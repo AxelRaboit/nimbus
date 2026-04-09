@@ -1,0 +1,105 @@
+app:
+  name: Nimbus
+  title: 'Nimbus — Envoi de fichiers'
+  footer: 'Nimbus. Tous droits réservés.'
+  tagline: 'Envoyez vos fichiers, simplement.'
+
+error:
+  default: Erreur
+  generic: "Une erreur s'est produite lors du traitement de votre demande."
+  not_found: 'La page demandée est introuvable.'
+  back: 'Page précédente'
+  home: Accueil
+
+common:
+  send: Envoyer
+  cancel: Annuler
+  download: Télécharger
+  delete: Supprimer
+  copy: Copier
+  copy_link: 'Copier le lien'
+  loading: 'Chargement...'
+  uploading: 'Envoi en cours...'
+  confirm: Confirmer
+  close: Fermer
+  yes: Oui
+  no: Non
+  optional: optionnel
+  required: obligatoire
+  or: ou
+  files: fichier(s)
+  size: Taille
+  name: Nom
+
+transfer:
+  create:
+    title: 'Envoyer des fichiers'
+    subtitle: 'Glissez vos fichiers ou cliquez pour parcourir'
+    drag_drop: 'Glissez vos fichiers ici'
+    drop_here: 'Déposez vos fichiers ici'
+    sender_email: 'Votre e-mail'
+    sender_name: 'Votre nom'
+    recipients: 'Destinataires'
+    recipients_placeholder: 'Ajouter une adresse e-mail'
+    add_recipient: 'Ajouter un destinataire'
+    message: Message
+    message_placeholder: 'Ajouter un message (optionnel)'
+    expiration: 'Expiration'
+    password: 'Protéger par un mot de passe'
+    password_placeholder: 'Mot de passe'
+    submit: 'Envoyer le transfert'
+    submit_loading: 'Envoi en cours...'
+    success_title: 'Transfert envoyé !'
+    success_subtitle: 'Les destinataires ont été notifiés par e-mail.'
+    manage_link: 'Gérer mon transfert'
+    copy_link: 'Copier le lien de téléchargement'
+  show:
+    title: 'Fichiers à télécharger'
+    sent_by: 'Envoyé par %name%'
+    expires: 'Expire le %date%'
+    download_all: 'Tout télécharger'
+    no_password: 'Aucun mot de passe requis'
+    password_required: 'Ce transfert est protégé par un mot de passe'
+    password_placeholder: 'Entrez le mot de passe'
+    password_submit: 'Accéder aux fichiers'
+    password_error: 'Mot de passe incorrect'
+  manage:
+    title: 'Gérer mon transfert'
+    reference: 'Référence'
+    status: Statut
+    expires: 'Expire le'
+    files: Fichiers
+    recipients: Destinataires
+    downloaded: Téléchargé
+    not_downloaded: 'Pas encore téléchargé'
+    delete_title: 'Supprimer ce transfert'
+    delete_confirm: 'Êtes-vous sûr de vouloir supprimer ce transfert ? Cette action est irréversible.'
+    delete_submit: 'Supprimer définitivement'
+    deleted: 'Votre transfert a bien été supprimé.'
+  status:
+    pending: 'En cours d''envoi'
+    ready: Disponible
+    expired: Expiré
+    deleted: Supprimé
+  unavailable:
+    title: 'Transfert indisponible'
+    expired: 'Ce transfert a expiré et n''est plus disponible.'
+    deleted: 'Ce transfert a été supprimé.'
+    not_found: 'Ce transfert est introuvable.'
+
+enum:
+  transfer_status:
+    pending: 'En cours d''envoi'
+    ready: Disponible
+    expired: Expiré
+    deleted: Supprimé
+
+mail:
+  transfer_ready:
+    subject: '%senderName% vous a envoyé des fichiers via Nimbus'
+    heading: 'Vous avez reçu des fichiers'
+    intro: '%senderName% vous a envoyé %count% fichier(s) via Nimbus.'
+    message_label: Message
+    download_button: 'Télécharger les fichiers'
+    expires: 'Ce transfert expire le %date%.'
+    footer: 'Si vous ne souhaitez pas télécharger ces fichiers, ignorez cet e-mail.'

@@ -1,0 +1,105 @@
+app:
+  name: Nimbus
+  title: 'Nimbus — File Transfer'
+  footer: 'Nimbus. All rights reserved.'
+  tagline: 'Send your files, simply.'
+
+error:
+  default: Error
+  generic: 'An error occurred while processing your request.'
+  not_found: 'The requested page could not be found.'
+  back: 'Go back'
+  home: Home
+
+common:
+  send: Send
+  cancel: Cancel
+  download: Download
+  delete: Delete
+  copy: Copy
+  copy_link: 'Copy link'
+  loading: 'Loading...'
+  uploading: 'Uploading...'
+  confirm: Confirm
+  close: Close
+  yes: Yes
+  no: No
+  optional: optional
+  required: required
+  or: or
+  files: file(s)
+  size: Size
+  name: Name
+
+transfer:
+  create:
+    title: 'Send files'
+    subtitle: 'Drag your files or click to browse'
+    drag_drop: 'Drag your files here'
+    drop_here: 'Drop your files here'
+    sender_email: 'Your e-mail'
+    sender_name: 'Your name'
+    recipients: Recipients
+    recipients_placeholder: 'Add an e-mail address'
+    add_recipient: 'Add a recipient'
+    message: Message
+    message_placeholder: 'Add a message (optional)'
+    expiration: Expiration
+    password: 'Protect with a password'
+    password_placeholder: Password
+    submit: 'Send transfer'
+    submit_loading: 'Sending...'
+    success_title: 'Transfer sent!'
+    success_subtitle: 'Recipients have been notified by e-mail.'
+    manage_link: 'Manage my transfer'
+    copy_link: 'Copy download link'
+  show:
+    title: 'Files to download'
+    sent_by: 'Sent by %name%'
+    expires: 'Expires on %date%'
+    download_all: 'Download all'
+    no_password: 'No password required'
+    password_required: 'This transfer is password protected'
+    password_placeholder: 'Enter the password'
+    password_submit: 'Access files'
+    password_error: 'Wrong password'
+  manage:
+    title: 'Manage my transfer'
+    reference: Reference
+    status: Status
+    expires: 'Expires on'
+    files: Files
+    recipients: Recipients
+    downloaded: Downloaded
+    not_downloaded: 'Not yet downloaded'
+    delete_title: 'Delete this transfer'
+    delete_confirm: 'Are you sure you want to delete this transfer? This action is irreversible.'
+    delete_submit: 'Delete permanently'
+    deleted: 'Your transfer has been deleted.'
+  status:
+    pending: 'Uploading'
+    ready: Available
+    expired: Expired
+    deleted: Deleted
+  unavailable:
+    title: 'Transfer unavailable'
+    expired: 'This transfer has expired and is no longer available.'
+    deleted: 'This transfer has been deleted.'
+    not_found: 'This transfer could not be found.'
+
+enum:
+  transfer_status:
+    pending: Uploading
+    ready: Available
+    expired: Expired
+    deleted: Deleted
+
+mail:
+  transfer_ready:
+    subject: '%senderName% sent you files via Nimbus'
+    heading: 'You received files'
+    intro: '%senderName% sent you %count% file(s) via Nimbus.'
+    message_label: Message
+    download_button: 'Download files'
+    expires: 'This transfer expires on %date%.'
+    footer: 'If you do not wish to download these files, ignore this e-mail.'

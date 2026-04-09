@@ -1,0 +1,105 @@
+app:
+  name: Nimbus
+  title: 'Nimbus — Dateiübertragung'
+  footer: 'Nimbus. Alle Rechte vorbehalten.'
+  tagline: 'Dateien senden, ganz einfach.'
+
+error:
+  default: Fehler
+  generic: 'Bei der Verarbeitung Ihrer Anfrage ist ein Fehler aufgetreten.'
+  not_found: 'Die angeforderte Seite konnte nicht gefunden werden.'
+  back: 'Zurück'
+  home: Startseite
+
+common:
+  send: Senden
+  cancel: Abbrechen
+  download: Herunterladen
+  delete: Löschen
+  copy: Kopieren
+  copy_link: 'Link kopieren'
+  loading: 'Laden...'
+  uploading: 'Hochladen...'
+  confirm: Bestätigen
+  close: Schließen
+  yes: Ja
+  no: Nein
+  optional: optional
+  required: erforderlich
+  or: oder
+  files: Datei(en)
+  size: Größe
+  name: Name
+
+transfer:
+  create:
+    title: 'Dateien senden'
+    subtitle: 'Dateien hierher ziehen oder klicken zum Durchsuchen'
+    drag_drop: 'Dateien hierher ziehen'
+    drop_here: 'Dateien hier ablegen'
+    sender_email: 'Ihre E-Mail'
+    sender_name: 'Ihr Name'
+    recipients: Empfänger
+    recipients_placeholder: 'E-Mail-Adresse hinzufügen'
+    add_recipient: 'Empfänger hinzufügen'
+    message: Nachricht
+    message_placeholder: 'Nachricht hinzufügen (optional)'
+    expiration: Ablauf
+    password: 'Mit Passwort schützen'
+    password_placeholder: Passwort
+    submit: 'Übertragung senden'
+    submit_loading: 'Senden...'
+    success_title: 'Übertragung gesendet!'
+    success_subtitle: 'Die Empfänger wurden per E-Mail benachrichtigt.'
+    manage_link: 'Meine Übertragung verwalten'
+    copy_link: 'Download-Link kopieren'
+  show:
+    title: 'Dateien zum Herunterladen'
+    sent_by: 'Gesendet von %name%'
+    expires: 'Läuft ab am %date%'
+    download_all: 'Alle herunterladen'
+    no_password: 'Kein Passwort erforderlich'
+    password_required: 'Diese Übertragung ist passwortgeschützt'
+    password_placeholder: 'Passwort eingeben'
+    password_submit: 'Auf Dateien zugreifen'
+    password_error: 'Falsches Passwort'
+  manage:
+    title: 'Meine Übertragung verwalten'
+    reference: Referenz
+    status: Status
+    expires: 'Läuft ab am'
+    files: Dateien
+    recipients: Empfänger
+    downloaded: Heruntergeladen
+    not_downloaded: 'Noch nicht heruntergeladen'
+    delete_title: 'Diese Übertragung löschen'
+    delete_confirm: 'Möchten Sie diese Übertragung wirklich löschen? Diese Aktion ist unwiderruflich.'
+    delete_submit: 'Endgültig löschen'
+    deleted: 'Ihre Übertragung wurde gelöscht.'
+  status:
+    pending: 'Wird hochgeladen'
+    ready: Verfügbar
+    expired: Abgelaufen
+    deleted: Gelöscht
+  unavailable:
+    title: 'Übertragung nicht verfügbar'
+    expired: 'Diese Übertragung ist abgelaufen und nicht mehr verfügbar.'
+    deleted: 'Diese Übertragung wurde gelöscht.'
+    not_found: 'Diese Übertragung konnte nicht gefunden werden.'
+
+enum:
+  transfer_status:
+    pending: 'Wird hochgeladen'
+    ready: Verfügbar
+    expired: Abgelaufen
+    deleted: Gelöscht
+
+mail:
+  transfer_ready:
+    subject: '%senderName% hat Ihnen Dateien über Nimbus gesendet'
+    heading: 'Sie haben Dateien erhalten'
+    intro: '%senderName% hat Ihnen %count% Datei(en) über Nimbus gesendet.'
+    message_label: Nachricht
+    download_button: 'Dateien herunterladen'
+    expires: 'Diese Übertragung läuft ab am %date%.'
+    footer: 'Wenn Sie diese Dateien nicht herunterladen möchten, ignorieren Sie diese E-Mail.'

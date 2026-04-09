@@ -34,7 +34,7 @@ dev:
 
 # === Install & Update ===
 setup-dirs: ## Create required runtime directories
-	@mkdir -p var/uploads/tus_tmp var/log
+	@mkdir -p var/uploads/tus_tmp var/uploads/transfers var/cache/tus var/log
 	@echo "✅ Runtime directories created"
 
 install-dev:

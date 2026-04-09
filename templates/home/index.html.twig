@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nimbus — Envoyer des fichiers{% endblock %}
+
+{% block body %}
+    <div id="app-home"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ vite_entry_script_tags('home') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ vite_entry_link_tags('home') }}
+{% endblock %}

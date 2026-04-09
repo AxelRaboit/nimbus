@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nimbus — Transfert indisponible{% endblock %}
+
+{% block body %}
+    <div id="app-unavailable"
+         data-status="{{ transfer.status.value }}"
+         data-expired="{{ transfer.isExpired ? 'true' : 'false' }}">
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ vite_entry_script_tags('app') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ vite_entry_link_tags('app') }}
+{% endblock %}

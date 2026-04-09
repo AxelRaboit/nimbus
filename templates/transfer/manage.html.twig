@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nimbus — Gérer mon transfert{% endblock %}
+
+{% block body %}
+    <div id="app-manage"
+         data-owner-token="{{ transfer.ownerToken }}"
+         data-reference="{{ transfer.reference }}"
+         data-status="{{ transfer.status.value }}"
+         data-expires-at="{{ transfer.expiresAt|date('c') }}"
+         data-files="{{ transfer.files|map(f => {name: f.originalName, size: f.fileSize})|json_encode }}"
+         data-recipients="{{ transfer.recipients|map(r => {email: r.email, downloaded: r.hasDownloaded})|json_encode }}">
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ vite_entry_script_tags('manage') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ vite_entry_link_tags('manage') }}
+{% endblock %}

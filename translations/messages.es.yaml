@@ -1,0 +1,105 @@
+app:
+  name: Nimbus
+  title: 'Nimbus — Transferencia de archivos'
+  footer: 'Nimbus. Todos los derechos reservados.'
+  tagline: 'Envía tus archivos, fácilmente.'
+
+error:
+  default: Error
+  generic: 'Se produjo un error al procesar su solicitud.'
+  not_found: 'La página solicitada no se pudo encontrar.'
+  back: 'Volver'
+  home: Inicio
+
+common:
+  send: Enviar
+  cancel: Cancelar
+  download: Descargar
+  delete: Eliminar
+  copy: Copiar
+  copy_link: 'Copiar enlace'
+  loading: 'Cargando...'
+  uploading: 'Enviando...'
+  confirm: Confirmar
+  close: Cerrar
+  yes: Sí
+  no: No
+  optional: opcional
+  required: obligatorio
+  or: o
+  files: archivo(s)
+  size: Tamaño
+  name: Nombre
+
+transfer:
+  create:
+    title: 'Enviar archivos'
+    subtitle: 'Arrastra tus archivos o haz clic para explorar'
+    drag_drop: 'Arrastra tus archivos aquí'
+    drop_here: 'Suelta tus archivos aquí'
+    sender_email: 'Tu correo electrónico'
+    sender_name: 'Tu nombre'
+    recipients: Destinatarios
+    recipients_placeholder: 'Añadir una dirección de correo'
+    add_recipient: 'Añadir destinatario'
+    message: Mensaje
+    message_placeholder: 'Añadir un mensaje (opcional)'
+    expiration: Vencimiento
+    password: 'Proteger con contraseña'
+    password_placeholder: Contraseña
+    submit: 'Enviar transferencia'
+    submit_loading: 'Enviando...'
+    success_title: '¡Transferencia enviada!'
+    success_subtitle: 'Los destinatarios han sido notificados por correo.'
+    manage_link: 'Gestionar mi transferencia'
+    copy_link: 'Copiar enlace de descarga'
+  show:
+    title: 'Archivos para descargar'
+    sent_by: 'Enviado por %name%'
+    expires: 'Vence el %date%'
+    download_all: 'Descargar todo'
+    no_password: 'No se requiere contraseña'
+    password_required: 'Esta transferencia está protegida con contraseña'
+    password_placeholder: 'Introduce la contraseña'
+    password_submit: 'Acceder a los archivos'
+    password_error: 'Contraseña incorrecta'
+  manage:
+    title: 'Gestionar mi transferencia'
+    reference: Referencia
+    status: Estado
+    expires: 'Vence el'
+    files: Archivos
+    recipients: Destinatarios
+    downloaded: Descargado
+    not_downloaded: 'Aún no descargado'
+    delete_title: 'Eliminar esta transferencia'
+    delete_confirm: '¿Estás seguro de que deseas eliminar esta transferencia? Esta acción es irreversible.'
+    delete_submit: 'Eliminar definitivamente'
+    deleted: 'Tu transferencia ha sido eliminada.'
+  status:
+    pending: 'Subiendo'
+    ready: Disponible
+    expired: Vencido
+    deleted: Eliminado
+  unavailable:
+    title: 'Transferencia no disponible'
+    expired: 'Esta transferencia ha vencido y ya no está disponible.'
+    deleted: 'Esta transferencia ha sido eliminada.'
+    not_found: 'No se encontró esta transferencia.'
+
+enum:
+  transfer_status:
+    pending: Subiendo
+    ready: Disponible
+    expired: Vencido
+    deleted: Eliminado
+
+mail:
+  transfer_ready:
+    subject: '%senderName% te ha enviado archivos a través de Nimbus'
+    heading: 'Has recibido archivos'
+    intro: '%senderName% te ha enviado %count% archivo(s) a través de Nimbus.'
+    message_label: Mensaje
+    download_button: 'Descargar archivos'
+    expires: 'Esta transferencia vence el %date%.'
+    footer: 'Si no deseas descargar estos archivos, ignora este correo.'
