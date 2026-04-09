@@ -14,6 +14,7 @@ final readonly class TransferManager
     public function __construct(
         private EntityManagerInterface $em,
         private TusUploadService $tusUploadService,
+        private TransferNotifier $notifier,
         private string $transferStoragePath,
     ) {}
 
@@ -57,6 +58,8 @@ final readonly class TransferManager
         $transfer->setTusUploadKey(null);
 
         $this->em->flush();
+
+        $this->notifier->notifyReady($transfer);
     }
 
     public function delete(Transfer $transfer): void

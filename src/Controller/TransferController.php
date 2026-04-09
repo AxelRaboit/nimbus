@@ -8,8 +8,12 @@ use App\Entity\Transfer;
 use App\Repository\TransferRepository;
 use App\Service\TransferManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use ZipArchive;
 
 class TransferController extends AbstractController
 {
@@ -34,16 +38,68 @@ class TransferController extends AbstractController
     }
 
     #[Route('/t/{token}/download', name: 'transfer_download')]
-    public function download(string $token, TransferRepository $transferRepository): Response
-    {
+    public function download(
+        string $token,
+        TransferRepository $transferRepository,
+        #[Autowire('%transfer_storage_path%')]
+        string $transferStoragePath,
+    ): Response {
         $transfer = $transferRepository->findByToken($token);
 
         if (!$transfer instanceof Transfer || !$transfer->isReady() || $transfer->isExpired()) {
             throw $this->createNotFoundException();
         }
 
-        // TODO: ZIP multiple files or serve single file directly
-        return new Response('Download not yet implemented', Response::HTTP_NOT_IMPLEMENTED);
+        $files = $transfer->getFiles()->toArray();
+
+        if (1 === count($files)) {
+            $file = $files[0];
+            $path = sprintf('%s/%s/%s', $transferStoragePath, $transfer->getToken(), $file->getFilename());
+
+            return new BinaryFileResponse(
+                $path,
+                Response::HTTP_OK,
+                [
+                    'Content-Disposition' => HeaderUtils::makeDisposition(
+                        HeaderUtils::DISPOSITION_ATTACHMENT,
+                        $file->getOriginalName(),
+                    ),
+                    'Content-Type' => $file->getMimeType() ?: 'application/octet-stream',
+                ],
+            );
+        }
+
+        // Multiple files → stream as ZIP
+        $zipName = sprintf('nimbus-%s.zip', mb_strtolower($transfer->getReference()));
+        $tmpZip = tempnam(sys_get_temp_dir(), 'nimbus_zip_');
+
+        $zip = new ZipArchive();
+        $zip->open($tmpZip, ZipArchive::OVERWRITE);
+
+        foreach ($files as $file) {
+            $path = sprintf('%s/%s/%s', $transferStoragePath, $transfer->getToken(), $file->getFilename());
+            if (file_exists($path)) {
+                $zip->addFile($path, $file->getOriginalName());
+            }
+        }
+
+        $zip->close();
+
+        $response = new BinaryFileResponse(
+            $tmpZip,
+            Response::HTTP_OK,
+            [
+                'Content-Disposition' => HeaderUtils::makeDisposition(
+                    HeaderUtils::DISPOSITION_ATTACHMENT,
+                    $zipName,
+                ),
+                'Content-Type' => 'application/zip',
+            ],
+        );
+
+        $response->deleteFileAfterSend(true);
+
+        return $response;
     }
 
     #[Route('/manage/{ownerToken}', name: 'transfer_manage')]

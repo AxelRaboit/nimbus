@@ -1,0 +1,28 @@
+{% extends 'email/layout/base.html.twig' %}
+
+{% block title %}Votre transfert a expiré — Nimbus{% endblock %}
+
+{% block content %}
+<h1>Votre transfert a expiré</h1>
+
+<p>
+    Votre transfert <strong>{{ transfer.reference }}</strong> a expiré
+    le {{ transfer.expiresAt|date('d/m/Y') }}.
+</p>
+
+{% set downloaded = transfer.recipients|filter(r => r.hasDownloaded)|length %}
+{% set total = transfer.recipients|length %}
+<p>
+    {{ downloaded }}/{{ total }} destinataire{{ total > 1 ? 's ont' : ' a' }} téléchargé les fichiers avant l'expiration.
+</p>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+        <td class="reference-cell">
+            Référence : <strong>{{ transfer.reference }}</strong>
+        </td>
+    </tr>
+</table>
+
+<p class="warning">Les fichiers ont été automatiquement supprimés.</p>
+{% endblock %}

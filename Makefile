@@ -110,7 +110,7 @@ stop:
 start-dev-worker: ## Start the messenger worker (async + scheduler)
 	@touch var/.messenger-dev-worker-running
 	@trap 'rm -f var/.messenger-dev-worker-running; exit' INT TERM EXIT; \
-	while true; do $(CONSOLE) messenger:consume async scheduler_default -vv --time-limit=3600 --memory-limit=512M || sleep 1; done
+	while true; do $(CONSOLE) messenger:consume async scheduler_main -vv --time-limit=3600 --memory-limit=512M || sleep 1; done
 
 routes:
 	$(CONSOLE) debug:router --show-controllers

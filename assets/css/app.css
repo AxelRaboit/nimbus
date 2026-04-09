@@ -1,1 +1,57 @@
-/* Global styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* ── Semantic color tokens ───────────────────────────────────────────────────
+   RGB format (no commas) so Tailwind opacity modifiers work: bg-surface/50
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+    --color-bg:        249 250 251;
+    --color-surface:   255 255 255;
+    --color-surface-2: 243 244 246;
+    --color-surface-3: 229 231 235;
+
+    --color-border:        229 231 235;
+    --color-border-strong: 209 213 219;
+    --color-border-subtle: 243 244 246;
+
+    --color-text-primary:   17  24  39;
+    --color-text-secondary: 107 114 128;
+    --color-text-muted:     156 163 175;
+    --color-text-subtle:    209 213 219;
+}
+
+.dark {
+    --color-bg:          3   7  18;
+    --color-surface:    17  24  39;
+    --color-surface-2:  31  41  55;
+    --color-surface-3:  55  65  81;
+
+    --color-border:        55  65  81;
+    --color-border-strong: 75  85  99;
+    --color-border-subtle: 31  41  55;
+
+    --color-text-primary:   243 244 246;
+    --color-text-secondary: 156 163 175;
+    --color-text-muted:     107 114 128;
+    --color-text-subtle:     75  85  99;
+}
+
+/* ── Figtree font ──────────────────────────────────────────────────────────── */
+@import url('https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap');
+
+body {
+    font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    background-color: rgb(var(--color-bg));
+    color: rgb(var(--color-text-primary));
+}
