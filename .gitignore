@@ -23,6 +23,9 @@
 # PHP CS Fixer
 .php-cs-fixer.cache
 
+# Twig CS Fixer
+.twig-cs-fixer.cache
+
 # Tools vendors
 /tools/*/vendor/
 /tools/*/composer.lock
