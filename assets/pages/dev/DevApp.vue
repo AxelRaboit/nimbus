@@ -66,7 +66,7 @@ function fmtMonth(yyyyMm) {
 }
 
 function fmtDate(iso) {
-    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
+    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
 
 const usersLineData = computed(() => ({
