@@ -1,10 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { RotateCcw, X, HelpCircle } from "lucide-vue-next";
+import { RotateCcw, X, HelpCircle, Lock } from "lucide-vue-next";
 import TransferForm from "./components/TransferForm.vue";
 import UploadProgress from "./components/UploadProgress.vue";
 import TransferSuccess from "./components/TransferSuccess.vue";
+import AppButton from "@/components/AppButton.vue";
 import { useTransferDraft } from "@/composables/useTransferDraft.js";
 import { formatFileSize } from "@/utils/validation.js";
 
@@ -13,14 +14,16 @@ const { t, locale } = useI18n();
 const { saveDraft, getDraft, clearDraft, clearTusFingerprints } = useTransferDraft();
 
 const props = defineProps({
-    userEmail:        { type: String, default: "" },
-    isGuest:          { type: Boolean, default: false },
-    maxSizeMb:        { type: Number, default: 500 },
-    maxFiles:         { type: Number, default: 20 },
-    maxRecipients:    { type: Number, default: 20 },
-    maxExpiryDays:    { type: Number, default: 7 },
-    expiryOptions:    { type: String, default: "[24]" },
-    extensionGroups:  { type: String, default: "{}" },
+    userEmail:              { type: String, default: "" },
+    isGuest:                { type: Boolean, default: false },
+    maxSizeMb:              { type: Number, default: 500 },
+    maxFiles:               { type: Number, default: 20 },
+    maxRecipients:          { type: Number, default: 20 },
+    maxExpiryDays:          { type: Number, default: 7 },
+    expiryOptions:          { type: String, default: "[24]" },
+    extensionGroups:        { type: String, default: "{}" },
+    accessPasswordEnabled:  { type: Boolean, default: false },
+    accessGranted:          { type: Boolean, default: true },
 });
 
 const fileTypeGroups = computed(() => {
@@ -32,9 +35,25 @@ const fileTypeGroups = computed(() => {
 });
 
 const showHelp = ref(false);
+const showAccessModal = ref(false);
+const accessGrantedLocal = ref(props.accessGranted);
+const accessModalPassword = ref("");
+const accessModalError = ref("");
+const accessModalLoading = ref(false);
+const pendingSubmit = ref(null);
 
 if (typeof window !== "undefined") {
-    window.addEventListener("keydown", (e) => { if (e.key === "Escape") showHelp.value = false; });
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            showHelp.value = false;
+            if (showAccessModal.value) {
+                showAccessModal.value = false;
+                pendingSubmit.value = null;
+                accessModalPassword.value = "";
+                accessModalError.value = "";
+            }
+        }
+    });
 }
 
 const step = ref("form");
@@ -85,7 +104,39 @@ const manageUrl = computed(() => {
     return `${window.location.origin}/manage/${transferOwnerToken.value}`;
 });
 
+async function verifyAccess() {
+    accessModalLoading.value = true;
+    accessModalError.value = "";
+    try {
+        const res = await fetch("/api/home/verify-access", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: accessModalPassword.value }),
+        });
+        if (res.ok) {
+            accessGrantedLocal.value = true;
+            showAccessModal.value = false;
+            const formData = pendingSubmit.value;
+            pendingSubmit.value = null;
+            accessModalPassword.value = "";
+            await onFormSubmit(formData);
+        } else {
+            accessModalError.value = t("home.access_password.error");
+        }
+    } catch {
+        accessModalError.value = t("home.access_password.error");
+    } finally {
+        accessModalLoading.value = false;
+    }
+}
+
 async function onFormSubmit(formData) {
+    if (props.accessPasswordEnabled && !accessGrantedLocal.value) {
+        pendingSubmit.value = formData;
+        showAccessModal.value = true;
+        return;
+    }
+
     apiError.value = null;
 
     const existing = resumeDraft.value ?? (getDraft()?.token ? getDraft() : null);
@@ -242,6 +293,48 @@ function reset() {
             />
         </div>
     </div>
+
+    <Teleport to="body">
+        <Transition name="modal">
+            <div
+                v-if="showAccessModal"
+                class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                v-on:click.self="showAccessModal = false; pendingSubmit = null; accessModalPassword = ''; accessModalError = '';"
+            >
+                <div class="absolute inset-0 bg-black/50" v-on:click="showAccessModal = false; pendingSubmit = null; accessModalPassword = ''; accessModalError = '';" />
+                <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-sm">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-base">
+                        <h2 class="text-base font-semibold text-primary flex items-center gap-2">
+                            <Lock class="w-4 h-4 text-indigo-500" :stroke-width="2" />
+                            {{ t('home.access_password.title') }}
+                        </h2>
+                        <button class="text-muted hover:text-primary transition-colors" v-on:click="showAccessModal = false; pendingSubmit = null; accessModalPassword = ''; accessModalError = '';">
+                            <X class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
+                    <div class="px-6 py-5 flex flex-col gap-4">
+                        <p class="text-sm text-secondary">{{ t('home.access_password.subtitle') }}</p>
+                        <div v-if="accessModalError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                            {{ accessModalError }}
+                        </div>
+                        <form class="flex flex-col gap-4" v-on:submit.prevent="verifyAccess">
+                            <input
+                                v-model="accessModalPassword"
+                                type="password"
+                                autofocus
+                                required
+                                class="block w-full rounded-md border border-base bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                                placeholder="••••••••"
+                            >
+                            <AppButton type="submit" :loading="accessModalLoading" class="w-full">
+                                {{ t('home.access_password.submit') }}
+                            </AppButton>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+    </Teleport>
 
     <Teleport to="body">
         <Transition name="modal">

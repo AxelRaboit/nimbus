@@ -18,6 +18,13 @@ export default {
         my_transfers: "Meine Übertragungen",
     },
     home: {
+        access_password: {
+            title: "Geschützter Zugang",
+            subtitle:
+                "Ein Passwort ist erforderlich, um eine Übertragung zu senden.",
+            submit: "Weiter",
+            error: "Falsches Passwort.",
+        },
         hero: {
             heading: "Wie",
             heading_accent: "funktioniert es?",
