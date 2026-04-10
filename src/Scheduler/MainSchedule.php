@@ -25,7 +25,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->add(
-                RecurringMessage::cron('0 2 * * *', new CleanupExpiredTransfersMessage()),
+                RecurringMessage::cron('0 * * * *', new CleanupExpiredTransfersMessage()),
             )
             ->add(
                 RecurringMessage::cron('0 * * * *', new SendRemindersMessage()),
