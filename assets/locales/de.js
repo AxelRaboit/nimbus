@@ -14,6 +14,7 @@ export default {
         profile: "Mein Profil",
         login: "Anmelden",
         dashboard: "Dashboard",
+        my_transfers: "Meine Übertragungen",
     },
     home: {
         hero: {
@@ -180,6 +181,20 @@ export default {
         other_desc:
             "Diese Übertragung ist noch nicht bereit oder existiert nicht.",
         back: "← Dateien senden",
+    },
+    dashboard: {
+        title: "Meine Übertragungen",
+        loading: "Wird geladen…",
+        error: "Übertragungen konnten nicht geladen werden.",
+        empty_title: "Noch keine Übertragungen",
+        empty_desc: "Deine gesendeten Übertragungen erscheinen hier.",
+        new_transfer: "Übertragung senden",
+        manage: "Verwalten",
+        expires: "Läuft ab am",
+        downloaded: "heruntergeladen",
+        public_link: "Öffentlicher Link",
+        downloads: "Download(s)",
+        load_more: "Mehr laden",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

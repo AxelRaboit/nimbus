@@ -66,6 +66,10 @@ class Transfer
     #[ORM\Column(options: ['default' => 0])]
     private int $publicDownloadCount = 0;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
+
     /**
      * @var Collection<int, TransferFile>
      */
@@ -293,6 +297,18 @@ class Transfer
     public function hasRecipients(): bool
     {
         return $this->recipients->count() > 0;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
     public function isPublic(): bool

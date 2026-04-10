@@ -14,6 +14,7 @@ export default {
         profile: "Mi perfil",
         login: "Iniciar sesión",
         dashboard: "Dashboard",
+        my_transfers: "Mis transferencias",
     },
     home: {
         hero: {
@@ -179,6 +180,20 @@ export default {
             "El remitente eliminó esta transferencia. Los archivos ya no están disponibles.",
         other_desc: "Esta transferencia aún no está lista o no existe.",
         back: "← Enviar archivos",
+    },
+    dashboard: {
+        title: "Mis transferencias",
+        loading: "Cargando…",
+        error: "No se pudieron cargar las transferencias.",
+        empty_title: "Sin transferencias por el momento",
+        empty_desc: "Tus transferencias enviadas aparecerán aquí.",
+        new_transfer: "Enviar una transferencia",
+        manage: "Gestionar",
+        expires: "Vence el",
+        downloaded: "descargado(s)",
+        public_link: "Enlace público",
+        downloads: "descarga(s)",
+        load_more: "Cargar más",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

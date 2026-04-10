@@ -14,6 +14,7 @@ export default {
         profile: "Mon profil",
         login: "Se connecter",
         dashboard: "Tableau de bord",
+        my_transfers: "Mes transferts",
     },
     home: {
         hero: {
@@ -97,7 +98,8 @@ export default {
             copy: "Copier",
             copied: "Copié !",
             new_transfer: "Envoyer un nouveau transfert",
-            public_link_hint: "Partagez ce lien — n'importe qui peut télécharger vos fichiers",
+            public_link_hint:
+                "Partagez ce lien — n'importe qui peut télécharger vos fichiers",
             guest_warning:
                 "Sauvegardez ce lien ! Sans compte, c'est le seul moyen de gérer ou supprimer votre transfert.",
         },
@@ -121,7 +123,8 @@ export default {
             pending_download: "En attente",
             no_recipients: "Aucun destinataire.",
             public_link: "Lien public",
-            public_downloads: "{count} téléchargement | {count} téléchargements",
+            public_downloads:
+                "{count} téléchargement | {count} téléchargements",
             danger_zone: "Zone de danger",
             danger_description:
                 "La suppression est définitive. Les fichiers seront effacés et les destinataires ne pourront plus télécharger.",
@@ -186,6 +189,20 @@ export default {
             "L'expéditeur a supprimé ce transfert. Les fichiers ne sont plus disponibles.",
         other_desc: "Ce transfert n'est pas encore prêt ou n'existe pas.",
         back: "← Envoyer des fichiers",
+    },
+    dashboard: {
+        title: "Mes transferts",
+        loading: "Chargement…",
+        error: "Impossible de charger les transferts.",
+        empty_title: "Aucun transfert pour l'instant",
+        empty_desc: "Vos transferts envoyés apparaîtront ici.",
+        new_transfer: "Envoyer un transfert",
+        manage: "Gérer",
+        expires: "Expire le",
+        downloaded: "téléchargé(s)",
+        public_link: "Lien public",
+        downloads: "téléchargement(s)",
+        load_more: "Charger plus",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

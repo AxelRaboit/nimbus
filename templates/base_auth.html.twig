@@ -79,6 +79,7 @@
                  data-is-guest="{{ app.user ? 'false' : 'true' }}"
                  data-is-dev="{{ app.user and is_granted('ROLE_DEV') ? 'true' : 'false' }}"
                  data-dev-path="{{ path('dev_dashboard') }}"
+                 data-dashboard-path="{{ app.user ? path('app_dashboard') : '' }}"
                  data-locale="{{ app.request.locale }}"
             ></div>
 

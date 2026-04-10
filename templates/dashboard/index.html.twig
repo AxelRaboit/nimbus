@@ -1,0 +1,24 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}{{ 'dashboard.title'|trans }} - Nimbus{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'dashboard.title'|trans}) }}
+{% endblock %}
+
+{% block body %}
+    <div id="app-dashboard"
+         data-locale="{{ app.request.locale }}"
+         class="flex-1">
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ vite_entry_script_tags('dashboard') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ vite_entry_link_tags('dashboard') }}
+{% endblock %}

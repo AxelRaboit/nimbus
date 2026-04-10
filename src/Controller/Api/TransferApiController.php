@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Entity\Transfer;
+use App\Entity\User;
 use App\Exception\DisallowedFileTypeException;
 use App\Exception\DisallowedZipContentException;
 use App\Exception\FileLimitExceededException;
@@ -25,6 +26,52 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api')]
 class TransferApiController extends AbstractController
 {
+    #[Route('/transfers', name: 'transfer_api_list', methods: ['GET'])]
+    public function list(Request $request, TransferRepository $transferRepository): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $limit = 10;
+        $offset = max(0, (int) $request->query->get('offset', 0));
+
+        $transfers = $transferRepository->findByUser($user, $limit, $offset);
+        $total = $transferRepository->countByUser($user);
+
+        $data = array_map(function (Transfer $t): array {
+            $recipients = array_map(fn ($r): array => [
+                'email' => $r->getEmail(),
+                'downloaded' => $r->hasDownloaded(),
+            ], $t->getRecipients()->toArray());
+
+            $files = array_map(fn ($f): array => [
+                'name' => $f->getOriginalName(),
+                'size' => $f->getFileSize(),
+            ], $t->getFiles()->toArray());
+
+            return [
+                'reference' => $t->getReference(),
+                'ownerToken' => $t->getOwnerToken(),
+                'token' => $t->getToken(),
+                'status' => $t->getStatus()->value,
+                'isPublic' => $t->isPublic(),
+                'files' => $files,
+                'recipients' => $recipients,
+                'publicDownloadCount' => $t->getPublicDownloadCount(),
+                'expiresAt' => $t->getExpiresAt()->format(DateTimeInterface::ATOM),
+                'createdAt' => $t->getCreatedAt()->format(DateTimeInterface::ATOM),
+            ];
+        }, $transfers);
+
+        return $this->json([
+            'items' => $data,
+            'hasMore' => ($offset + $limit) < $total,
+        ]);
+    }
+
     #[Route('/transfer', name: 'transfer_api_create', methods: ['POST'])]
     public function create(
         Request $request,
@@ -71,7 +118,11 @@ class TransferApiController extends AbstractController
             return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $transfer = $transferManager->create(array_merge($data, ['isPublic' => $isPublic]));
+        $user = $this->getUser();
+        $transfer = $transferManager->create(
+            array_merge($data, ['isPublic' => $isPublic]),
+            $user instanceof User ? $user : null,
+        );
 
         return $this->json([
             'token' => $transfer->getToken(),

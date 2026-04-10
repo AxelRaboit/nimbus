@@ -14,6 +14,7 @@ export default {
         profile: "My profile",
         login: "Log in",
         dashboard: "Dashboard",
+        my_transfers: "My transfers",
     },
     home: {
         hero: {
@@ -93,7 +94,8 @@ export default {
             copy: "Copy",
             copied: "Copied!",
             new_transfer: "Send a new transfer",
-            public_link_hint: "Share this link — anyone can download your files",
+            public_link_hint:
+                "Share this link — anyone can download your files",
             guest_warning:
                 "Save this link! Without an account, it is the only way to manage or delete your transfer.",
         },
@@ -181,6 +183,20 @@ export default {
             "The sender deleted this transfer. The files are no longer available.",
         other_desc: "This transfer is not ready yet or does not exist.",
         back: "← Send files",
+    },
+    dashboard: {
+        title: "My transfers",
+        loading: "Loading…",
+        error: "Could not load transfers.",
+        empty_title: "No transfers yet",
+        empty_desc: "Your sent transfers will appear here.",
+        new_transfer: "Send a transfer",
+        manage: "Manage",
+        expires: "Expires",
+        downloaded: "downloaded",
+        public_link: "Public link",
+        downloads: "download(s)",
+        load_more: "Load more",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

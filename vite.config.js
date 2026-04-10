@@ -25,6 +25,7 @@ export default defineConfig({
                 'transfer-password': './assets/pages/transfer-password/index.js',
                 'transfer-unavailable': './assets/pages/transfer-unavailable/index.js',
                 dev: './assets/pages/dev/index.js',
+                dashboard: './assets/pages/dashboard/index.js',
             },
         },
     },

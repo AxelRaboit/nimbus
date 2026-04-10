@@ -228,3 +228,6 @@ mail:
     download_button: 'Dateien herunterladen'
     expires: 'Diese Übertragung läuft ab am %date%.'
     footer: 'Wenn Sie diese Dateien nicht herunterladen möchten, ignorieren Sie diese E-Mail.'
+
+dashboard:
+  title: 'Meine Übertragungen'

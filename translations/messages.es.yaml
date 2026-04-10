@@ -228,3 +228,6 @@ mail:
     download_button: 'Descargar archivos'
     expires: 'Esta transferencia vence el %date%.'
     footer: 'Si no deseas descargar estos archivos, ignora este correo.'
+
+dashboard:
+  title: 'Mis transferencias'

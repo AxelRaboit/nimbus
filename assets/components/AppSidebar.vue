@@ -14,6 +14,7 @@ import {
     Menu,
     X,
     LayoutDashboard,
+    History,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -29,6 +30,7 @@ const props = defineProps({
     isGuest: { type: Boolean, default: false },
     isDev: { type: Boolean, default: false },
     devPath: { type: String, default: "/dev" },
+    dashboardPath: { type: String, default: "/dashboard" },
 });
 
 const { t } = useI18n();
@@ -55,9 +57,10 @@ function closeMobile() {
     document.body.style.overflow = "";
 }
 
-const homeActive    = props.activeRoute === "home";
-const profileActive = props.activeRoute?.startsWith("app_profile");
-const devActive     = props.activeRoute?.startsWith("dev_");
+const homeActive      = props.activeRoute === "home";
+const dashboardActive = props.activeRoute === "app_dashboard";
+const profileActive   = props.activeRoute?.startsWith("app_profile");
+const devActive       = props.activeRoute?.startsWith("dev_");
 </script>
 
 <template>
@@ -116,6 +119,19 @@ const devActive     = props.activeRoute?.startsWith("dev_");
                 <span class="si-label truncate">{{ t("nav.send") }}</span>
                 <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                     {{ t("nav.send") }}
+                </span>
+            </a>
+
+            <a
+                v-if="!isGuest"
+                :href="dashboardPath"
+                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                :class="dashboardActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+            >
+                <History class="w-5 h-5 shrink-0" :class="dashboardActive ? 'text-indigo-400' : 'text-muted'" />
+                <span class="si-label truncate">{{ t("nav.my_transfers") }}</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    {{ t("nav.my_transfers") }}
                 </span>
             </a>
 
@@ -282,6 +298,16 @@ const devActive     = props.activeRoute?.startsWith("dev_");
                 >
                     <UploadCloud class="w-5 h-5 shrink-0" :class="homeActive ? 'text-indigo-400' : 'text-muted'" />
                     {{ t("nav.send") }}
+                </a>
+
+                <a
+                    v-if="!isGuest"
+                    :href="dashboardPath"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    :class="dashboardActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                >
+                    <History class="w-5 h-5 shrink-0" :class="dashboardActive ? 'text-indigo-400' : 'text-muted'" />
+                    {{ t("nav.my_transfers") }}
                 </a>
 
                 <a

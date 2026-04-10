@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\Recipient;
 use App\Entity\Transfer;
 use App\Entity\TransferFile;
+use App\Entity\User;
 use App\Enum\TransferStatusEnum;
 use App\Repository\ApplicationParameterRepository;
 use App\Repository\RecipientRepository;
@@ -39,13 +40,17 @@ final readonly class TransferManager
      *     isPublic?: bool,
      * } $data
      */
-    public function create(array $data): Transfer
+    public function create(array $data, ?User $user = null): Transfer
     {
         $transfer = new Transfer();
         $transfer->setSenderEmail($data['senderEmail'] ?? null);
         $transfer->setSenderName($data['senderName'] ?? null);
         $transfer->setMessage($data['message'] ?? null);
         $transfer->setIsPublic($data['isPublic'] ?? false);
+
+        if ($user instanceof User) {
+            $transfer->setUser($user);
+        }
 
         if (!empty($data['expiresInHours'])) {
             $transfer->setExpiresAt(new DateTimeImmutable(sprintf('+%d hours', $data['expiresInHours'])));

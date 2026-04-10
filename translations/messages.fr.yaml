@@ -235,3 +235,6 @@ mail:
     download_button: 'Télécharger les fichiers'
     expires: 'Ce transfert expire le %date%.'
     footer: 'Si vous ne souhaitez pas télécharger ces fichiers, ignorez cet e-mail.'
+
+dashboard:
+  title: 'Mes transferts'
