@@ -37,6 +37,9 @@ setup-dirs: ## Create required runtime directories
 	@mkdir -p var/uploads/tus_tmp var/uploads/transfers var/cache/tus var/log
 	@echo "✅ Runtime directories created"
 
+setup-perms: ## Set file permissions for production (run with sudo, use FULL_PERMS=1 for thorough mode)
+	@sudo ./setup-perms.sh
+
 install-dev:
 	$(COMPOSER) install
 	$(COMPOSER) install --working-dir=tools/php-cs-fixer
@@ -49,6 +52,7 @@ install-dev:
 	make dev
 
 install-prod:
+	make setup-perms
 	$(COMPOSER) install --no-dev --optimize-autoloader
 	$(PNPM) install --frozen-lockfile
 	make setup-dirs
@@ -58,7 +62,8 @@ install-prod:
 	make cc-prod
 
 deploy-prod: ## Deploy to production (requires a git tag on HEAD)
-	@git pull; \
+	@make setup-perms; \
+	git pull; \
 	APP_VERSION=$$(git describe --exact-match --tags HEAD 2>/dev/null); \
 	if [ -z "$$APP_VERSION" ]; then \
 		echo "❌ Deployment blocked: no release tag on current commit. Create a git tag first (e.g. git tag v1.0.0)."; \
