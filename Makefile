@@ -53,6 +53,7 @@ install-prod:
 	$(PNPM) install --frozen-lockfile
 	make setup-dirs
 	make migrate-f
+	$(CONSOLE) app:application-parameter
 	make build
 	make cc-prod
 
@@ -68,6 +69,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	$(COMPOSER) install --no-dev --optimize-autoloader; \
 	make cc-prod; \
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
+	$(CONSOLE) app:application-parameter; \
 	$(PNPM) install --frozen-lockfile; \
 	$(PNPM) run build; \
 	echo "✅ Deployed $$APP_VERSION successfully."
