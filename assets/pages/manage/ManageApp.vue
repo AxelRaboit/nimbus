@@ -113,7 +113,7 @@ async function remind(email) {
             </div>
 
             <!-- Meta -->
-            <div class="px-5 py-3 border-b border-base flex items-center gap-6 text-sm bg-surface-2">
+            <div class="px-5 py-3 border-b border-base flex flex-wrap items-center gap-x-6 gap-y-2 text-sm bg-surface-2">
                 <div>
                     <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.expires') }}</p>
                     <p class="font-medium text-primary">{{ expiresDate }}</p>
@@ -152,7 +152,7 @@ async function remind(email) {
                     <input
                         :value="publicDownloadUrl"
                         readonly
-                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
                     <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyPublicLink">
@@ -173,7 +173,7 @@ async function remind(email) {
                     <input
                         :value="downloadUrl"
                         readonly
-                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
                     <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copiedDownload ? null : copyDownloadLink()">
@@ -188,7 +188,7 @@ async function remind(email) {
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.recipients') }}</p>
                 <p v-if="parsedRecipients.length === 0" class="text-sm text-muted">{{ t('transfer.manage.no_recipients') }}</p>
                 <ul v-else class="flex flex-col gap-1.5 mb-2">
-                    <li v-for="(recipient, index) in parsedRecipients" :key="index" class="flex items-center justify-between gap-2 text-sm">
+                    <li v-for="(recipient, index) in parsedRecipients" :key="index" class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 text-sm">
                         <span class="truncate text-primary">{{ recipient.email }}</span>
                         <div class="flex items-center gap-2 shrink-0">
                             <AppButton
@@ -231,7 +231,7 @@ async function remind(email) {
                 </AppButton>
             </div>
 
-            <div v-else class="flex items-center gap-3">
+            <div v-else class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <p class="text-sm text-primary font-medium">{{ t('transfer.manage.confirm_delete') }}</p>
                 <form :action="deleteUrl" method="POST" class="flex items-center gap-2">
                     <input type="hidden" name="_token" :value="csrfToken">

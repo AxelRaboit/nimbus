@@ -214,7 +214,7 @@ function reset() {
             {{ apiError }}
         </div>
 
-        <div class="rounded-xl border border-base bg-surface shadow-lg shadow-indigo-500/10 p-6">
+        <div class="rounded-xl border border-base bg-surface shadow-lg shadow-indigo-500/10 p-4 sm:p-6">
             <TransferForm
                 v-if="step === 'form'"
                 :key="formKey"
@@ -295,7 +295,7 @@ function reset() {
                         </ol>
 
                         <!-- Stats -->
-                        <div class="grid grid-cols-2 gap-x-8 gap-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
                             <div class="flex items-center justify-between border-b border-base pb-3">
                                 <span class="text-xs text-muted">Taille max</span>
                                 <span class="text-sm font-semibold text-primary">{{ formatFileSize(maxSizeMb, locale) }}</span>

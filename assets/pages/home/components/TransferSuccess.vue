@@ -60,13 +60,13 @@ async function copyLink(text, flag) {
                 <input
                     :value="downloadUrl"
                     readonly
-                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                     v-on:click="$event.target.select()"
                 >
-                <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="copyLink(downloadUrl, copied)">
+                <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(downloadUrl, copied)">
                     <Check v-if="copied" class="w-4 h-4 text-green-500" :stroke-width="2" />
                     <Copy v-else class="w-4 h-4" :stroke-width="2" />
-                    {{ copied ? t('transfer.success.copied') : t('transfer.success.copy') }}
+                    <span class="hidden sm:inline">{{ copied ? t('transfer.success.copied') : t('transfer.success.copy') }}</span>
                 </AppButton>
             </div>
         </div>
@@ -81,13 +81,13 @@ async function copyLink(text, flag) {
                 <input
                     :value="manageUrl"
                     readonly
-                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                     v-on:click="$event.target.select()"
                 >
-                <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="copyLink(manageUrl, copiedManage)">
+                <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(manageUrl, copiedManage)">
                     <Check v-if="copiedManage" class="w-4 h-4 text-green-500" :stroke-width="2" />
                     <Copy v-else class="w-4 h-4" :stroke-width="2" />
-                    {{ copiedManage ? t('transfer.success.copied') : t('transfer.success.copy') }}
+                    <span class="hidden sm:inline">{{ copiedManage ? t('transfer.success.copied') : t('transfer.success.copy') }}</span>
                 </AppButton>
             </div>
         </div>

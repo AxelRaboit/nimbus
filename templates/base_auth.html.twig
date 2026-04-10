@@ -13,9 +13,11 @@
             #sidebar { width: 15rem; transition: width 200ms ease; }
             .sidebar-collapsed #sidebar { width: 4rem; }
 
-            /* Main content offset */
-            #main-content { padding-left: 15rem; transition: padding-left 200ms ease; }
-            .sidebar-collapsed #main-content { padding-left: 4rem; }
+            /* Main content offset — desktop only (sidebar hidden on mobile) */
+            @media (min-width: 1024px) {
+                #main-content { padding-left: 15rem; transition: padding-left 200ms ease; }
+                .sidebar-collapsed #main-content { padding-left: 4rem; }
+            }
 
             /* Header: expanded = space-between + px-4 / collapsed = centered */
             .sh-wrap { justify-content: space-between; padding-left: 1rem; padding-right: 1rem; }

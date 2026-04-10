@@ -135,7 +135,7 @@ function totalSize(files) {
                 <!-- Right: action -->
                 <a
                     :href="manageUrl(transfer.ownerToken)"
-                    class="shrink-0 flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary border border-base rounded-lg px-3 py-1.5 transition-colors hover:bg-surface-2"
+                    class="shrink-0 flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary border border-base rounded-lg px-3 py-2 transition-colors hover:bg-surface-2"
                 >
                     <Settings class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t('dashboard.manage') }}

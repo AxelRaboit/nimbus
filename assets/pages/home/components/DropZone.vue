@@ -170,7 +170,7 @@ function removeFile(index) {
         >
 
         <div
-            class="relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed transition-colors cursor-pointer p-8"
+            class="relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed transition-colors cursor-pointer p-5 sm:p-8"
             :class="isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-base hover:border-indigo-400 bg-surface-2'"
             v-on:dragover.prevent="isDragging = true"
             v-on:dragleave.prevent="isDragging = false"

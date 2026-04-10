@@ -112,7 +112,7 @@ if (typeof window !== "undefined") {
                                 <button
                                     v-if="isPreviewable(file.mimeType)"
                                     type="button"
-                                    class="p-1.5 text-muted hover:text-primary transition-colors"
+                                    class="p-2 text-muted hover:text-primary transition-colors"
                                     :title="t('transfer.show.preview')"
                                     v-on:click="openPreview(file)"
                                 >
@@ -120,7 +120,7 @@ if (typeof window !== "undefined") {
                                 </button>
                                 <a
                                     :href="fileDownloadUrl(file.filename)"
-                                    class="p-1.5 text-muted hover:text-primary transition-colors"
+                                    class="p-2 text-muted hover:text-primary transition-colors"
                                     :title="t('transfer.show.download')"
                                 >
                                     <ArrowDownToLine class="w-4 h-4" :stroke-width="2" />
