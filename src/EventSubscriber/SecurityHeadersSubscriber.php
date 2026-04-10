@@ -51,10 +51,10 @@ final readonly class SecurityHeadersSubscriber implements EventSubscriberInterfa
                 : "script-src 'self' 'unsafe-inline'",
             $isDev
                 ? sprintf("style-src 'self' 'unsafe-inline' %s https://fonts.bunny.net", $vite)
-                : "style-src 'self' 'unsafe-inline'",
+                : "style-src 'self' 'unsafe-inline' https://fonts.bunny.net",
             $isDev
                 ? sprintf("font-src 'self' %s https://fonts.bunny.net", $vite)
-                : "font-src 'self'",
+                : "font-src 'self' https://fonts.bunny.net",
             $isDev
                 ? sprintf("connect-src 'self' %s ws://127.0.0.1:5173", $vite)
                 : "connect-src 'self'",
