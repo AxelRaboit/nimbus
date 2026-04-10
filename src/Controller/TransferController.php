@@ -10,6 +10,7 @@ use App\Entity\TransferFile;
 use App\Repository\RecipientRepository;
 use App\Repository\TransferRepository;
 use App\Service\TransferManager;
+use App\Service\TransferNotifierInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -227,6 +228,41 @@ class TransferController extends AbstractController
             'transfer' => $transfer,
             'csrf_token' => $this->container->get('security.csrf.token_manager')->getToken('transfer_delete_'.$transfer->getOwnerToken())->getValue(),
         ]);
+    }
+
+    #[Route('/api/manage/{ownerToken}/remind', name: 'transfer_remind', methods: ['POST'])]
+    public function remind(
+        string $ownerToken,
+        Request $request,
+        TransferRepository $transferRepository,
+        TransferNotifierInterface $notifier,
+    ): JsonResponse {
+        $transfer = $transferRepository->findByOwnerToken($ownerToken);
+
+        if (!$transfer instanceof Transfer) {
+            return $this->json(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$transfer->isReady()) {
+            return $this->json(['error' => 'Transfer not ready'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $body = json_decode($request->getContent(), true) ?? [];
+        $email = isset($body['email']) ? (string) $body['email'] : null;
+
+        if (null === $email) {
+            return $this->json(['error' => 'Missing email'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        foreach ($transfer->getRecipients() as $recipient) {
+            if ($recipient->getEmail() === $email && !$recipient->hasDownloaded()) {
+                $notifier->notifyReminder($transfer, $recipient);
+
+                return $this->json(['ok' => true]);
+            }
+        }
+
+        return $this->json(['error' => 'Recipient not found or already downloaded'], Response::HTTP_NOT_FOUND);
     }
 
     #[Route('/manage/{ownerToken}/delete', name: 'transfer_delete', methods: ['POST'])]

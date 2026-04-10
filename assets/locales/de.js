@@ -121,6 +121,10 @@ export default {
             downloaded: "Heruntergeladen",
             download_link: "Download-Link",
             pending_download: "Ausstehend",
+            remind: "Erneut senden",
+            remind_sent: "Gesendet!",
+            auto_reminder_hint:
+                "Eine automatische Erinnerung wird an Empfänger gesendet, die noch nicht heruntergeladen haben, zur Halbzeit der Gültigkeitsdauer.",
             no_recipients: "Keine Empfänger.",
             danger_zone: "Gefahrenzone",
             danger_description:

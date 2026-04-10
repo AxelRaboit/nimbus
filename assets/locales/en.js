@@ -121,6 +121,10 @@ export default {
             recipients: "Recipients",
             downloaded: "Downloaded",
             pending_download: "Pending",
+            remind: "Resend",
+            remind_sent: "Sent!",
+            auto_reminder_hint:
+                "A reminder will automatically be sent to recipients who haven't downloaded yet, halfway through the transfer's validity.",
             no_recipients: "No recipients.",
             download_link: "Download link",
             public_link: "Public link",

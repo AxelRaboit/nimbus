@@ -28,7 +28,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
                 RecurringMessage::cron('0 2 * * *', new CleanupExpiredTransfersMessage()),
             )
             ->add(
-                RecurringMessage::cron('0 10 * * *', new SendRemindersMessage()),
+                RecurringMessage::cron('0 * * * *', new SendRemindersMessage()),
             );
     }
 }

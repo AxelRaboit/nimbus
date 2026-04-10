@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { FileText, Check, Trash2, Copy, Link } from "lucide-vue-next";
+import { FileText, Check, Trash2, Copy, Link, Send } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 import AppQrCode from "@/components/AppQrCode.vue";
 import { useFileSize } from "@/composables/useFileSize.js";
@@ -70,6 +70,24 @@ const statusClass = {
 const confirmDelete = ref(false);
 const deleting = ref(false);
 const deleteUrl = computed(() => `/manage/${props.ownerToken}/delete`);
+
+const reminding = ref(new Set());
+const reminded = ref(new Set());
+
+async function remind(email) {
+    if (reminding.value.has(email) || reminded.value.has(email)) return;
+    reminding.value = new Set([...reminding.value, email]);
+    try {
+        await fetch(`/api/manage/${props.ownerToken}/remind`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+        reminded.value = new Set([...reminded.value, email]);
+    } finally {
+        reminding.value = new Set([...reminding.value].filter((e) => e !== email));
+    }
+}
 </script>
 
 <template>
@@ -169,18 +187,35 @@ const deleteUrl = computed(() => `/manage/${props.ownerToken}/delete`);
             <div v-if="!publicMode" class="px-5 py-3">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.recipients') }}</p>
                 <p v-if="parsedRecipients.length === 0" class="text-sm text-muted">{{ t('transfer.manage.no_recipients') }}</p>
-                <ul v-else class="flex flex-col gap-1.5">
+                <ul v-else class="flex flex-col gap-1.5 mb-2">
                     <li v-for="(recipient, index) in parsedRecipients" :key="index" class="flex items-center justify-between gap-2 text-sm">
                         <span class="truncate text-primary">{{ recipient.email }}</span>
-                        <span
-                            class="text-xs font-bold shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-full"
-                            :class="recipient.downloaded ? 'bg-badge-success-bg text-badge-success-text' : 'bg-surface-2 text-muted'"
-                        >
-                            <Check v-if="recipient.downloaded" class="w-3 h-3" :stroke-width="2.5" />
-                            {{ recipient.downloaded ? t('transfer.manage.downloaded') : t('transfer.manage.pending_download') }}
-                        </span>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <AppButton
+                                v-if="!recipient.downloaded && status === 'ready'"
+                                variant="secondary"
+                                size="sm"
+                                :disabled="reminding.has(recipient.email) || reminded.has(recipient.email)"
+                                v-on:click="remind(recipient.email)"
+                            >
+                                <Check v-if="reminded.has(recipient.email)" class="w-3 h-3 text-green-500" :stroke-width="2.5" />
+                                <Send v-else class="w-3 h-3" :stroke-width="2" />
+                                {{ reminded.has(recipient.email) ? t('transfer.manage.remind_sent') : t('transfer.manage.remind') }}
+                            </AppButton>
+                            <span
+                                class="text-xs font-bold flex items-center gap-1 px-2 py-0.5 rounded-full"
+                                :class="recipient.downloaded ? 'bg-badge-success-bg text-badge-success-text' : 'bg-surface-2 text-muted'"
+                            >
+                                <Check v-if="recipient.downloaded" class="w-3 h-3" :stroke-width="2.5" />
+                                {{ recipient.downloaded ? t('transfer.manage.downloaded') : t('transfer.manage.pending_download') }}
+                            </span>
+                        </div>
                     </li>
                 </ul>
+                <p v-if="parsedRecipients.some(r => !r.downloaded) && status === 'ready'" class="text-xs text-muted flex items-center gap-1">
+                    <Send class="w-3 h-3 shrink-0" :stroke-width="2" />
+                    {{ t('transfer.manage.auto_reminder_hint') }}
+                </p>
             </div>
         </div>
 

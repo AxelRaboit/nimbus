@@ -25,26 +25,33 @@ final readonly class SendRemindersHandler
 
     public function __invoke(SendRemindersMessage $message): void
     {
-        $reminderThreshold = new DateTimeImmutable('-2 days');
+        $now = new DateTimeImmutable();
 
-        // Find recipients who have not downloaded yet and whose transfer is still ready,
-        // and who have not been reminded in the last 2 days (or never been reminded)
+        // Candidates: not downloaded, not yet reminded, transfer ready and not expired
         $recipients = $this->recipientRepository->createQueryBuilder('r')
             ->join('r.transfer', 't')
             ->where('r.downloadedAt IS NULL')
+            ->andWhere('r.lastReminderSentAt IS NULL')
             ->andWhere('t.status = :status')
             ->andWhere('t.expiresAt > :now')
-            ->andWhere('r.lastReminderSentAt IS NULL OR r.lastReminderSentAt < :threshold')
             ->setParameter('status', TransferStatusEnum::Ready)
-            ->setParameter('now', new DateTimeImmutable())
-            ->setParameter('threshold', $reminderThreshold)
+            ->setParameter('now', $now)
             ->getQuery()
             ->getResult();
 
         $count = 0;
         foreach ($recipients as $recipient) {
-            $this->notifier->notifyReminder($recipient->getTransfer(), $recipient);
-            $recipient->setLastReminderSentAt(new DateTimeImmutable());
+            $transfer = $recipient->getTransfer();
+            $createdAt = $transfer->getCreatedAt()->getTimestamp();
+            $expiresAt = $transfer->getExpiresAt()->getTimestamp();
+            $midpoint = $createdAt + (int) (($expiresAt - $createdAt) / 2);
+
+            if ($now->getTimestamp() < $midpoint) {
+                continue;
+            }
+
+            $this->notifier->notifyReminder($transfer, $recipient);
+            $recipient->setLastReminderSentAt($now);
             ++$count;
         }
 

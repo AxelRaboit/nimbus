@@ -126,6 +126,10 @@ export default {
             recipients: "Destinataires",
             downloaded: "Téléchargé",
             pending_download: "En attente",
+            remind: "Relancer",
+            remind_sent: "Envoyé !",
+            auto_reminder_hint:
+                "Un rappel automatique sera envoyé aux destinataires n'ayant pas encore téléchargé à mi-chemin de la validité.",
             no_recipients: "Aucun destinataire.",
             download_link: "Lien de téléchargement",
             public_link: "Lien public",

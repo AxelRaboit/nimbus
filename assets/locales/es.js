@@ -121,6 +121,10 @@ export default {
             downloaded: "Descargado",
             download_link: "Enlace de descarga",
             pending_download: "Pendiente",
+            remind: "Reenviar",
+            remind_sent: "¡Enviado!",
+            auto_reminder_hint:
+                "Se enviará un recordatorio automático a los destinatarios que aún no hayan descargado, a mitad de la validez de la transferencia.",
             no_recipients: "Sin destinatarios.",
             danger_zone: "Zona de peligro",
             danger_description:
