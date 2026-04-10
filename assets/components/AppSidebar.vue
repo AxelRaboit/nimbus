@@ -1,0 +1,350 @@
+<script setup>
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useTheme } from "@/composables/useTheme.js";
+import {
+    Cloud,
+    UploadCloud,
+    User,
+    LogOut,
+    Moon,
+    Sun,
+    ChevronsLeft,
+    ChevronsRight,
+    Menu,
+    X,
+    LayoutDashboard,
+} from "lucide-vue-next";
+
+const props = defineProps({
+    userName: { type: String, default: "" },
+    userEmail: { type: String, default: "" },
+    appVersion: { type: String, default: "" },
+    activeRoute: { type: String, default: "" },
+    logoutCsrf: { type: String, default: "" },
+    homePath: { type: String, default: "/" },
+    profilePath: { type: String, default: "/profile" },
+    logoutPath: { type: String, default: "/logout" },
+    loginPath: { type: String, default: "/login" },
+    isGuest: { type: Boolean, default: false },
+    isDev: { type: Boolean, default: false },
+    devPath: { type: String, default: "/dev" },
+});
+
+const { t } = useI18n();
+const { theme, toggle: toggleTheme } = useTheme();
+
+const SIDEBAR_KEY = "nimbus-sidebar";
+
+function collapse() {
+    document.documentElement.classList.add("sidebar-collapsed");
+    localStorage.setItem(SIDEBAR_KEY, "collapsed");
+}
+function expand() {
+    document.documentElement.classList.remove("sidebar-collapsed");
+    localStorage.setItem(SIDEBAR_KEY, "expanded");
+}
+
+const mobileOpen = ref(false);
+function openMobile() {
+    mobileOpen.value = true;
+    document.body.style.overflow = "hidden";
+}
+function closeMobile() {
+    mobileOpen.value = false;
+    document.body.style.overflow = "";
+}
+
+const homeActive    = props.activeRoute === "home";
+const profileActive = props.activeRoute?.startsWith("app_profile");
+const devActive     = props.activeRoute?.startsWith("dev_");
+</script>
+
+<template>
+    <!-- Desktop sidebar -->
+    <aside
+        id="sidebar"
+        class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-base z-30 overflow-hidden"
+    >
+        <!-- Header -->
+        <div
+            class="sh-wrap flex items-center h-16 border-b border-base shrink-0 transition-all duration-200"
+        >
+            <!-- Expanded: icon + name + version -->
+            <a :href="homePath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
+                <div
+                    class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0"
+                >
+                    <Cloud class="w-4 h-4 text-white" />
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <span
+                        class="text-primary font-bold text-lg tracking-tight truncate leading-tight"
+                    >Nimbus</span>
+                    <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{
+                        appVersion
+                    }}</span>
+                </div>
+            </a>
+
+            <!-- Collapsed: icon only -->
+            <a :href="homePath" class="sh-logo-collapsed">
+                <div
+                    class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center"
+                >
+                    <Cloud class="w-4 h-4 text-white" />
+                </div>
+            </a>
+
+            <!-- Collapse button -->
+            <button
+                class="sh-collapse-btn ml-2 p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors shrink-0"
+                v-on:click="collapse"
+            >
+                <ChevronsLeft class="w-4 h-4" />
+            </button>
+        </div>
+
+        <!-- Nav -->
+        <nav class="sidebar-nav flex-1 py-4 space-y-0.5">
+            <a
+                :href="homePath"
+                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                :class="homeActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+            >
+                <UploadCloud class="w-5 h-5 shrink-0" :class="homeActive ? 'text-indigo-400' : 'text-muted'" />
+                <span class="si-label truncate">{{ t("nav.send") }}</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    {{ t("nav.send") }}
+                </span>
+            </a>
+
+            <a
+                v-if="isDev"
+                :href="devPath"
+                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                :class="devActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+            >
+                <LayoutDashboard class="w-5 h-5 shrink-0" :class="devActive ? 'text-indigo-400' : 'text-muted'" />
+                <span class="si-label truncate">{{ t("nav.dashboard") }}</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    {{ t("nav.dashboard") }}
+                </span>
+            </a>
+        </nav>
+
+        <!-- Bottom -->
+        <div class="sidebar-bottom shrink-0 border-t border-base py-3 space-y-0.5">
+            <!-- Expand button (collapsed only) -->
+            <button
+                class="sh-expand-btn w-full items-center justify-center py-2.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors"
+                v-on:click="expand"
+            >
+                <ChevronsRight class="w-4 h-4" />
+            </button>
+
+            <!-- Theme toggle -->
+            <button
+                class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
+                v-on:click="toggleTheme"
+            >
+                <Moon v-if="theme !== 'dark'" class="w-5 h-5 shrink-0 text-muted" />
+                <Sun v-else class="w-5 h-5 shrink-0 text-muted" />
+                <span class="si-label">{{
+                    theme === "dark" ? t("nav.lightMode") : t("nav.darkMode")
+                }}</span>
+                <span
+                    class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
+                >
+                    {{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}
+                </span>
+            </button>
+
+            <!-- Guest: login link -->
+            <template v-if="isGuest">
+                <a
+                    :href="loginPath"
+                    class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors group relative"
+                >
+                    <User class="w-5 h-5 shrink-0 text-muted" />
+                    <span class="si-label truncate">{{ t("nav.login") }}</span>
+                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                        {{ t("nav.login") }}
+                    </span>
+                </a>
+            </template>
+
+            <!-- Authenticated: profile + logout -->
+            <template v-else>
+                <a
+                    :href="profilePath"
+                    class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                    :class="
+                        profileActive
+                            ? 'bg-indigo-600/15 text-indigo-400'
+                            : 'text-secondary hover:text-primary hover:bg-surface-2'
+                    "
+                >
+                    <User class="w-5 h-5 shrink-0 text-muted" />
+                    <span class="si-label truncate">{{ userName }}</span>
+                    <span
+                        class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
+                    >
+                        {{ userName }}
+                    </span>
+                </a>
+
+                <form :action="logoutPath" method="POST">
+                    <input type="hidden" name="_token" :value="logoutCsrf">
+                    <button
+                        type="submit"
+                        class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors w-full group relative"
+                    >
+                        <LogOut class="w-5 h-5 shrink-0 text-muted" />
+                        <span class="si-label">{{ t("nav.logout") }}</span>
+                        <span
+                            class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
+                        >
+                            {{ t("nav.logout") }}
+                        </span>
+                    </button>
+                </form>
+            </template>
+        </div>
+    </aside>
+
+    <!-- Mobile topbar -->
+    <div
+        class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-base z-30 flex items-center justify-between px-4"
+    >
+        <a :href="homePath" class="flex items-center gap-2">
+            <div
+                class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center"
+            >
+                <Cloud class="w-3.5 h-3.5 text-white" />
+            </div>
+            <span class="text-primary font-bold text-base tracking-tight">Nimbus</span>
+        </a>
+        <button
+            class="p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+            v-on:click="openMobile"
+        >
+            <Menu class="w-5 h-5" />
+        </button>
+    </div>
+
+    <!-- Mobile overlay + drawer -->
+    <div
+        class="lg:hidden fixed inset-0 z-50 transition-opacity duration-200"
+        :class="
+            mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        "
+    >
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60" v-on:click="closeMobile" />
+
+        <!-- Drawer -->
+        <div
+            class="relative w-72 max-w-[85vw] bg-surface h-full flex flex-col shadow-2xl transition-transform duration-200"
+            :class="mobileOpen ? 'translate-x-0' : '-translate-x-full'"
+        >
+            <!-- Drawer header -->
+            <div
+                class="flex items-center justify-between px-5 h-14 border-b border-base shrink-0"
+            >
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center"
+                    >
+                        <Cloud class="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-primary font-bold text-base leading-tight">Nimbus</span>
+                        <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{
+                            appVersion
+                        }}</span>
+                    </div>
+                </div>
+                <button
+                    class="p-1.5 text-muted hover:text-primary transition-colors"
+                    v-on:click="closeMobile"
+                >
+                    <X class="w-5 h-5" />
+                </button>
+            </div>
+
+            <!-- Drawer nav -->
+            <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+                <a
+                    :href="homePath"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    :class="homeActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                >
+                    <UploadCloud class="w-5 h-5 shrink-0" :class="homeActive ? 'text-indigo-400' : 'text-muted'" />
+                    {{ t("nav.send") }}
+                </a>
+
+                <a
+                    v-if="isDev"
+                    :href="devPath"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    :class="devActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                >
+                    <LayoutDashboard class="w-5 h-5 shrink-0" :class="devActive ? 'text-indigo-400' : 'text-muted'" />
+                    {{ t("nav.dashboard") }}
+                </a>
+            </nav>
+
+            <!-- Drawer bottom -->
+            <div class="shrink-0 border-t border-base px-3 py-3 space-y-1">
+                <!-- Theme toggle -->
+                <button
+                    class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+                    v-on:click="toggleTheme"
+                >
+                    <Moon v-if="theme !== 'dark'" class="w-5 h-5 text-muted shrink-0" />
+                    <Sun v-else class="w-5 h-5 text-muted shrink-0" />
+                    <span>{{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}</span>
+                </button>
+
+                <!-- Guest: login link -->
+                <template v-if="isGuest">
+                    <a
+                        :href="loginPath"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+                    >
+                        <User class="w-5 h-5 text-muted shrink-0" />
+                        {{ t("nav.login") }}
+                    </a>
+                </template>
+
+                <!-- Authenticated: user info + profile + logout -->
+                <template v-else>
+                    <div class="px-3 py-2">
+                        <p class="text-sm font-medium text-primary">{{ userName }}</p>
+                        <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+                    </div>
+
+                    <a
+                        :href="profilePath"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+                    >
+                        <User class="w-5 h-5 text-muted shrink-0" />
+                        {{ t("nav.profile") }}
+                    </a>
+
+                    <form :action="logoutPath" method="POST">
+                        <input type="hidden" name="_token" :value="logoutCsrf">
+                        <button
+                            type="submit"
+                            class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                        >
+                            <LogOut class="w-5 h-5 shrink-0 text-muted" />
+                            {{ t("nav.logout") }}
+                        </button>
+                    </form>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

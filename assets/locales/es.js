@@ -1,0 +1,184 @@
+export default {
+    common: {
+        save: "Guardar",
+    },
+    app: {
+        theme_dark: "Cambiar al modo oscuro",
+        theme_light: "Cambiar al modo claro",
+    },
+    nav: {
+        send: "Nueva transferencia",
+        logout: "Cerrar sesión",
+        lightMode: "Modo claro",
+        darkMode: "Modo oscuro",
+        profile: "Mi perfil",
+        login: "Iniciar sesión",
+        dashboard: "Dashboard",
+    },
+    home: {
+        hero: {
+            heading: "¿Cómo",
+            heading_accent: "funciona?",
+            step_1_title: "Añade tus archivos",
+            step_1_desc:
+                "Arrastra y suelta o busca tus archivos. Se aceptan todos los tipos.",
+            step_2_title: "Añade destinatarios",
+            step_2_desc:
+                "Introduce una o varias direcciones de correo. El mensaje es opcional.",
+            step_3_title: "Envía",
+            step_3_desc:
+                "Los destinatarios reciben un correo con el enlace de descarga.",
+        },
+        file_groups: {
+            images: "Imágenes",
+            documents: "Documentos",
+            text: "Texto",
+            video: "Vídeo",
+            audio: "Audio",
+            archive: "Archivo",
+        },
+    },
+    transfer: {
+        create: {
+            title: "Enviar archivos",
+            subtitle: "Comparte tus archivos en segundos, de forma segura.",
+            uploading_subtitle: "Tus archivos se están subiendo.",
+            uploading_title: "Enviando…",
+            files_label: "Archivos",
+            max_size: "Máximo: {max}",
+            how_it_works: "¿Cómo funciona?",
+            recipients_label: "Destinatarios",
+            add_recipient: "Añadir destinatario",
+            sender_email: "Tu correo",
+            sender_name: "Tu nombre",
+            sender_email_placeholder: "tu{'@'}ejemplo.com",
+            sender_name_placeholder: "Opcional",
+            message_label: "Mensaje",
+            message_placeholder: "Un mensaje para tus destinatarios (opcional)",
+            advanced_options: "Opciones avanzadas",
+            expiry_label: "Disponible durante",
+            expiry_hours: "1 hora | {n} horas",
+            expiry_days: "1 día | {n} días",
+            password_label: "Contraseña",
+            password_placeholder: "Dejar vacío para sin contraseña",
+            submit: "Enviar",
+            error_files: "Añade al menos un archivo.",
+            error_max_files:
+                "Demasiados archivos (máximo {max} por transferencia).",
+            error_max_size: "Transferencia demasiado grande (máximo {max}).",
+            error_email_required: "El correo electrónico es obligatorio.",
+            error_email_invalid: "Correo electrónico inválido.",
+            error_recipients_required: "Añade al menos un destinatario.",
+            error_recipient_invalid: "Dirección inválida: {email}",
+        },
+        dropzone: {
+            drag: "Arrastra tus archivos o haz clic para explorar",
+            drop: "Suelta tus archivos aquí",
+            hint: "Imágenes, documentos, vídeos, audio y archivos ZIP",
+            error_type: "Tipo no permitido: {files}",
+            error_zip: "El ZIP contiene archivos no permitidos: {files}",
+        },
+        progress: {
+            uploading: "Enviando…",
+            do_not_close: "No cierres esta página",
+            error: "Se produjo un error durante el envío. Por favor, inténtalo de nuevo.",
+        },
+        success: {
+            title: "¡Transferencia enviada!",
+            subtitle:
+                "Tus destinatarios recibirán un correo con el enlace de descarga.",
+            reference_label: "Referencia de la transferencia",
+            manage_hint:
+                "Guarda este enlace para gestionar o eliminar tu transferencia",
+            copy: "Copiar",
+            copied: "¡Copiado!",
+            new_transfer: "Enviar una nueva transferencia",
+            guest_warning:
+                "¡Guarda este enlace! Sin cuenta, es la única forma de gestionar o eliminar tu transferencia.",
+        },
+        show: {
+            title: "Archivos disponibles",
+            sent_by: "Enviado por",
+            expires: "Vence el",
+            reference: "Referencia",
+            files_count: "0 archivos | 1 archivo | {n} archivos",
+            download: "Descargar",
+            download_all: "Descargar todo",
+        },
+        manage: {
+            title: "Gestionar mi transferencia",
+            subtitle: "Consulta los detalles y elimina si es necesario.",
+            reference: "Referencia",
+            expires: "Vencimiento",
+            files: "Archivos",
+            recipients: "Destinatarios",
+            downloaded: "Descargado",
+            pending_download: "Pendiente",
+            no_recipients: "Sin destinatarios.",
+            danger_zone: "Zona de peligro",
+            danger_description:
+                "La eliminación es permanente. Los archivos serán borrados y los destinatarios no podrán descargarlos.",
+            delete_btn: "Eliminar esta transferencia",
+            confirm_delete: "¿Confirmar eliminación?",
+            confirm_yes: "Sí, eliminar",
+            cancel: "Cancelar",
+        },
+        status: {
+            pending: "Pendiente",
+            ready: "Activo",
+            expired: "Vencido",
+            deleted: "Eliminado",
+        },
+    },
+    profile: {
+        locale: {
+            title: "Idioma",
+            subtitle: "Elige el idioma de visualización de la aplicación.",
+            field: "Idioma",
+        },
+        info: {
+            title: "Información del perfil",
+            subtitle: "Actualiza tu nombre y dirección de correo electrónico.",
+            name: "Nombre completo",
+            email: "Dirección de correo electrónico",
+            saved: "Perfil actualizado con éxito.",
+        },
+        password: {
+            title: "Cambiar contraseña",
+            subtitle:
+                "Usa una contraseña larga y aleatoria para proteger tu cuenta.",
+            current: "Contraseña actual",
+            new: "Nueva contraseña",
+            confirm: "Confirmar contraseña",
+            saved: "Contraseña actualizada con éxito.",
+            error_current: "La contraseña actual es incorrecta.",
+        },
+        danger: {
+            title: "Eliminar cuenta",
+            description:
+                "Una vez que tu cuenta sea eliminada, todos los datos asociados serán borrados permanentemente.",
+            confirm:
+                "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible.",
+            submit: "Eliminar mi cuenta",
+        },
+    },
+    transfer_password: {
+        title: "Transferencia protegida",
+        subtitle: "Introduce la contraseña para acceder a los archivos.",
+        label: "Contraseña",
+        submit: "Acceder a los archivos",
+        error: "Contraseña incorrecta",
+    },
+    transfer_unavailable: {
+        title: "Transferencia no disponible",
+        expired_title: "Esta transferencia ha expirado",
+        expired_desc:
+            "Los archivos fueron eliminados automáticamente después de la fecha de vencimiento.",
+        deleted_title: "Esta transferencia ha sido eliminada",
+        deleted_desc:
+            "El remitente eliminó esta transferencia. Los archivos ya no están disponibles.",
+        other_desc: "Esta transferencia aún no está lista o no existe.",
+        back: "← Enviar archivos",
+    },
+    locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
+};

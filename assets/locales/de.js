@@ -1,0 +1,185 @@
+export default {
+    common: {
+        save: "Speichern",
+    },
+    app: {
+        theme_dark: "Dunkelmodus aktivieren",
+        theme_light: "Hellmodus aktivieren",
+    },
+    nav: {
+        send: "Neue Übertragung",
+        logout: "Abmelden",
+        lightMode: "Helles Design",
+        darkMode: "Dunkles Design",
+        profile: "Mein Profil",
+        login: "Anmelden",
+        dashboard: "Dashboard",
+    },
+    home: {
+        hero: {
+            heading: "Wie",
+            heading_accent: "funktioniert es?",
+            step_1_title: "Dateien hinzufügen",
+            step_1_desc:
+                "Drag & Drop oder Dateien durchsuchen. Alle Dateitypen akzeptiert.",
+            step_2_title: "Empfänger hinzufügen",
+            step_2_desc:
+                "Eine oder mehrere E-Mail-Adressen eingeben. Eine Nachricht ist optional.",
+            step_3_title: "Senden",
+            step_3_desc:
+                "Empfänger erhalten eine E-Mail mit dem Download-Link.",
+        },
+        file_groups: {
+            images: "Bilder",
+            documents: "Dokumente",
+            text: "Text",
+            video: "Video",
+            audio: "Audio",
+            archive: "Archiv",
+        },
+    },
+    transfer: {
+        create: {
+            title: "Dateien senden",
+            subtitle: "Teile deine Dateien in Sekunden, sicher und einfach.",
+            uploading_subtitle: "Deine Dateien werden hochgeladen.",
+            uploading_title: "Wird hochgeladen…",
+            files_label: "Dateien",
+            max_size: "Maximum: {max}",
+            how_it_works: "Wie funktioniert es?",
+            recipients_label: "Empfänger",
+            add_recipient: "Empfänger hinzufügen",
+            sender_email: "Deine E-Mail",
+            sender_name: "Dein Name",
+            sender_email_placeholder: "du{'@'}beispiel.de",
+            sender_name_placeholder: "Optional",
+            message_label: "Nachricht",
+            message_placeholder:
+                "Eine Nachricht für deine Empfänger (optional)",
+            advanced_options: "Erweiterte Optionen",
+            expiry_label: "Verfügbar für",
+            expiry_hours: "1 Stunde | {n} Stunden",
+            expiry_days: "1 Tag | {n} Tage",
+            password_label: "Passwort",
+            password_placeholder: "Leer lassen für kein Passwort",
+            submit: "Senden",
+            error_files: "Füge mindestens eine Datei hinzu.",
+            error_max_files: "Zu viele Dateien (maximal {max} pro Transfer).",
+            error_max_size: "Transfer zu groß (maximal {max}).",
+            error_email_required: "E-Mail-Adresse ist erforderlich.",
+            error_email_invalid: "Ungültige E-Mail-Adresse.",
+            error_recipients_required: "Füge mindestens einen Empfänger hinzu.",
+            error_recipient_invalid: "Ungültige Adresse: {email}",
+        },
+        dropzone: {
+            drag: "Dateien hierher ziehen oder klicken zum Durchsuchen",
+            drop: "Dateien hier ablegen",
+            hint: "Bilder, Dokumente, Videos, Audio und ZIP-Archive",
+            error_type: "Typ nicht erlaubt: {files}",
+            error_zip: "ZIP enthält nicht erlaubte Dateien: {files}",
+        },
+        progress: {
+            uploading: "Wird hochgeladen…",
+            do_not_close: "Diese Seite nicht schließen",
+            error: "Beim Hochladen ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+        },
+        success: {
+            title: "Übertragung gesendet!",
+            subtitle:
+                "Deine Empfänger erhalten eine E-Mail mit dem Download-Link.",
+            reference_label: "Übertragungsreferenz",
+            manage_hint:
+                "Bewahre diesen Link auf, um deine Übertragung zu verwalten oder zu löschen",
+            copy: "Kopieren",
+            copied: "Kopiert!",
+            new_transfer: "Neue Übertragung senden",
+            guest_warning:
+                "Speichere diesen Link! Ohne Konto ist er die einzige Möglichkeit, deine Übertragung zu verwalten oder zu löschen.",
+        },
+        show: {
+            title: "Verfügbare Dateien",
+            sent_by: "Gesendet von",
+            expires: "Läuft ab am",
+            reference: "Referenz",
+            files_count: "0 Dateien | 1 Datei | {n} Dateien",
+            download: "Herunterladen",
+            download_all: "Alle herunterladen",
+        },
+        manage: {
+            title: "Meine Übertragung verwalten",
+            subtitle: "Details anzeigen und bei Bedarf löschen.",
+            reference: "Referenz",
+            expires: "Ablauf",
+            files: "Dateien",
+            recipients: "Empfänger",
+            downloaded: "Heruntergeladen",
+            pending_download: "Ausstehend",
+            no_recipients: "Keine Empfänger.",
+            danger_zone: "Gefahrenzone",
+            danger_description:
+                "Das Löschen ist endgültig. Dateien werden gelöscht und Empfänger können nicht mehr herunterladen.",
+            delete_btn: "Diese Übertragung löschen",
+            confirm_delete: "Löschen bestätigen?",
+            confirm_yes: "Ja, löschen",
+            cancel: "Abbrechen",
+        },
+        status: {
+            pending: "Ausstehend",
+            ready: "Aktiv",
+            expired: "Abgelaufen",
+            deleted: "Gelöscht",
+        },
+    },
+    profile: {
+        locale: {
+            title: "Sprache",
+            subtitle: "Wähle die Anzeigesprache der Anwendung.",
+            field: "Sprache",
+        },
+        info: {
+            title: "Profilinformationen",
+            subtitle: "Aktualisiere deinen Namen und deine E-Mail-Adresse.",
+            name: "Vollständiger Name",
+            email: "E-Mail-Adresse",
+            saved: "Profil erfolgreich aktualisiert.",
+        },
+        password: {
+            title: "Passwort ändern",
+            subtitle:
+                "Verwende ein langes, zufälliges Passwort, um dein Konto zu sichern.",
+            current: "Aktuelles Passwort",
+            new: "Neues Passwort",
+            confirm: "Passwort bestätigen",
+            saved: "Passwort erfolgreich aktualisiert.",
+            error_current: "Das aktuelle Passwort ist falsch.",
+        },
+        danger: {
+            title: "Konto löschen",
+            description:
+                "Sobald dein Konto gelöscht ist, werden alle zugehörigen Daten dauerhaft gelöscht.",
+            confirm:
+                "Bist du sicher, dass du dein Konto löschen möchtest? Diese Aktion ist unumkehrbar.",
+            submit: "Mein Konto löschen",
+        },
+    },
+    transfer_password: {
+        title: "Geschützte Übertragung",
+        subtitle: "Gib das Passwort ein, um auf die Dateien zuzugreifen.",
+        label: "Passwort",
+        submit: "Auf Dateien zugreifen",
+        error: "Falsches Passwort",
+    },
+    transfer_unavailable: {
+        title: "Übertragung nicht verfügbar",
+        expired_title: "Diese Übertragung ist abgelaufen",
+        expired_desc:
+            "Die Dateien wurden nach dem Ablaufdatum automatisch gelöscht.",
+        deleted_title: "Diese Übertragung wurde gelöscht",
+        deleted_desc:
+            "Der Absender hat diese Übertragung gelöscht. Die Dateien sind nicht mehr verfügbar.",
+        other_desc:
+            "Diese Übertragung ist noch nicht bereit oder existiert nicht.",
+        back: "← Dateien senden",
+    },
+    locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
+};

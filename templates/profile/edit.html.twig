@@ -1,0 +1,21 @@
+{% extends 'base_auth.html.twig' %}
+{% block title %}{{ 'profile.title'|trans }} - Nimbus{% endblock %}
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'profile.title'|trans}) }}
+{% endblock %}
+{% block body %}
+<div id="app-profile"
+     data-user-name="{{ app.user.name }}"
+     data-user-email="{{ app.user.email }}"
+     data-locale="{{ app.request.locale }}"
+     data-update-path="{{ path('app_profile_update') }}"
+     data-password-path="{{ path('app_profile_password') }}"
+     data-delete-path="{{ path('app_profile_delete') }}"
+     data-locale-path="{{ path('app_locale_switch') }}"
+     data-delete-csrf="{{ csrf_token('delete_account') }}"
+     data-login-path="{{ path('app_login') }}"
+     class="flex-1">
+</div>
+{% endblock %}
+{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('profile') }}{% endblock %}
+{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('profile') }}{% endblock %}

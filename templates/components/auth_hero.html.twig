@@ -1,0 +1,27 @@
+<h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary leading-tight mb-4">
+    {{ 'auth.hero.heading'|trans }}<br>
+    <span class="text-indigo-500">{{ 'auth.hero.heading_accent'|trans }}</span>
+</h1>
+
+<p class="text-secondary text-base leading-relaxed mb-8">
+    {{ 'auth.hero.description'|trans }}
+</p>
+
+<ul class="space-y-3">
+    <li class="flex items-center gap-3 text-secondary text-sm">
+        {{ include('components/icon.html.twig', {name: 'lock', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+        {{ 'auth.hero.feature_1'|trans }}
+    </li>
+    <li class="flex items-center gap-3 text-secondary text-sm">
+        {{ include('components/icon.html.twig', {name: 'clock', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+        {{ 'auth.hero.feature_2'|trans }}
+    </li>
+    <li class="flex items-center gap-3 text-secondary text-sm">
+        {{ include('components/icon.html.twig', {name: 'mail', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+        {{ 'auth.hero.feature_3'|trans }}
+    </li>
+    <li class="flex items-center gap-3 text-secondary text-sm">
+        {{ include('components/icon.html.twig', {name: 'user', class: 'w-4 h-4 text-indigo-500 shrink-0', size: 16}) }}
+        {{ 'auth.hero.feature_4'|trans }}
+    </li>
+</ul>

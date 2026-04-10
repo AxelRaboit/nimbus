@@ -1,7 +1,4 @@
-import { createApp } from "vue";
+import { mountApp } from "@/utils/mountApp.js";
 import ManageApp from "./ManageApp.vue";
 
-const el = document.getElementById("app-manage");
-if (el) {
-    createApp(ManageApp, { ...el.dataset }).mount(el);
-}
+mountApp("app-manage", ManageApp);

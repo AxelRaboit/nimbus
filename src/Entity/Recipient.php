@@ -40,9 +40,6 @@ class Recipient
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $passwordHash = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $pendingPasswordEncrypted = null;
-
     public function __construct()
     {
         $this->token = bin2hex(random_bytes(32));
@@ -125,18 +122,6 @@ class Recipient
 
     public function isPasswordProtected(): bool
     {
-        return null !== $this->passwordHash || null !== $this->pendingPasswordEncrypted;
-    }
-
-    public function getPendingPasswordEncrypted(): ?string
-    {
-        return $this->pendingPasswordEncrypted;
-    }
-
-    public function setPendingPasswordEncrypted(?string $pendingPasswordEncrypted): static
-    {
-        $this->pendingPasswordEncrypted = $pendingPasswordEncrypted;
-
-        return $this;
+        return null !== $this->passwordHash;
     }
 }

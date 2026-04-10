@@ -1,13 +1,12 @@
 {% extends 'email/layout/base.html.twig' %}
 
-{% block title %}Vous avez reçu des fichiers — Nimbus{% endblock %}
+{% block title %}{{ 'mail.transfer_ready.heading'|trans }} — Nimbus{% endblock %}
 
 {% block content %}
-<h1>Vous avez reçu des fichiers</h1>
+<h1>{{ 'mail.transfer_ready.heading'|trans }}</h1>
 
 <p>
-    <strong>{{ transfer.senderName ?? transfer.senderEmail ?? 'Quelqu\'un' }}</strong>
-    vous a envoyé {{ transfer.files|length }} fichier{{ transfer.files|length > 1 ? 's' : '' }} via Nimbus.
+    {{ 'mail.transfer_ready.intro'|trans({'%senderName%': transfer.senderName ?? transfer.senderEmail ?? 'Nimbus', '%count%': transfer.files|length}) }}
 </p>
 
 {% if transfer.message %}
@@ -20,49 +19,32 @@
 </table>
 {% endif %}
 
-<table class="file-list" role="presentation">
-    {% for file in transfer.files %}
-    <tr>
-        <td>📄 {{ file.originalName }}</td>
-        <td align="right" style="color:#9ca3af;white-space:nowrap;">
-            {% if file.fileSize < 1048576 %}
-                {{ (file.fileSize / 1024)|number_format(1) }} Ko
-            {% else %}
-                {{ (file.fileSize / 1048576)|number_format(1) }} Mo
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{{ include('email/partials/file_list.html.twig') }}
 
-<table class="action" role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+{% if plainPassword %}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr>
-        <td align="center">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
-                <tr>
-                    <td style="background-color:#4f46e5;border-radius:8px;">
-                        <a href="{{ downloadUrl }}" class="button button-primary">
-                            Télécharger les fichiers
-                        </a>
-                    </td>
-                </tr>
-            </table>
+        <td class="panel">
+            <div class="panel-content">
+                {{ 'mail.transfer_ready.password_label'|trans }} : <strong>{{ plainPassword }}</strong>
+            </div>
         </td>
     </tr>
 </table>
+{% endif %}
+
+{{ include('email/partials/action_button.html.twig', {
+    url: downloadUrl,
+    label: 'mail.transfer_ready.download_button'|trans,
+}) }}
 
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr>
         <td class="reference-cell">
-            Référence : <strong>{{ transfer.reference }}</strong> — Expire le {{ transfer.expiresAt|date('d/m/Y') }}
+            {{ 'mail.transfer_ready.expires'|trans({'%date%': transfer.expiresAt|date('d/m/Y')}) }}
         </td>
     </tr>
 </table>
 
-<p class="fallback">
-    Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
-    <a href="{{ downloadUrl }}">{{ downloadUrl }}</a>
-</p>
-
-<p class="warning">Ce lien est personnel et vous est destiné. Ne le partagez pas.</p>
+<p class="warning">{{ 'mail.transfer_ready.footer'|trans }}</p>
 {% endblock %}

@@ -1,6 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_auth.html.twig' %}
 
-{% block title %}Nimbus — Gérer mon transfert{% endblock %}
+{% block title %}{{ 'transfer.manage.title'|trans }} - Nimbus{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'transfer.manage.title'|trans}) }}
+{% endblock %}
 
 {% block body %}
     <div id="app-manage"
@@ -9,7 +13,13 @@
          data-status="{{ transfer.status.value }}"
          data-expires-at="{{ transfer.expiresAt|date('c') }}"
          data-files="{{ transfer.files|map(f => {name: f.originalName, size: f.fileSize})|json_encode }}"
-         data-recipients="{{ transfer.recipients|map(r => {email: r.email, downloaded: r.hasDownloaded})|json_encode }}">
+         data-recipients="{{ transfer.recipients|map(r => {email: r.email, downloaded: r.hasDownloaded})|json_encode }}"
+         data-csrf-token="{{ csrf_token }}"
+         data-locale="{{ app.request.locale }}"
+         data-is-public="{{ transfer.isPublic ? 'true' : 'false' }}"
+         data-public-download-count="{{ transfer.publicDownloadCount }}"
+         data-transfer-token="{{ transfer.token }}"
+         class="flex-1">
     </div>
 {% endblock %}
 

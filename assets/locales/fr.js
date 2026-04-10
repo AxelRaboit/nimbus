@@ -1,0 +1,191 @@
+export default {
+    common: {
+        save: "Enregistrer",
+    },
+    app: {
+        theme_dark: "Passer en mode sombre",
+        theme_light: "Passer en mode clair",
+    },
+    nav: {
+        send: "Nouveau transfert",
+        logout: "Déconnexion",
+        lightMode: "Mode clair",
+        darkMode: "Mode sombre",
+        profile: "Mon profil",
+        login: "Se connecter",
+        dashboard: "Tableau de bord",
+    },
+    home: {
+        hero: {
+            heading: "Comment",
+            heading_accent: "ça marche ?",
+            step_1_title: "Ajoutez vos fichiers",
+            step_1_desc:
+                "Glissez-déposez ou parcourez vos fichiers. Tous types acceptés.",
+            step_2_title: "Renseignez les destinataires",
+            step_2_desc:
+                "Ajoutez une ou plusieurs adresses e-mail. Un message est optionnel.",
+            step_3_title: "Envoyez",
+            step_3_desc:
+                "Vos destinataires reçoivent un lien par e-mail pour télécharger les fichiers.",
+        },
+        file_groups: {
+            images: "Images",
+            documents: "Documents",
+            text: "Texte",
+            video: "Vidéo",
+            audio: "Audio",
+            archive: "Archive",
+        },
+    },
+    transfer: {
+        create: {
+            title: "Envoyer des fichiers",
+            subtitle:
+                "Partagez vos fichiers en quelques secondes, de façon sécurisée.",
+            uploading_subtitle: "Vos fichiers sont en cours de téléversement.",
+            uploading_title: "Envoi en cours…",
+            files_label: "Fichiers",
+            max_size: "Maximum : {max}",
+            how_it_works: "Comment ça marche ?",
+            recipients_label: "Destinataires",
+            add_recipient: "Ajouter un destinataire",
+            sender_email: "Votre email",
+            sender_name: "Votre nom",
+            sender_email_placeholder: "vous{'@'}exemple.com",
+            sender_name_placeholder: "Optionnel",
+            message_label: "Message",
+            message_placeholder:
+                "Un message pour vos destinataires (optionnel)",
+            advanced_options: "Options avancées",
+            expiry_label: "Disponible pendant",
+            expiry_hours: "1 heure | {n} heures",
+            expiry_days: "1 jour | {n} jours",
+            password_label: "Mot de passe",
+            password_placeholder: "Laisser vide pour aucun mot de passe",
+            submit: "Envoyer",
+            error_files: "Ajoutez au moins un fichier.",
+            error_max_files: "Trop de fichiers (maximum {max} par transfert).",
+            error_max_size: "Transfert trop volumineux (maximum {max}).",
+            error_email_required: "L'adresse email est requise.",
+            error_email_invalid: "Adresse email invalide.",
+            error_recipients_required: "Ajoutez au moins un destinataire.",
+            error_recipient_invalid: "Adresse invalide : {email}",
+            mode_label: "Mode de partage",
+            mode_email: "Envoyer par e-mail",
+            mode_link: "Lien public",
+        },
+        dropzone: {
+            drag: "Glissez vos fichiers ou cliquez pour parcourir",
+            drop: "Déposez vos fichiers ici",
+            hint: "Images, documents, vidéos, audio et archives ZIP",
+            error_type: "Type non autorisé : {files}",
+            error_zip: "Le ZIP contient des fichiers non autorisés : {files}",
+        },
+        progress: {
+            uploading: "Envoi en cours…",
+            do_not_close: "Ne fermez pas cette page",
+            error: "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+        },
+        success: {
+            title: "Transfert envoyé !",
+            subtitle:
+                "Vos destinataires vont recevoir un email avec le lien de téléchargement.",
+            reference_label: "Référence du transfert",
+            manage_hint:
+                "Conservez ce lien pour gérer ou supprimer votre transfert",
+            copy: "Copier",
+            copied: "Copié !",
+            new_transfer: "Envoyer un nouveau transfert",
+            public_link_hint: "Partagez ce lien — n'importe qui peut télécharger vos fichiers",
+            guest_warning:
+                "Sauvegardez ce lien ! Sans compte, c'est le seul moyen de gérer ou supprimer votre transfert.",
+        },
+        show: {
+            title: "Fichiers disponibles",
+            sent_by: "Envoyé par",
+            expires: "Expire le",
+            reference: "Référence",
+            files_count: "0 fichier | 1 fichier | {n} fichiers",
+            download: "Télécharger",
+            download_all: "Tout télécharger",
+        },
+        manage: {
+            title: "Gérer mon transfert",
+            subtitle: "Consultez les détails et supprimez si nécessaire.",
+            reference: "Référence",
+            expires: "Expiration",
+            files: "Fichiers",
+            recipients: "Destinataires",
+            downloaded: "Téléchargé",
+            pending_download: "En attente",
+            no_recipients: "Aucun destinataire.",
+            public_link: "Lien public",
+            public_downloads: "{count} téléchargement | {count} téléchargements",
+            danger_zone: "Zone de danger",
+            danger_description:
+                "La suppression est définitive. Les fichiers seront effacés et les destinataires ne pourront plus télécharger.",
+            delete_btn: "Supprimer ce transfert",
+            confirm_delete: "Confirmer la suppression ?",
+            confirm_yes: "Oui, supprimer",
+            cancel: "Annuler",
+        },
+        status: {
+            pending: "En attente",
+            ready: "Actif",
+            expired: "Expiré",
+            deleted: "Supprimé",
+        },
+    },
+    profile: {
+        locale: {
+            title: "Langue",
+            subtitle: "Choisissez la langue d'affichage de l'application.",
+            field: "Langue",
+        },
+        info: {
+            title: "Informations du profil",
+            subtitle: "Mettez à jour votre nom et adresse e-mail.",
+            name: "Nom complet",
+            email: "Adresse e-mail",
+            saved: "Profil mis à jour avec succès.",
+        },
+        password: {
+            title: "Modifier le mot de passe",
+            subtitle:
+                "Utilisez un mot de passe long et aléatoire pour sécuriser votre compte.",
+            current: "Mot de passe actuel",
+            new: "Nouveau mot de passe",
+            confirm: "Confirmer le mot de passe",
+            saved: "Mot de passe mis à jour avec succès.",
+            error_current: "Le mot de passe actuel est incorrect.",
+        },
+        danger: {
+            title: "Zone de danger",
+            description:
+                "Une fois votre compte supprimé, toutes les données associées seront définitivement effacées.",
+            confirm:
+                "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+            submit: "Supprimer mon compte",
+        },
+    },
+    transfer_password: {
+        title: "Transfert protégé",
+        subtitle: "Entrez le mot de passe pour accéder aux fichiers.",
+        label: "Mot de passe",
+        submit: "Accéder aux fichiers",
+        error: "Mot de passe incorrect",
+    },
+    transfer_unavailable: {
+        title: "Transfert indisponible",
+        expired_title: "Ce transfert a expiré",
+        expired_desc:
+            "Les fichiers ont été automatiquement supprimés après la date d'expiration.",
+        deleted_title: "Ce transfert a été supprimé",
+        deleted_desc:
+            "L'expéditeur a supprimé ce transfert. Les fichiers ne sont plus disponibles.",
+        other_desc: "Ce transfert n'est pas encore prêt ou n'existe pas.",
+        back: "← Envoyer des fichiers",
+    },
+    locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
+};

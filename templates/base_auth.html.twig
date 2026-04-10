@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Nimbus{% endblock %}</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="stylesheet" href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap">
+        {{ include('components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
+        <style>
+            /* Sidebar width */
+            #sidebar { width: 15rem; transition: width 200ms ease; }
+            .sidebar-collapsed #sidebar { width: 4rem; }
+
+            /* Main content offset */
+            #main-content { padding-left: 15rem; transition: padding-left 200ms ease; }
+            .sidebar-collapsed #main-content { padding-left: 4rem; }
+
+            /* Header: expanded = space-between + px-4 / collapsed = centered */
+            .sh-wrap { justify-content: space-between; padding-left: 1rem; padding-right: 1rem; }
+            .sidebar-collapsed .sh-wrap { justify-content: center; padding-left: 0; padding-right: 0; }
+
+            /* Logo: expanded = logo+text link visible / collapsed = icon-only link visible */
+            .sh-logo-expanded { display: flex; }
+            .sh-logo-collapsed { display: none; }
+            .sidebar-collapsed .sh-logo-expanded { display: none; }
+            .sidebar-collapsed .sh-logo-collapsed { display: flex; }
+
+            /* Collapse button: hidden when collapsed */
+            .sh-collapse-btn { display: flex; }
+            .sidebar-collapsed .sh-collapse-btn { display: none; }
+
+            /* Expand button: shown only when collapsed */
+            .sh-expand-btn { display: none; }
+            .sidebar-collapsed .sh-expand-btn { display: flex; }
+
+            /* Nav / bottom padding */
+            .sidebar-nav { padding-left: 0.75rem; padding-right: 0.75rem; overflow-y: auto; }
+            .sidebar-collapsed .sidebar-nav { padding-left: 0.5rem; padding-right: 0.5rem; overflow-y: visible; }
+            .sidebar-bottom { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .sidebar-collapsed .sidebar-bottom { padding-left: 0.5rem; padding-right: 0.5rem; }
+
+            /* Nav items: expanded = gap + px / collapsed = centered, no px, no gap */
+            .si { gap: 0.75rem; padding: 0.625rem 0.75rem; }
+            .sidebar-collapsed .si { justify-content: center; padding: 0.625rem 0; gap: 0; }
+
+            /* Labels inside items */
+            .si-label { display: block; min-width: 0; }
+            .sidebar-collapsed .si-label { display: none; }
+
+            /* Tooltips: only on hover when collapsed */
+            .si-tooltip { display: none; }
+            .sidebar-collapsed .si:hover .si-tooltip { display: block; }
+        </style>
+        {% block stylesheets %}
+            {{ vite_entry_link_tags('app') }}
+            {{ vite_entry_link_tags('sidebar') }}
+        {% endblock %}
+        {% block javascripts %}
+            {{ vite_entry_script_tags('app') }}
+            {{ vite_entry_script_tags('sidebar') }}
+        {% endblock %}
+    </head>
+    <body class="transition-colors duration-200">
+        <div class="min-h-screen bg-bg">
+
+            {# ── Sidebar (Vue component) ───────────────────────────────────────── #}
+            <div id="app-sidebar"
+                 data-user-name="{{ app.user ? app.user.name : '' }}"
+                 data-user-email="{{ app.user ? app.user.email : '' }}"
+                 data-app-version="{{ appVersion is defined ? appVersion : '' }}"
+                 data-active-route="{{ app.request.attributes.get('_route') }}"
+                 data-logout-csrf="{{ app.user ? csrf_token('logout') : '' }}"
+                 data-home-path="{{ path('home') }}"
+                 data-profile-path="{{ app.user ? path('app_profile') : '' }}"
+                 data-logout-path="{{ app.user ? path('app_logout') : '' }}"
+                 data-login-path="{{ path('app_login') }}"
+                 data-is-guest="{{ app.user ? 'false' : 'true' }}"
+                 data-is-dev="{{ app.user and is_granted('ROLE_DEV') ? 'true' : 'false' }}"
+                 data-dev-path="{{ path('dev_dashboard') }}"
+                 data-locale="{{ app.request.locale }}"
+            ></div>
+
+            {# ── Main content ─────────────────────────────────────────────────── #}
+            <div id="main-content" class="flex-1 flex flex-col min-h-screen transition-all duration-200 pt-14 lg:pt-0">
+
+                {% block page_header_slot %}{% endblock %}
+
+                {# Flash messages #}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="px-6 py-3 text-sm font-medium
+                                    {{ label == 'success' ? 'bg-green-500/10 text-green-600 border-b border-green-500/20' : '' }}
+                                    {{ label == 'error' ? 'bg-red-500/10 text-red-600 border-b border-red-500/20' : '' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+                    {% block body %}{% endblock %}
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

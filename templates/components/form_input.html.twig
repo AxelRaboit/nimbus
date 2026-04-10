@@ -1,0 +1,30 @@
+{% set id = id ?? '' %}
+{% set type = type ?? 'text' %}
+{% set name = name ?? '' %}
+{% set label = label ?? '' %}
+{% set placeholder = placeholder ?? '' %}
+{% set value = value ?? '' %}
+{% set error = error is defined ? error : null %}
+{% set required = required ?? false %}
+{% set autofocus = autofocus ?? false %}
+{% set autocomplete = autocomplete ?? '' %}
+
+<div>
+    {% if label %}
+        <label for="{{ id }}" class="block text-sm font-medium text-secondary mb-1 uppercase">{{ label }}</label>
+    {% endif %}
+    <input
+        id="{{ id }}"
+        type="{{ type }}"
+        name="{{ name }}"
+        value="{{ value }}"
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if required %}required{% endif %}
+        {% if autofocus %}autofocus{% endif %}
+        {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
+        class="w-full px-3 py-2 border border-base rounded-md bg-surface-2 text-primary placeholder-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition {{ error ? 'border-red-500 focus:ring-red-500' : '' }}"
+    >
+    {% if error %}
+        <p class="mt-1 text-xs text-red-500">{{ error }}</p>
+    {% endif %}
+</div>

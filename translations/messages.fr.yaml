@@ -1,6 +1,6 @@
 app:
   name: Nimbus
-  title: 'Nimbus — Envoi de fichiers'
+  title: 'Envoi de fichiers - Nimbus'
   footer: 'Nimbus. Tous droits réservés.'
   tagline: 'Envoyez vos fichiers, simplement.'
 
@@ -30,6 +30,96 @@ common:
   files: fichier(s)
   size: Taille
   name: Nom
+  save: Enregistrer
+  saved: Enregistré
+
+nav:
+  send: 'Nouveau transfert'
+  logout: 'Déconnexion'
+  lightMode: 'Mode clair'
+  darkMode: 'Mode sombre'
+  profile: 'Mon profil'
+  login: 'Se connecter'
+
+auth:
+  login:
+    title: 'Connexion'
+    email: 'Adresse e-mail'
+    email_placeholder: 'vous@exemple.com'
+    password: 'Mot de passe'
+    remember: 'Se souvenir de moi'
+    forgot: 'Mot de passe oublié ?'
+    submit: 'Se connecter'
+    no_account: 'Pas encore de compte ?'
+    register_link: 'Créer un compte'
+    continue_as_guest: 'Continuer sans connexion'
+  hero:
+    heading: 'Envoyez vos fichiers,'
+    heading_accent: 'simplement.'
+    description: 'Partagez des fichiers en toute sécurité avec vos contacts. Rapide, sans inscription et sans installation.'
+    feature_1: 'Transferts chiffrés et sécurisés'
+    feature_2: 'Expiration automatique des liens'
+    feature_3: 'Notifications par e-mail'
+    feature_4: 'Connexion non obligatoire'
+  forgot_password:
+    title: 'Mot de passe oublié'
+    instructions: 'Mot de passe oublié ? Renseignez votre adresse e-mail pour recevoir un lien de réinitialisation.'
+    submit: 'Envoyer le lien'
+    sent: 'Si un compte correspond à cette adresse, vous recevrez un e-mail avec les instructions.'
+    back_login: 'Retour à la connexion'
+    email_subject: 'Réinitialisation de votre mot de passe Nimbus'
+    email_body: 'Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe. Ce lien expire dans 1 heure.'
+    email_expiry: 'Si vous n''avez pas demandé cette réinitialisation, ignorez cet e-mail.'
+  reset_password:
+    title: 'Nouveau mot de passe'
+    instructions: 'Choisissez un nouveau mot de passe pour votre compte.'
+    submit: 'Réinitialiser le mot de passe'
+    success: 'Votre mot de passe a été réinitialisé. Vous pouvez vous connecter.'
+    invalid_link: 'Ce lien est invalide ou a expiré. Veuillez recommencer.'
+  register:
+    title: 'Inscription'
+    heading: 'Créer un compte'
+    name: 'Nom complet'
+    name_placeholder: 'Jean Dupont'
+    email: 'Adresse e-mail'
+    password: 'Mot de passe'
+    password_confirm: 'Confirmer le mot de passe'
+    submit: "Créer mon compte"
+    already_account: 'Déjà un compte ?'
+    login_link: 'Se connecter'
+    error_name_required: 'Le nom est obligatoire.'
+    error_email_required: "L'adresse e-mail est obligatoire."
+    error_email_invalid: "L'adresse e-mail n'est pas valide."
+    error_email_taken: 'Cette adresse e-mail est déjà utilisée.'
+    error_password_length: 'Le mot de passe doit contenir au moins 8 caractères.'
+    error_password_mismatch: 'Les mots de passe ne correspondent pas.'
+
+profile:
+  title: Profil
+  subtitle: 'Gérez vos informations personnelles et votre sécurité.'
+  locale:
+    title: Langue
+    subtitle: "Choisissez la langue d'affichage de l'application."
+    field: Langue
+  info:
+    title: 'Informations du profil'
+    subtitle: 'Mettez à jour votre nom et adresse e-mail.'
+    name: 'Nom complet'
+    email: 'Adresse e-mail'
+    saved: 'Profil mis à jour avec succès.'
+  password:
+    title: 'Modifier le mot de passe'
+    subtitle: 'Utilisez un mot de passe long et aléatoire pour sécuriser votre compte.'
+    current: 'Mot de passe actuel'
+    new: 'Nouveau mot de passe'
+    confirm: 'Confirmer le mot de passe'
+    saved: 'Mot de passe mis à jour avec succès.'
+    error_current: 'Le mot de passe actuel est incorrect.'
+  danger:
+    title: 'Supprimer le compte'
+    description: 'Une fois votre compte supprimé, toutes les données associées seront définitivement effacées.'
+    confirm: 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.'
+    submit: 'Supprimer mon compte'
 
 transfer:
   create:
@@ -53,6 +143,9 @@ transfer:
     success_subtitle: 'Les destinataires ont été notifiés par e-mail.'
     manage_link: 'Gérer mon transfert'
     copy_link: 'Copier le lien de téléchargement'
+    mode_label: 'Mode de partage'
+    mode_email: 'Envoyer par e-mail'
+    mode_link: 'Lien public'
   show:
     title: 'Fichiers à télécharger'
     sent_by: 'Envoyé par %name%'
@@ -76,6 +169,9 @@ transfer:
     delete_confirm: 'Êtes-vous sûr de vouloir supprimer ce transfert ? Cette action est irréversible.'
     delete_submit: 'Supprimer définitivement'
     deleted: 'Votre transfert a bien été supprimé.'
+    pending_download: 'Pas encore téléchargé'
+    public_link: 'Lien public'
+    public_downloads: '{count} téléchargement(s)'
   status:
     pending: 'En cours d''envoi'
     ready: Disponible
@@ -86,6 +182,18 @@ transfer:
     expired: 'Ce transfert a expiré et n''est plus disponible.'
     deleted: 'Ce transfert a été supprimé.'
     not_found: 'Ce transfert est introuvable.'
+    expired_title: 'Ce transfert a expiré'
+    expired_desc: 'Les fichiers ont été automatiquement supprimés après la date d''expiration.'
+    deleted_title: 'Ce transfert a été supprimé'
+    deleted_desc: 'L''expéditeur a supprimé ce transfert. Les fichiers ne sont plus disponibles.'
+    other_desc: 'Ce transfert n''est pas encore prêt ou n''existe pas.'
+    back: '← Envoyer des fichiers'
+    page_title: 'Nimbus — Transfert indisponible'
+  password:
+    page_title: 'Nimbus — Transfert protégé'
+    title: 'Transfert protégé'
+    subtitle: 'Entrez le mot de passe pour accéder aux fichiers.'
+    label: 'Mot de passe'
 
 enum:
   transfer_status:
@@ -94,12 +202,36 @@ enum:
     expired: Expiré
     deleted: Supprimé
 
+locales:
+  fr: Français
+  en: English
+  es: Español
+  de: Deutsch
+
 mail:
   transfer_ready:
     subject: '%senderName% vous a envoyé des fichiers via Nimbus'
     heading: 'Vous avez reçu des fichiers'
     intro: '%senderName% vous a envoyé %count% fichier(s) via Nimbus.'
     message_label: Message
+    download_button: 'Télécharger les fichiers'
+    expires: 'Ce transfert expire le %date%.'
+    password_label: 'Mot de passe requis'
+    footer: 'Si vous ne souhaitez pas télécharger ces fichiers, ignorez cet e-mail.'
+  transfer_downloaded:
+    subject: 'Vos fichiers ont été téléchargés [Réf. %reference%]'
+    heading: 'Fichiers téléchargés'
+    intro: '%recipientEmail% a téléchargé vos fichiers du transfert %reference%.'
+    warning: 'Si vous n''attendiez pas ce téléchargement, vous pouvez supprimer votre transfert depuis votre lien de gestion.'
+  transfer_expired:
+    subject: 'Votre transfert a expiré [Réf. %reference%]'
+    heading: 'Transfert expiré'
+    intro: 'Votre transfert %reference% a expiré et les fichiers ont été supprimés.'
+    footer: 'Créez un nouveau transfert si vous souhaitez renvoyer vos fichiers.'
+  transfer_reminder:
+    subject: 'Rappel : des fichiers vous attendent [Réf. %reference%]'
+    heading: 'Vous avez des fichiers en attente'
+    intro: '%senderName% vous a envoyé %count% fichier(s) via Nimbus et ils n''ont pas encore été téléchargés.'
     download_button: 'Télécharger les fichiers'
     expires: 'Ce transfert expire le %date%.'
     footer: 'Si vous ne souhaitez pas télécharger ces fichiers, ignorez cet e-mail.'

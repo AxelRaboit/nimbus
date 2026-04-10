@@ -7,7 +7,7 @@ namespace App\Service;
 use App\Enum\FallbackMimeTypeEnum;
 use TusPhp\Cache\FileStore as TusFileStore;
 
-final readonly class TusUploadService
+final readonly class TusUploadService implements TusUploadServiceInterface
 {
     public function __construct(
         private string $tusCachePath,

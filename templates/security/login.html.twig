@@ -1,0 +1,80 @@
+{% extends 'base_guest.html.twig' %}
+
+{% block title %}{{ 'auth.login.title'|trans }} - Nimbus{% endblock %}
+
+{% block hero %}
+    {{ include('components/auth_hero.html.twig') }}
+{% endblock %}
+
+{% block content %}
+    {% if app.request.query.get('reset') %}
+        <div class="mb-4 text-sm font-medium text-green-600">
+            {{ 'auth.reset_password.success'|trans }}
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="mb-4 text-sm font-medium text-red-500">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+    {% endif %}
+
+    <form method="POST" action="{{ path('app_login') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <div>
+            {{ include('components/form_input.html.twig', {
+                id: 'email',
+                type: 'email',
+                name: 'email',
+                label: 'auth.login.email'|trans,
+                placeholder: 'auth.login.email_placeholder'|trans,
+                value: last_username,
+                required: true,
+                autofocus: true,
+                autocomplete: 'email',
+            }, false) }}
+        </div>
+
+        <div class="mt-4">
+            {{ include('components/form_password_input.html.twig', {
+                id: 'password',
+                name: 'password',
+                label: 'auth.login.password'|trans,
+                required: true,
+                autocomplete: 'current-password',
+            }, false) }}
+        </div>
+
+        <div class="mt-4 flex items-center justify-between">
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="_remember_me"
+                       class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                <span class="text-sm text-secondary">{{ 'auth.login.remember'|trans }}</span>
+            </label>
+            <a href="{{ path('app_forgot_password') }}" class="text-sm text-link hover:text-link-hover underline transition-colors">
+                {{ 'auth.login.forgot'|trans }}
+            </a>
+        </div>
+
+        <div class="mt-6">
+            {{ include('components/form_submit_button.html.twig', {
+                text: 'auth.login.submit'|trans,
+            }, false) }}
+        </div>
+    </form>
+
+    {{ include('components/divider_or.html.twig') }}
+
+    <div class="mt-4 text-center">
+        <a href="{{ path('app_register') }}" class="text-sm text-link hover:text-link-hover underline transition-colors">
+            {{ 'auth.login.no_account'|trans }}
+        </a>
+    </div>
+
+    {{ include('components/divider_or.html.twig') }}
+
+    <a href="{{ path('home') }}" class="mt-4 inline-flex items-center justify-center gap-2 w-full rounded border border-base bg-surface-2 hover:bg-surface-3 text-secondary font-medium py-2 px-4 text-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        {{ 'auth.login.continue_as_guest'|trans }}
+    </a>
+{% endblock %}

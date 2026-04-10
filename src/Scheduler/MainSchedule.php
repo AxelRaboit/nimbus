@@ -5,18 +5,30 @@ declare(strict_types=1);
 namespace App\Scheduler;
 
 use App\Message\CleanupExpiredTransfersMessage;
+use App\Message\SendRemindersMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 #[AsSchedule('main')]
-final class MainSchedule implements ScheduleProviderInterface
+final readonly class MainSchedule implements ScheduleProviderInterface
 {
+    public function __construct(
+        private CacheInterface $cache,
+    ) {}
+
     public function getSchedule(): Schedule
     {
-        return (new Schedule())->add(
-            RecurringMessage::cron('0 2 * * *', new CleanupExpiredTransfersMessage()),
-        );
+        return (new Schedule())
+            ->stateful($this->cache)
+            ->processOnlyLastMissedRun(true)
+            ->add(
+                RecurringMessage::cron('0 2 * * *', new CleanupExpiredTransfersMessage()),
+            )
+            ->add(
+                RecurringMessage::cron('0 10 * * *', new SendRemindersMessage()),
+            );
     }
 }

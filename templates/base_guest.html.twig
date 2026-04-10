@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Nimbus{% endblock %}</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="stylesheet" href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap">
+        {{ include('components/theme_script.html.twig', {colorScheme: true}) }}
+        {% block stylesheets %}
+            {{ vite_entry_link_tags('app') }}
+        {% endblock %}
+        {% block javascripts %}
+            {{ vite_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body class="transition-colors duration-200">
+        {% set hero_content %}{% block hero %}{% endblock %}{% endset %}
+        {% set form_content %}{% block content %}{% endblock %}{% endset %}
+        {% if hero_content|trim %}
+            {# Two-column layout (login page) #}
+            <div class="flex min-h-screen items-center justify-center bg-bg px-4 py-12">
+                <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                    <div>
+                        <a href="{{ path('app_login') }}" class="inline-flex items-center gap-3 mb-8">
+                            <div class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                                {{ include('components/icon.html.twig', {name: 'cloud', class: 'w-8 h-8 text-white', size: 32}) }}
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-2xl leading-tight">Nimbus</span>
+                                {% if appVersion is defined and appVersion %}
+                                    <span class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {{ hero_content|raw }}
+                    </div>
+                    <div class="w-full overflow-hidden bg-surface border border-base px-6 py-4 shadow-md rounded-lg">
+                        {{ form_content|raw }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {# Single-column centered layout (register, forgot password, etc.) #}
+            <div class="flex min-h-screen flex-col items-center bg-bg px-4 pt-6 sm:justify-center sm:pt-0">
+                <div>
+                    <a href="{{ path('app_login') }}" class="flex flex-col items-center gap-2">
+                        <div class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                            {{ include('components/icon.html.twig', {name: 'cloud', class: 'w-8 h-8 text-white', size: 32}) }}
+                        </div>
+                        <span class="text-primary font-bold text-2xl">Nimbus</span>
+                        {% if appVersion is defined and appVersion %}
+                            <span class="text-xs text-secondary">{{ appVersion }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+
+                <div class="mt-6 w-full overflow-hidden bg-surface border border-base px-6 py-4 shadow-md rounded-lg sm:max-w-md">
+                    {{ form_content|raw }}
+                </div>
+            </div>
+        {% endif %}
+    </body>
+</html>

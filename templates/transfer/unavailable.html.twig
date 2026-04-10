@@ -1,20 +1,16 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_auth.html.twig' %}
+{% block title %}{{ 'transfer.unavailable.page_title'|trans }}{% endblock %}
 
-{% block title %}Nimbus — Transfert indisponible{% endblock %}
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'transfer.unavailable.title'|trans}) }}
+{% endblock %}
 
 {% block body %}
-    <div id="app-unavailable"
-         data-status="{{ transfer.status.value }}"
-         data-expired="{{ transfer.isExpired ? 'true' : 'false' }}">
-    </div>
+<div id="app-transfer-unavailable"
+     data-status="{{ transfer.isExpired ? 'expired' : transfer.status.value }}"
+     data-home-path="{{ path('home') }}"
+     data-locale="{{ app.request.locale }}"
+</div>
 {% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ vite_entry_script_tags('app') }}
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ vite_entry_link_tags('app') }}
-{% endblock %}
+{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('transfer-unavailable') }}{% endblock %}
+{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('transfer-unavailable') }}{% endblock %}

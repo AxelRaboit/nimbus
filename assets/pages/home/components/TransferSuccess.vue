@@ -1,87 +1,95 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { Check, Copy } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
+
+const { t } = useI18n();
+
+defineEmits(["reset"]);
 
 const props = defineProps({
     reference: { type: String, required: true },
     manageUrl: { type: String, required: true },
+    isGuest: { type: Boolean, default: false },
+    isPublic: { type: Boolean, default: false },
+    transferToken: { type: String, default: "" },
 });
 
-const copied = ref(false);
+const downloadUrl = computed(() =>
+    props.transferToken ? `${window.location.origin}/t/${props.transferToken}` : ""
+);
 
-async function copyManageLink() {
+const copied = ref(false);
+const copiedManage = ref(false);
+
+async function copyLink(text, flag) {
     try {
-        await navigator.clipboard.writeText(props.manageUrl);
-        copied.value = true;
-        setTimeout(() => (copied.value = false), 2000);
-    } catch {
-        // fallback: select the input
-    }
+        await navigator.clipboard.writeText(text);
+        flag.value = true;
+        setTimeout(() => (flag.value = false), 2000);
+    } catch {}
 }
 </script>
 
 <template>
     <div class="flex flex-col items-center gap-6 text-center py-4">
-        <!-- Icon -->
         <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
+            <Check class="w-8 h-8 text-green-600" :stroke-width="2" />
         </div>
 
-        <!-- Title -->
         <div>
-            <h2 class="text-lg font-semibold text-primary">Transfert envoyé !</h2>
-            <p class="text-sm text-muted mt-1">
-                Vos destinataires vont recevoir un email avec le lien de téléchargement.
-            </p>
+            <h2 class="text-lg font-semibold text-primary">{{ t('transfer.success.title') }}</h2>
+            <p class="text-sm text-muted mt-1">{{ t('transfer.success.subtitle') }}</p>
         </div>
 
-        <!-- Reference -->
-        <div class="bg-surface-2 rounded-xl px-6 py-3">
-            <p class="text-xs text-muted mb-1">Référence du transfert</p>
+        <div class="bg-surface-2 rounded-lg px-6 py-3">
+            <p class="text-xs text-muted mb-1">{{ t('transfer.success.reference_label') }}</p>
             <p class="text-2xl font-bold text-primary tracking-widest">{{ reference }}</p>
         </div>
 
-        <!-- Manage link -->
-        <div class="w-full flex flex-col gap-2">
-            <p class="text-xs text-muted">
-                Conservez ce lien pour gérer ou supprimer votre transfert
-            </p>
+        <div v-if="isGuest" class="w-full rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
+            {{ t('transfer.success.guest_warning') }}
+        </div>
+
+        <!-- Public link (primary) -->
+        <div v-if="isPublic" class="w-full flex flex-col gap-2">
+            <p class="text-xs text-muted">{{ t('transfer.success.public_link_hint') }}</p>
             <div class="flex items-center gap-2">
                 <input
-                    :value="manageUrl"
+                    :value="downloadUrl"
                     readonly
-                    class="block w-full rounded-lg border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
                     v-on:click="$event.target.select()"
                 >
-                <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="copyManageLink">
-                    <svg
-                        v-if="!copied"
-                        class="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    <svg
-                        v-else
-                        class="w-4 h-4 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {{ copied ? 'Copié !' : 'Copier' }}
+                <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="copyLink(downloadUrl, copied)">
+                    <Check v-if="copied" class="w-4 h-4 text-green-500" :stroke-width="2" />
+                    <Copy v-else class="w-4 h-4" :stroke-width="2" />
+                    {{ copied ? t('transfer.success.copied') : t('transfer.success.copy') }}
                 </AppButton>
             </div>
         </div>
 
-        <!-- New transfer -->
+        <!-- Manage link -->
+        <div class="w-full flex flex-col gap-2">
+            <p class="text-xs text-muted">{{ t('transfer.success.manage_hint') }}</p>
+            <div class="flex items-center gap-2">
+                <input
+                    :value="manageUrl"
+                    readonly
+                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                    v-on:click="$event.target.select()"
+                >
+                <AppButton variant="secondary" size="md" class="shrink-0" v-on:click="copyLink(manageUrl, copiedManage)">
+                    <Check v-if="copiedManage" class="w-4 h-4 text-green-500" :stroke-width="2" />
+                    <Copy v-else class="w-4 h-4" :stroke-width="2" />
+                    {{ copiedManage ? t('transfer.success.copied') : t('transfer.success.copy') }}
+                </AppButton>
+            </div>
+        </div>
+
         <AppButton variant="ghost" size="sm" v-on:click="$emit('reset')">
-            Envoyer un nouveau transfert
+            {{ t('transfer.success.new_transfer') }}
         </AppButton>
     </div>
 </template>

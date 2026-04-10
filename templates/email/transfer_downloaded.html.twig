@@ -1,24 +1,23 @@
 {% extends 'email/layout/base.html.twig' %}
 
-{% block title %}Vos fichiers ont été téléchargés — Nimbus{% endblock %}
+{% block title %}{{ 'mail.transfer_downloaded.heading'|trans }} — Nimbus{% endblock %}
 
 {% block content %}
-<h1>Vos fichiers ont été téléchargés</h1>
+<h1>{{ 'mail.transfer_downloaded.heading'|trans }}</h1>
 
 <p>
-    <strong>{{ recipient.email }}</strong> a téléchargé vos fichiers du transfert
-    <strong>{{ transfer.reference }}</strong>.
+    {{ 'mail.transfer_downloaded.intro'|trans({'%recipientEmail%': recipient.email, '%reference%': transfer.reference}) }}
 </p>
 
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr>
         <td class="reference-cell">
-            Référence : <strong>{{ transfer.reference }}</strong>
+            {{ transfer.reference }}
         </td>
     </tr>
 </table>
 
 <p class="warning">
-    Si vous n'attendiez pas ce téléchargement, vous pouvez supprimer votre transfert depuis votre lien de gestion.
+    {{ 'mail.transfer_downloaded.warning'|trans }}
 </p>
 {% endblock %}

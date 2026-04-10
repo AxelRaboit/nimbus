@@ -5,12 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Nimbus{% endblock %}</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="stylesheet" href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap">
+        {# Anti-FOUC : doit être inline et synchrone pour s'exécuter avant le premier rendu #}
+        {{ include('components/theme_script.html.twig') }}
         {% block stylesheets %}
             {{ vite_entry_link_tags('app') }}
         {% endblock %}
 
         {% block javascripts %}
             {{ vite_entry_script_tags('app') }}
+            {{ vite_entry_script_tags('theme') }}
         {% endblock %}
     </head>
     <body>

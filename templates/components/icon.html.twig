@@ -1,0 +1,44 @@
+{#
+  SVG icon component.
+  Usage: {{ include('components/icon.html.twig', { name: 'lock', class: 'w-4 h-4 text-indigo-500' }) }}
+
+  Parameters:
+    name   (string) – icon name (see list below)
+    class  (string) – CSS classes, default 'w-5 h-5'
+    size   (int)    – HTML width/height attribute in px, default 20
+    stroke (string) – stroke-width value, default '2'
+
+  Available icons: cloud, lock, clock, mail, check, eye, chevron-down, arrow-right, user, moon, sun
+#}
+
+{% set iconClass = class ?? 'w-5 h-5' %}
+{% set iconSize = size ?? 20 %}
+{% set iconStroke = stroke ?? '2' %}
+
+<svg class="{{ iconClass }}" width="{{ iconSize }}" height="{{ iconSize }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    {% if name == 'cloud' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+    {% elseif name == 'lock' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+    {% elseif name == 'clock' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    {% elseif name == 'mail' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+    {% elseif name == 'check' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M5 13l4 4L19 7"/>
+    {% elseif name == 'eye' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+    {% elseif name == 'chevron-down' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M19 9l-7 7-7-7"/>
+    {% elseif name == 'arrow-right' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M5 12h14M15 8l4 4-4 4"/>
+    {% elseif name == 'user' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M12 12a3 3 0 100-6 3 3 0 000 6z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M19 20c0-4.418-3.582-8-8-8s-8 3.582-8 8"/>
+    {% elseif name == 'moon' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+    {% elseif name == 'sun' %}
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ iconStroke }}" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+    {% endif %}
+</svg>

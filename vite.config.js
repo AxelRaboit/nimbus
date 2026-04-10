@@ -17,9 +17,14 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 app: './assets/app.js',
+                sidebar: './assets/sidebar.js',
                 home: './assets/pages/home/index.js',
                 transfer: './assets/pages/transfer/index.js',
                 manage: './assets/pages/manage/index.js',
+                profile: './assets/pages/profile/index.js',
+                'transfer-password': './assets/pages/transfer-password/index.js',
+                'transfer-unavailable': './assets/pages/transfer-unavailable/index.js',
+                dev: './assets/pages/dev/index.js',
             },
         },
     },

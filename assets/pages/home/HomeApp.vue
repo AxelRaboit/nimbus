@@ -1,28 +1,87 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { RotateCcw, X, HelpCircle } from "lucide-vue-next";
 import TransferForm from "./components/TransferForm.vue";
 import UploadProgress from "./components/UploadProgress.vue";
 import TransferSuccess from "./components/TransferSuccess.vue";
+import { useTransferDraft } from "@/composables/useTransferDraft.js";
+import { formatFileSize } from "@/utils/validation.js";
 
-// Steps: form → uploading → success
+
+const { t, locale } = useI18n();
+const { saveDraft, getDraft, clearDraft, clearTusFingerprints } = useTransferDraft();
+
+const props = defineProps({
+    userEmail:        { type: String, default: "" },
+    isGuest:          { type: Boolean, default: false },
+    maxSizeMb:        { type: Number, default: 500 },
+    maxFiles:         { type: Number, default: 20 },
+    maxRecipients:    { type: Number, default: 20 },
+    maxExpiryDays:    { type: Number, default: 7 },
+    expiryOptions:    { type: String, default: "[24]" },
+    extensionGroups:  { type: String, default: "{}" },
+});
+
+const fileTypeGroups = computed(() => {
+    const groups = JSON.parse(props.extensionGroups || "{}");
+    return Object.entries(groups).map(([key, exts]) => ({
+        label: t(`home.file_groups.${key}`, key),
+        exts,
+    }));
+});
+
+const showHelp = ref(false);
+
+// Close modal on Escape
+if (typeof window !== "undefined") {
+    window.addEventListener("keydown", (e) => { if (e.key === "Escape") showHelp.value = false; });
+}
+
 const step = ref("form");
-
-// Data from form submission
 const pendingFiles = ref([]);
 const pendingFormData = ref(null);
-
-// Data from API
 const transferToken = ref(null);
 const transferOwnerToken = ref(null);
 const transferReference = ref(null);
-
-// Upload keys collected after TUS
+const transferIsPublic = ref(false);
 const uploadKeys = ref([]);
-
-// Errors
 const apiError = ref(null);
 
-// Computed manage URL
+// ── Resume draft ──────────────────────────────────────────────────────────────
+const resumeDraft = ref(null);
+const formKey     = ref(0); // forces TransferForm remount on abandon
+
+onMounted(async () => {
+    const draft = getDraft();
+    if (!draft?.token) return;
+
+    try {
+        const res = await fetch(`/api/transfer/${draft.token}/resume-check`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data.resumable) {
+                resumeDraft.value = draft;
+                return;
+            }
+        }
+    } catch {}
+
+    clearDraft();
+    clearTusFingerprints();
+});
+
+async function abandonResume() {
+    const draft = resumeDraft.value;
+    resumeDraft.value = null;
+    formKey.value++;       // remount form → champs vides
+    clearDraft();
+    clearTusFingerprints();
+    if (draft?.token) {
+        await fetch(`/api/transfer/${draft.token}/abandon`, { method: "DELETE" }).catch(() => {});
+    }
+}
+
 const manageUrl = computed(() => {
     if (!transferOwnerToken.value) return "";
     return `${window.location.origin}/manage/${transferOwnerToken.value}`;
@@ -31,57 +90,84 @@ const manageUrl = computed(() => {
 async function onFormSubmit(formData) {
     apiError.value = null;
 
+    // If resuming an existing pending transfer, skip creation
+    const existing = resumeDraft.value ?? (getDraft()?.token ? getDraft() : null);
+    if (existing?.token) {
+        resumeDraft.value = null;
+        transferToken.value = existing.token;
+        transferOwnerToken.value = existing.ownerToken;
+        transferReference.value = existing.reference;
+        pendingFiles.value = formData.files;
+        pendingFormData.value = formData;
+        step.value = "uploading";
+        return;
+    }
+
     try {
         const res = await fetch("/api/transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                senderEmail: formData.senderEmail,
-                senderName: formData.senderName,
-                recipients: formData.recipients,
+                isPublic: formData.isPublic ?? false,
+                senderEmail: formData.senderEmail || undefined,
+                senderName: formData.senderName || undefined,
+                recipients: formData.isPublic ? undefined : formData.recipients,
                 message: formData.message || null,
-                expiresInDays: formData.expiresIn,
+                expiresInHours: formData.expiresIn,
                 password: formData.password || null,
             }),
         });
-
         if (!res.ok) {
             const data = await res.json().catch(() => ({}));
             throw new Error(data.error || `Erreur serveur (${res.status})`);
         }
-
         const data = await res.json();
         transferToken.value = data.token;
         transferOwnerToken.value = data.ownerToken;
         transferReference.value = data.reference;
-
+        transferIsPublic.value = data.isPublic ?? false;
         pendingFiles.value = formData.files;
         pendingFormData.value = formData;
 
+        saveDraft({
+            token: data.token,
+            ownerToken: data.ownerToken,
+            reference: data.reference,
+            senderEmail: formData.senderEmail,
+            senderName: formData.senderName,
+            recipients: formData.recipients,
+            message: formData.message,
+            expiresIn: formData.expiresIn,
+            password: formData.password,
+            fileNames: formData.files.map((f) => ({ name: f.name, size: f.size })),
+            savedAt: Date.now(),
+        });
+
         step.value = "uploading";
     } catch (err) {
-        apiError.value = err.message || "Une erreur est survenue. Veuillez réessayer.";
+        apiError.value = err.message || "Une erreur est survenue.";
     }
 }
 
 async function onUploadDone({ uploadKeys: keys }) {
     apiError.value = null;
     uploadKeys.value = keys;
-
     try {
         const res = await fetch(`/api/transfer/${transferToken.value}/finalize`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                uploadKeys: keys,
-            }),
+            body: JSON.stringify({ uploadKeys: keys, password: pendingFormData.value?.password || null }),
         });
-
         if (!res.ok) {
             const data = await res.json().catch(() => ({}));
+            if (data.error === "zip_content_not_allowed") {
+                const names = (data.disallowed_files ?? []).join(", ");
+                throw new Error(t("transfer.dropzone.error_zip", { files: names || "?" }));
+            }
             throw new Error(data.error || `Erreur serveur (${res.status})`);
         }
-
+        clearDraft();
+        clearTusFingerprints();
         step.value = "success";
     } catch (err) {
         apiError.value = err.message || "Une erreur est survenue lors de la finalisation.";
@@ -101,68 +187,154 @@ function reset() {
     transferToken.value = null;
     transferOwnerToken.value = null;
     transferReference.value = null;
+    transferIsPublic.value = false;
     uploadKeys.value = [];
     apiError.value = null;
 }
 </script>
 
 <template>
-    <div class="min-h-screen bg-bg flex flex-col">
-        <!-- Header -->
-        <header class="border-b border-base bg-surface">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                    </svg>
-                </div>
-                <span class="text-base font-bold text-primary">Nimbus</span>
+    <div class="w-full max-w-xl mx-auto">
+        <!-- Resume banner -->
+        <div v-if="resumeDraft" class="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 flex items-start gap-3">
+            <RotateCcw class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" :stroke-width="2" />
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-amber-400">Transfert en cours détecté</p>
+                <p class="text-xs text-secondary mt-0.5 truncate">
+                    {{ resumeDraft.fileNames?.map(f => f.name).join(', ') || 'Fichiers inconnus' }}
+                </p>
+                <p class="text-xs text-muted mt-1">Re-sélectionnez vos fichiers pour reprendre automatiquement.</p>
             </div>
-        </header>
+            <button class="p-1 text-muted hover:text-primary transition-colors shrink-0" v-on:click="abandonResume">
+                <X class="w-3.5 h-3.5" :stroke-width="2" />
+            </button>
+        </div>
 
-        <!-- Main -->
-        <main class="flex-1 flex items-start justify-center px-4 py-10">
-            <div class="w-full max-w-xl">
-                <!-- Step indicator (form + uploading only) -->
-                <div v-if="step !== 'success'" class="mb-8 text-center">
-                    <h1 class="text-2xl font-bold text-primary">
-                        {{ step === 'form' ? 'Envoyer des fichiers' : 'Envoi en cours…' }}
-                    </h1>
-                    <p class="text-sm text-muted mt-1">
-                        {{ step === 'form'
-                            ? 'Partagez vos fichiers en quelques secondes, de façon sécurisée.'
-                            : 'Vos fichiers sont en cours de téléversement.' }}
-                    </p>
-                </div>
+        <div v-if="apiError" class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {{ apiError }}
+        </div>
 
-                <!-- API Error -->
-                <div v-if="apiError" class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {{ apiError }}
-                </div>
-
-                <!-- Card -->
-                <div class="rounded-2xl border border-base bg-surface shadow-sm p-6">
-                    <TransferForm
-                        v-if="step === 'form'"
-                        v-on:submit="onFormSubmit"
-                    />
-
-                    <UploadProgress
-                        v-else-if="step === 'uploading'"
-                        :files="pendingFiles"
-                        :transfer-token="transferToken"
-                        v-on:done="onUploadDone"
-                        v-on:error="onUploadError"
-                    />
-
-                    <TransferSuccess
-                        v-else-if="step === 'success'"
-                        :reference="transferReference"
-                        :manage-url="manageUrl"
-                        v-on:reset="reset"
-                    />
-                </div>
-            </div>
-        </main>
+        <div class="rounded-xl border border-base bg-surface shadow-lg shadow-indigo-500/10 p-6">
+            <TransferForm
+                v-if="step === 'form'"
+                :key="formKey"
+                :prefill-email="props.userEmail"
+                :draft="resumeDraft"
+                :max-files="Number(props.maxFiles)"
+                :max-recipients="Number(props.maxRecipients)"
+                :max-size-mb="Number(props.maxSizeMb)"
+                :max-expiry-days="Number(props.maxExpiryDays)"
+                :expiry-options="JSON.parse(props.expiryOptions)"
+                v-on:submit="onFormSubmit"
+                v-on:open-help="showHelp = true"
+            />
+            <UploadProgress
+                v-else-if="step === 'uploading'"
+                :files="pendingFiles"
+                :transfer-token="transferToken"
+                v-on:done="onUploadDone"
+                v-on:error="onUploadError"
+            />
+            <TransferSuccess
+                v-else-if="step === 'success'"
+                :reference="transferReference"
+                :manage-url="manageUrl"
+                :is-guest="props.isGuest"
+                :is-public="transferIsPublic"
+                :transfer-token="transferToken"
+                v-on:reset="reset"
+            />
+        </div>
     </div>
+
+    <!-- Help modal -->
+    <Teleport to="body">
+        <Transition name="modal">
+            <div
+                v-if="showHelp"
+                class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                v-on:click.self="showHelp = false"
+            >
+                <div class="absolute inset-0 bg-black/50" v-on:click="showHelp = false" />
+                <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-base">
+                        <h2 class="text-base font-semibold text-primary flex items-center gap-2">
+                            <HelpCircle class="w-4 h-4 text-indigo-500" :stroke-width="2" />
+                            {{ t('home.hero.heading') }} {{ t('home.hero.heading_accent') }}
+                        </h2>
+                        <button class="text-muted hover:text-primary transition-colors" v-on:click="showHelp = false">
+                            <X class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
+
+                    <div class="px-6 py-5 space-y-6">
+                        <!-- Steps -->
+                        <ol class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                                <div>
+                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_1_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_1_desc') }}</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+                                <div>
+                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_2_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_2_desc') }}</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+                                <div>
+                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_3_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_3_desc') }}</p>
+                                </div>
+                            </li>
+                        </ol>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-2 gap-x-8 gap-y-3">
+                            <div class="flex items-center justify-between border-b border-base pb-3">
+                                <span class="text-xs text-muted">Taille max</span>
+                                <span class="text-sm font-semibold text-primary">{{ formatFileSize(maxSizeMb, locale) }}</span>
+                            </div>
+                            <div class="flex items-center justify-between border-b border-base pb-3">
+                                <span class="text-xs text-muted">Fichiers</span>
+                                <span class="text-sm font-semibold text-primary">{{ maxFiles }} max</span>
+                            </div>
+                            <div class="flex items-center justify-between border-b border-base pb-3">
+                                <span class="text-xs text-muted">Destinataires</span>
+                                <span class="text-sm font-semibold text-primary">{{ maxRecipients }} max</span>
+                            </div>
+                            <div class="flex items-center justify-between border-b border-base pb-3">
+                                <span class="text-xs text-muted">Durée</span>
+                                <span class="text-sm font-semibold text-primary">jusqu'à {{ maxExpiryDays }}j</span>
+                            </div>
+                        </div>
+
+                        <!-- Password note -->
+                        <p class="text-xs text-muted flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Protection par mot de passe optionnelle
+                        </p>
+
+                        <!-- Accepted file types -->
+                        <div>
+                            <p class="text-xs text-muted uppercase tracking-wide mb-3">Formats acceptés</p>
+                            <div class="flex flex-col gap-2">
+                                <div v-for="group in fileTypeGroups" :key="group.label" class="flex items-baseline gap-2">
+                                    <span class="text-xs text-muted w-20 shrink-0">{{ group.label }}</span>
+                                    <p class="text-xs font-mono text-secondary leading-relaxed">{{ group.exts.join('  ') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+    </Teleport>
 </template>

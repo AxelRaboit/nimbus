@@ -1,0 +1,51 @@
+<header class="border-b border-base bg-surface">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+                {{ include('components/icon.html.twig', {name: 'cloud', class: 'w-4 h-4 text-white', size: 16}) }}
+            </div>
+            <span class="text-base font-bold text-primary">Nimbus</span>
+        </a>
+
+        <div class="flex items-center gap-1">
+            {# Language selector #}
+            <div class="relative" id="lang-switcher">
+                <button
+                    type="button"
+                    id="lang-btn"
+                    class="h-8 px-2 flex items-center gap-1.5 rounded text-secondary hover:text-primary hover:bg-surface-2 transition text-xs font-bold uppercase tracking-wide"
+                >
+                    {{ app.request.locale }}
+                    {{ include('components/icon.html.twig', {name: 'chevron-down', class: 'w-3 h-3', size: 12, stroke: '2.5'}) }}
+                </button>
+                <div
+                    id="lang-dropdown"
+                    class="hidden absolute right-0 top-full mt-1 w-36 rounded-lg border border-base bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden z-50"
+                >
+                    {% for code, label in {fr: 'Français', en: 'English', es: 'Español', de: 'Deutsch'} %}
+                        <button
+                            type="button"
+                            data-locale="{{ code }}"
+                            class="lang-option w-full text-left px-3 py-2 text-sm flex items-center justify-between gap-2 hover:bg-surface-2 transition {{ code == app.request.locale ? 'text-indigo-600 font-bold' : 'text-primary' }}"
+                        >
+                            {{ label }}
+                            {% if code == app.request.locale %}
+                                {{ include('components/icon.html.twig', {name: 'check', class: 'w-3.5 h-3.5 text-indigo-600 shrink-0', size: 14, stroke: '2.5'}) }}
+                            {% endif %}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Theme toggle #}
+            <button
+                id="theme-toggle"
+                type="button"
+                class="w-8 h-8 flex items-center justify-center rounded text-secondary hover:text-primary hover:bg-surface-2 transition"
+            >
+                {{ include('components/icon.html.twig', {name: 'moon', class: 'icon-moon w-4 h-4', size: 16}) }}
+                {{ include('components/icon.html.twig', {name: 'sun', class: 'icon-sun w-4 h-4', size: 16}) }}
+            </button>
+        </div>
+    </div>
+</header>

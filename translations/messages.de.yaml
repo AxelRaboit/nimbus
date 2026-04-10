@@ -1,6 +1,6 @@
 app:
   name: Nimbus
-  title: 'Nimbus — Dateiübertragung'
+  title: 'Dateiübertragung - Nimbus'
   footer: 'Nimbus. Alle Rechte vorbehalten.'
   tagline: 'Dateien senden, ganz einfach.'
 
@@ -30,6 +30,96 @@ common:
   files: Datei(en)
   size: Größe
   name: Name
+  save: Speichern
+  saved: Gespeichert
+
+nav:
+  send: 'Neue Übertragung'
+  logout: 'Abmelden'
+  lightMode: 'Helles Design'
+  darkMode: 'Dunkles Design'
+  profile: 'Mein Profil'
+  login: 'Anmelden'
+
+auth:
+  login:
+    title: 'Anmelden'
+    email: 'E-Mail-Adresse'
+    email_placeholder: 'du@beispiel.de'
+    password: 'Passwort'
+    remember: 'Angemeldet bleiben'
+    forgot: 'Passwort vergessen?'
+    submit: 'Anmelden'
+    no_account: 'Noch kein Konto?'
+    register_link: 'Konto erstellen'
+    continue_as_guest: 'Ohne Anmeldung fortfahren'
+  hero:
+    heading: 'Dateien versenden,'
+    heading_accent: 'ganz einfach.'
+    description: 'Teile Dateien sicher mit deinen Kontakten. Schnell, ohne Anmeldung und ohne Installation.'
+    feature_1: 'Verschlüsselte und sichere Übertragungen'
+    feature_2: 'Automatisches Ablaufen der Links'
+    feature_3: 'E-Mail-Benachrichtigungen'
+    feature_4: 'Keine Installation erforderlich'
+  forgot_password:
+    title: 'Passwort vergessen'
+    instructions: 'Passwort vergessen? Geben Sie Ihre E-Mail-Adresse ein, um einen Reset-Link zu erhalten.'
+    submit: 'Link senden'
+    sent: 'Falls ein Konto zu dieser Adresse existiert, erhalten Sie eine E-Mail.'
+    back_login: 'Zurück zur Anmeldung'
+    email_subject: 'Ihr Nimbus-Passwort zurücksetzen'
+    email_body: 'Klicken Sie auf den Link, um Ihr Passwort zurückzusetzen. Der Link läuft in 1 Stunde ab.'
+    email_expiry: 'Falls Sie kein Zurücksetzen angefordert haben, ignorieren Sie diese E-Mail.'
+  reset_password:
+    title: 'Neues Passwort'
+    instructions: 'Wählen Sie ein neues Passwort für Ihr Konto.'
+    submit: 'Passwort zurücksetzen'
+    success: 'Ihr Passwort wurde zurückgesetzt. Sie können sich jetzt anmelden.'
+    invalid_link: 'Dieser Link ist ungültig oder abgelaufen. Bitte versuchen Sie es erneut.'
+  register:
+    title: 'Registrieren'
+    heading: 'Konto erstellen'
+    name: 'Vollständiger Name'
+    name_placeholder: 'Max Mustermann'
+    email: 'E-Mail-Adresse'
+    password: 'Passwort'
+    password_confirm: 'Passwort bestätigen'
+    submit: 'Mein Konto erstellen'
+    already_account: 'Bereits ein Konto?'
+    login_link: 'Anmelden'
+    error_name_required: 'Name ist erforderlich.'
+    error_email_required: 'E-Mail-Adresse ist erforderlich.'
+    error_email_invalid: 'E-Mail-Adresse ist ungültig.'
+    error_email_taken: 'Diese E-Mail-Adresse wird bereits verwendet.'
+    error_password_length: 'Das Passwort muss mindestens 8 Zeichen lang sein.'
+    error_password_mismatch: 'Die Passwörter stimmen nicht überein.'
+
+profile:
+  title: Profil
+  subtitle: 'Verwalten Sie Ihre persönlichen Informationen und Sicherheit.'
+  locale:
+    title: Sprache
+    subtitle: 'Wählen Sie die Anzeigesprache der Anwendung.'
+    field: Sprache
+  info:
+    title: Profilinformationen
+    subtitle: 'Aktualisieren Sie Ihren Namen und Ihre E-Mail-Adresse.'
+    name: 'Vollständiger Name'
+    email: 'E-Mail-Adresse'
+    saved: 'Profil erfolgreich aktualisiert.'
+  password:
+    title: 'Passwort ändern'
+    subtitle: 'Verwenden Sie ein langes, zufälliges Passwort, um Ihr Konto zu sichern.'
+    current: 'Aktuelles Passwort'
+    new: 'Neues Passwort'
+    confirm: 'Passwort bestätigen'
+    saved: 'Passwort erfolgreich aktualisiert.'
+    error_current: 'Das aktuelle Passwort ist falsch.'
+  danger:
+    title: 'Konto löschen'
+    description: 'Sobald Ihr Konto gelöscht ist, werden alle zugehörigen Daten dauerhaft entfernt.'
+    confirm: 'Möchten Sie Ihr Konto wirklich löschen? Diese Aktion ist unwiderruflich.'
+    submit: 'Mein Konto löschen'
 
 transfer:
   create:
@@ -86,6 +176,18 @@ transfer:
     expired: 'Diese Übertragung ist abgelaufen und nicht mehr verfügbar.'
     deleted: 'Diese Übertragung wurde gelöscht.'
     not_found: 'Diese Übertragung konnte nicht gefunden werden.'
+    expired_title: 'Diese Übertragung ist abgelaufen'
+    expired_desc: 'Die Dateien wurden nach dem Ablaufdatum automatisch gelöscht.'
+    deleted_title: 'Diese Übertragung wurde gelöscht'
+    deleted_desc: 'Der Absender hat diese Übertragung gelöscht. Die Dateien sind nicht mehr verfügbar.'
+    other_desc: 'Diese Übertragung ist noch nicht bereit oder existiert nicht.'
+    back: '← Dateien senden'
+    page_title: 'Nimbus — Übertragung nicht verfügbar'
+  password:
+    page_title: 'Nimbus — Geschützte Übertragung'
+    title: 'Geschützte Übertragung'
+    subtitle: 'Geben Sie das Passwort ein, um auf die Dateien zuzugreifen.'
+    label: Passwort
 
 enum:
   transfer_status:
@@ -94,12 +196,35 @@ enum:
     expired: Abgelaufen
     deleted: Gelöscht
 
+locales:
+  fr: Français
+  en: English
+  es: Español
+  de: Deutsch
+
 mail:
   transfer_ready:
     subject: '%senderName% hat Ihnen Dateien über Nimbus gesendet'
     heading: 'Sie haben Dateien erhalten'
     intro: '%senderName% hat Ihnen %count% Datei(en) über Nimbus gesendet.'
     message_label: Nachricht
+    download_button: 'Dateien herunterladen'
+    expires: 'Diese Übertragung läuft ab am %date%.'
+    footer: 'Wenn Sie diese Dateien nicht herunterladen möchten, ignorieren Sie diese E-Mail.'
+  transfer_downloaded:
+    subject: 'Ihre Dateien wurden heruntergeladen [Ref. %reference%]'
+    heading: 'Dateien heruntergeladen'
+    intro: '%recipientEmail% hat Ihre Dateien aus Übertragung %reference% heruntergeladen.'
+    warning: 'Falls Sie diesen Download nicht erwartet haben, können Sie Ihre Übertragung über Ihren Verwaltungslink löschen.'
+  transfer_expired:
+    subject: 'Ihre Übertragung ist abgelaufen [Ref. %reference%]'
+    heading: 'Übertragung abgelaufen'
+    intro: 'Ihre Übertragung %reference% ist abgelaufen und die Dateien wurden gelöscht.'
+    footer: 'Erstellen Sie eine neue Übertragung, wenn Sie Ihre Dateien erneut senden möchten.'
+  transfer_reminder:
+    subject: 'Erinnerung: Dateien warten auf Sie [Ref. %reference%]'
+    heading: 'Sie haben ausstehende Dateien'
+    intro: '%senderName% hat Ihnen %count% Datei(en) über Nimbus gesendet und sie wurden noch nicht heruntergeladen.'
     download_button: 'Dateien herunterladen'
     expires: 'Diese Übertragung läuft ab am %date%.'
     footer: 'Wenn Sie diese Dateien nicht herunterladen möchten, ignorieren Sie diese E-Mail.'

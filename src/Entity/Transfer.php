@@ -60,8 +60,11 @@ class Transfer
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $passwordHash = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $pendingPasswordEncrypted = null;
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isPublic = false;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $publicDownloadCount = 0;
 
     /**
      * @var Collection<int, TransferFile>
@@ -227,18 +230,6 @@ class Transfer
         return null !== $this->passwordHash;
     }
 
-    public function getPendingPasswordEncrypted(): ?string
-    {
-        return $this->pendingPasswordEncrypted;
-    }
-
-    public function setPendingPasswordEncrypted(?string $pendingPasswordEncrypted): static
-    {
-        $this->pendingPasswordEncrypted = $pendingPasswordEncrypted;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, TransferFile>
      */
@@ -302,5 +293,29 @@ class Transfer
     public function hasRecipients(): bool
     {
         return $this->recipients->count() > 0;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+
+    public function setIsPublic(bool $isPublic): static
+    {
+        $this->isPublic = $isPublic;
+
+        return $this;
+    }
+
+    public function getPublicDownloadCount(): int
+    {
+        return $this->publicDownloadCount;
+    }
+
+    public function incrementPublicDownloadCount(): static
+    {
+        ++$this->publicDownloadCount;
+
+        return $this;
     }
 }

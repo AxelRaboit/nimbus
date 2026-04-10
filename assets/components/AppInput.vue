@@ -12,8 +12,8 @@ defineEmits(['update:modelValue']);
 </script>
 
 <template>
-    <div class="flex flex-col gap-1">
-        <label v-if="label" class="text-sm font-medium text-primary">
+    <div class="flex flex-col gap-1.5">
+        <label v-if="label" class="block text-xs text-secondary uppercase tracking-wide">
             {{ label }}
             <span v-if="required" class="text-red-500 ml-0.5">*</span>
         </label>
@@ -22,7 +22,7 @@ defineEmits(['update:modelValue']);
             :value="modelValue"
             :placeholder="placeholder"
             :required="required"
-            class="block w-full rounded-lg border border-base bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            class="block w-full rounded-md border border-base bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
             :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-500': error }"
             v-on:input="$emit('update:modelValue', $event.target.value)"
         >

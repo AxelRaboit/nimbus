@@ -56,6 +56,22 @@ install-prod:
 	make build
 	make cc-prod
 
+deploy-prod: ## Deploy to production (requires a git tag on HEAD)
+	@APP_VERSION=$$(git describe --exact-match --tags HEAD 2>/dev/null); \
+	if [ -z "$$APP_VERSION" ]; then \
+		echo "❌ Deployment blocked: no release tag on current commit. Create a git tag first (e.g. git tag v1.0.0)."; \
+		exit 1; \
+	fi; \
+	echo "🚀 Deploying $$APP_VERSION..."; \
+	git pull; \
+	echo "$$APP_VERSION" > VERSION; \
+	$(COMPOSER) install --no-dev --optimize-autoloader; \
+	make cc-prod; \
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
+	$(PNPM) install --frozen-lockfile; \
+	$(PNPM) run build; \
+	echo "✅ Deployed $$APP_VERSION successfully."
+
 update:
 	$(COMPOSER) update
 	$(COMPOSER) update --working-dir=tools/php-cs-fixer
@@ -117,6 +133,23 @@ routes:
 
 sf:
 	$(CONSOLE)
+
+# === Fixtures & Dev ===
+fixtures: ## Drop DB, re-run migrations and load fixtures
+	$(CONSOLE) doctrine:database:drop --force --if-exists
+	$(CONSOLE) doctrine:database:create --if-not-exists
+	$(CONSOLE) doctrine:migrations:migrate --no-interaction
+	$(CONSOLE) app:application-parameter
+	$(CONSOLE) doctrine:fixtures:load --no-interaction
+	@echo "✅ Fixtures loaded"
+
+dev-user: ## Assign ROLE_DEV to a user (usage: make dev-user EMAIL=user@example.com)
+	@if [ -z "$(EMAIL)" ]; then \
+		echo "❌ Error: EMAIL is required. Usage: make dev-user EMAIL=user@example.com"; \
+		exit 1; \
+	fi
+	$(CONSOLE) app:user:role $(EMAIL) ROLE_DEV
+	@echo "✅ ROLE_DEV assigned to $(EMAIL)"
 
 # === Database ===
 migration:

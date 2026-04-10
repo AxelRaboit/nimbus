@@ -1,0 +1,9 @@
+{% set text = text ?? '' %}
+{% set variant = variant ?? 'primary' %}
+{% set fullWidth = fullWidth ?? true %}
+
+<button type="submit"
+        class="inline-flex items-center justify-center gap-2 rounded text-white font-bold py-2.5 px-4 transition focus:outline-none focus:ring-2 focus:ring-offset-2 {{ fullWidth ? 'w-full' : '' }} {{ variant === 'primary' ? 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500' : 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500' }}"
+>
+    {{ text }}
+</button>

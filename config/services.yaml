@@ -34,3 +34,8 @@ services:
             $mailerSender: '%mailer.sender%'
 
     App\Service\TransferNotifier: ~
+
+    App\Twig\AppExtension:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+        tags: ['twig.extension']

@@ -10,20 +10,22 @@ use App\Enum\EmailTypeEnum;
 use App\Message\EmailQueueMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
-final readonly class TransferNotifier
+final readonly class TransferNotifier implements TransferNotifierInterface
 {
     public function __construct(
         private MessageBusInterface $messageBus,
         private TwigEnvironment $twig,
         private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
     ) {}
 
-    public function notifyReady(Transfer $transfer): void
+    public function notifyReady(Transfer $transfer, ?string $plainPassword = null): void
     {
         foreach ($transfer->getRecipients() as $recipient) {
-            $this->sendTransferReadyEmail($transfer, $recipient);
+            $this->sendTransferReadyEmail($transfer, $recipient, $plainPassword);
         }
     }
 
@@ -39,10 +41,14 @@ final readonly class TransferNotifier
             'recipient' => $recipient,
         ]);
 
+        $subject = $this->translator->trans('mail.transfer_downloaded.subject', [
+            '%reference%' => $transfer->getReference(),
+        ]);
+
         $this->messageBus->dispatch(new EmailQueueMessage(
             type: EmailTypeEnum::TransferDownloaded->value,
             recipientEmail: $senderEmail,
-            subject: sprintf('Vos fichiers ont été téléchargés [Réf. %s]', $transfer->getReference()),
+            subject: $subject,
             body: $body,
         ));
     }
@@ -58,15 +64,47 @@ final readonly class TransferNotifier
             'transfer' => $transfer,
         ]);
 
+        $subject = $this->translator->trans('mail.transfer_expired.subject', [
+            '%reference%' => $transfer->getReference(),
+        ]);
+
         $this->messageBus->dispatch(new EmailQueueMessage(
             type: EmailTypeEnum::TransferExpired->value,
             recipientEmail: $senderEmail,
-            subject: sprintf('Votre transfert a expiré [Réf. %s]', $transfer->getReference()),
+            subject: $subject,
             body: $body,
         ));
     }
 
-    private function sendTransferReadyEmail(Transfer $transfer, Recipient $recipient): void
+    public function notifyReminder(Transfer $transfer, Recipient $recipient): void
+    {
+        $downloadUrl = $this->urlGenerator->generate(
+            'transfer_show',
+            ['token' => $recipient->getToken()],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        $body = $this->twig->render('email/transfer_reminder.html.twig', [
+            'transfer' => $transfer,
+            'recipient' => $recipient,
+            'downloadUrl' => $downloadUrl,
+        ]);
+
+        $senderName = $transfer->getSenderName() ?? $transfer->getSenderEmail() ?? 'Nimbus';
+
+        $subject = $this->translator->trans('mail.transfer_reminder.subject', [
+            '%reference%' => $transfer->getReference(),
+        ]);
+
+        $this->messageBus->dispatch(new EmailQueueMessage(
+            type: EmailTypeEnum::TransferReady->value,
+            recipientEmail: $recipient->getEmail(),
+            subject: $subject,
+            body: $body,
+        ));
+    }
+
+    private function sendTransferReadyEmail(Transfer $transfer, Recipient $recipient, ?string $plainPassword = null): void
     {
         $downloadUrl = $this->urlGenerator->generate(
             'transfer_show',
@@ -78,14 +116,19 @@ final readonly class TransferNotifier
             'transfer' => $transfer,
             'recipient' => $recipient,
             'downloadUrl' => $downloadUrl,
+            'plainPassword' => $plainPassword,
         ]);
 
-        $senderName = $transfer->getSenderName() ?? $transfer->getSenderEmail() ?? "Quelqu'un";
+        $senderName = $transfer->getSenderName() ?? $transfer->getSenderEmail() ?? 'Nimbus';
+
+        $subject = $this->translator->trans('mail.transfer_ready.subject', [
+            '%senderName%' => $senderName,
+        ]);
 
         $this->messageBus->dispatch(new EmailQueueMessage(
             type: EmailTypeEnum::TransferReady->value,
             recipientEmail: $recipient->getEmail(),
-            subject: sprintf('%s vous a envoyé des fichiers [Réf. %s]', $senderName, $transfer->getReference()),
+            subject: $subject,
             body: $body,
         ));
     }

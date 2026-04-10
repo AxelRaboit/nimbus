@@ -1,6 +1,6 @@
 app:
   name: Nimbus
-  title: 'Nimbus — Transferencia de archivos'
+  title: 'Transferencia de archivos - Nimbus'
   footer: 'Nimbus. Todos los derechos reservados.'
   tagline: 'Envía tus archivos, fácilmente.'
 
@@ -30,6 +30,96 @@ common:
   files: archivo(s)
   size: Tamaño
   name: Nombre
+  save: Guardar
+  saved: Guardado
+
+nav:
+  send: 'Nueva transferencia'
+  logout: 'Cerrar sesión'
+  lightMode: 'Modo claro'
+  darkMode: 'Modo oscuro'
+  profile: 'Mi perfil'
+  login: 'Iniciar sesión'
+
+auth:
+  login:
+    title: 'Iniciar sesión'
+    email: 'Correo electrónico'
+    email_placeholder: 'tu@ejemplo.com'
+    password: 'Contraseña'
+    remember: 'Recordarme'
+    forgot: '¿Olvidaste tu contraseña?'
+    submit: 'Iniciar sesión'
+    no_account: '¿Sin cuenta aún?'
+    register_link: 'Crear una cuenta'
+    continue_as_guest: 'Continuar sin iniciar sesión'
+  hero:
+    heading: 'Envía tus archivos,'
+    heading_accent: 'fácilmente.'
+    description: 'Comparte archivos de forma segura con tus contactos. Rápido, sin registro y sin instalación.'
+    feature_1: 'Transferencias cifradas y seguras'
+    feature_2: 'Caducidad automática de enlaces'
+    feature_3: 'Notificaciones por correo'
+    feature_4: 'Sin instalación requerida'
+  forgot_password:
+    title: 'Contraseña olvidada'
+    instructions: '¿Olvidaste tu contraseña? Ingresa tu correo para recibir un enlace de restablecimiento.'
+    submit: 'Enviar enlace'
+    sent: 'Si existe una cuenta con este correo, recibirás las instrucciones.'
+    back_login: 'Volver al inicio de sesión'
+    email_subject: 'Restablece tu contraseña de Nimbus'
+    email_body: 'Haz clic en el enlace para restablecer tu contraseña. Caduca en 1 hora.'
+    email_expiry: 'Si no solicitaste este restablecimiento, ignora este correo.'
+  reset_password:
+    title: 'Nueva contraseña'
+    instructions: 'Elige una nueva contraseña para tu cuenta.'
+    submit: 'Restablecer contraseña'
+    success: 'Tu contraseña ha sido restablecida. Ya puedes iniciar sesión.'
+    invalid_link: 'Este enlace es inválido o ha expirado. Por favor inténtalo de nuevo.'
+  register:
+    title: 'Registro'
+    heading: 'Crear una cuenta'
+    name: 'Nombre completo'
+    name_placeholder: 'Juan García'
+    email: 'Correo electrónico'
+    password: 'Contraseña'
+    password_confirm: 'Confirmar contraseña'
+    submit: 'Crear mi cuenta'
+    already_account: '¿Ya tienes cuenta?'
+    login_link: 'Iniciar sesión'
+    error_name_required: 'El nombre es obligatorio.'
+    error_email_required: 'El correo electrónico es obligatorio.'
+    error_email_invalid: 'El correo electrónico no es válido.'
+    error_email_taken: 'Este correo electrónico ya está en uso.'
+    error_password_length: 'La contraseña debe tener al menos 8 caracteres.'
+    error_password_mismatch: 'Las contraseñas no coinciden.'
+
+profile:
+  title: Perfil
+  subtitle: 'Gestiona tu información personal y seguridad.'
+  locale:
+    title: Idioma
+    subtitle: 'Elige el idioma de visualización de la aplicación.'
+    field: Idioma
+  info:
+    title: 'Información del perfil'
+    subtitle: 'Actualiza tu nombre y correo electrónico.'
+    name: 'Nombre completo'
+    email: 'Correo electrónico'
+    saved: 'Perfil actualizado correctamente.'
+  password:
+    title: 'Cambiar contraseña'
+    subtitle: 'Usa una contraseña larga y aleatoria para mantener tu cuenta segura.'
+    current: 'Contraseña actual'
+    new: 'Nueva contraseña'
+    confirm: 'Confirmar contraseña'
+    saved: 'Contraseña actualizada correctamente.'
+    error_current: 'La contraseña actual es incorrecta.'
+  danger:
+    title: 'Eliminar cuenta'
+    description: 'Una vez eliminada tu cuenta, todos los datos asociados se borrarán definitivamente.'
+    confirm: '¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.'
+    submit: 'Eliminar mi cuenta'
 
 transfer:
   create:
@@ -86,6 +176,18 @@ transfer:
     expired: 'Esta transferencia ha vencido y ya no está disponible.'
     deleted: 'Esta transferencia ha sido eliminada.'
     not_found: 'No se encontró esta transferencia.'
+    expired_title: 'Esta transferencia ha vencido'
+    expired_desc: 'Los archivos fueron eliminados automáticamente tras la fecha de vencimiento.'
+    deleted_title: 'Esta transferencia ha sido eliminada'
+    deleted_desc: 'El remitente eliminó esta transferencia. Los archivos ya no están disponibles.'
+    other_desc: 'Esta transferencia no está lista aún o no existe.'
+    back: '← Enviar archivos'
+    page_title: 'Nimbus — Transferencia no disponible'
+  password:
+    page_title: 'Nimbus — Transferencia protegida'
+    title: 'Transferencia protegida'
+    subtitle: 'Introduce la contraseña para acceder a los archivos.'
+    label: Contraseña
 
 enum:
   transfer_status:
@@ -94,12 +196,35 @@ enum:
     expired: Vencido
     deleted: Eliminado
 
+locales:
+  fr: Français
+  en: English
+  es: Español
+  de: Deutsch
+
 mail:
   transfer_ready:
     subject: '%senderName% te ha enviado archivos a través de Nimbus'
     heading: 'Has recibido archivos'
     intro: '%senderName% te ha enviado %count% archivo(s) a través de Nimbus.'
     message_label: Mensaje
+    download_button: 'Descargar archivos'
+    expires: 'Esta transferencia vence el %date%.'
+    footer: 'Si no deseas descargar estos archivos, ignora este correo.'
+  transfer_downloaded:
+    subject: 'Tus archivos fueron descargados [Ref. %reference%]'
+    heading: 'Archivos descargados'
+    intro: '%recipientEmail% descargó tus archivos de la transferencia %reference%.'
+    warning: 'Si no esperabas esta descarga, puedes eliminar tu transferencia desde tu enlace de gestión.'
+  transfer_expired:
+    subject: 'Tu transferencia ha expirado [Ref. %reference%]'
+    heading: 'Transferencia expirada'
+    intro: 'Tu transferencia %reference% ha expirado y los archivos han sido eliminados.'
+    footer: 'Crea una nueva transferencia si deseas volver a enviar tus archivos.'
+  transfer_reminder:
+    subject: 'Recordatorio: tienes archivos esperando [Ref. %reference%]'
+    heading: 'Tienes archivos pendientes'
+    intro: '%senderName% te envió %count% archivo(s) a través de Nimbus y aún no han sido descargados.'
     download_button: 'Descargar archivos'
     expires: 'Esta transferencia vence el %date%.'
     footer: 'Si no deseas descargar estos archivos, ignora este correo.'

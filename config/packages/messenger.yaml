@@ -12,7 +12,7 @@ framework:
                     max_retries: 20
                     multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
-            scheduler_main: 'scheduler://main'
+            scheduler_main: 'schedule://main'
 
         default_bus: messenger.bus.default
 
@@ -22,3 +22,4 @@ framework:
         routing:
             'App\Message\EmailQueueMessage': async
             'App\Message\CleanupExpiredTransfersMessage': async
+            'App\Message\SendRemindersMessage': async

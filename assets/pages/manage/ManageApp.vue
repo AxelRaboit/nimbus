@@ -1,6 +1,14 @@
 <script setup>
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { FileText, Check, Trash2, Copy, Link } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
+import { useFileSize } from "@/composables/useFileSize.js";
+import { useDateFormat } from "@/composables/useDateFormat.js";
+
+const { t } = useI18n();
+const { formatSize } = useFileSize();
+const { formatDate } = useDateFormat();
 
 const props = defineProps({
     ownerToken: { type: String, required: true },
@@ -9,192 +17,167 @@ const props = defineProps({
     expiresAt: { type: String, required: true },
     files: { type: String, default: "[]" },
     recipients: { type: String, default: "[]" },
+    csrfToken: { type: String, default: "" },
+    isPublic: { type: String, default: "false" },
+    publicDownloadCount: { type: String, default: "0" },
+    transferToken: { type: String, default: "" },
 });
 
 const parsedFiles = computed(() => JSON.parse(props.files));
 const parsedRecipients = computed(() => JSON.parse(props.recipients));
-
-const expiresDate = computed(() =>
-    new Intl.DateTimeFormat("fr-FR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    }).format(new Date(props.expiresAt))
+const publicMode = computed(() => props.isPublic === "true");
+const downloadCount = computed(() => parseInt(props.publicDownloadCount, 10));
+const publicDownloadUrl = computed(() =>
+    props.transferToken ? `${window.location.origin}/t/${props.transferToken}` : ""
 );
+
+const expiresDate = computed(() => formatDate(props.expiresAt).value);
+
+const copiedLink = ref(false);
+async function copyPublicLink() {
+    try {
+        await navigator.clipboard.writeText(publicDownloadUrl.value);
+        copiedLink.value = true;
+        setTimeout(() => (copiedLink.value = false), 2000);
+    } catch {}
+}
 
 const totalSize = computed(() =>
     parsedFiles.value.reduce((acc, f) => acc + f.size, 0)
 );
 
-function formatSize(bytes) {
-    if (bytes < 1024) return `${bytes} o`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`;
-    return `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
-}
-
-const statusLabel = {
-    pending: "En attente",
-    ready: "Actif",
-    expired: "Expiré",
-    deleted: "Supprimé",
-};
-
 const statusClass = {
-    pending: "bg-yellow-100 text-yellow-700",
-    ready: "bg-green-100 text-green-700",
+    pending: "bg-badge-warning-bg text-badge-warning-text",
+    ready: "bg-badge-success-bg text-badge-success-text",
     expired: "bg-surface-2 text-muted",
-    deleted: "bg-red-100 text-red-700",
+    deleted: "bg-badge-danger-bg text-badge-danger-text",
 };
 
-// Delete confirmation
 const confirmDelete = ref(false);
 const deleting = ref(false);
-
 const deleteUrl = computed(() => `/manage/${props.ownerToken}/delete`);
 </script>
 
 <template>
-    <div class="min-h-screen bg-bg flex flex-col">
-        <!-- Header -->
-        <header class="border-b border-base bg-surface">
-            <div class="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
-                <a href="/" class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                        </svg>
-                    </div>
-                    <span class="text-base font-bold text-primary">Nimbus</span>
-                </a>
-            </div>
-        </header>
+    <div class="max-w-xl mx-auto flex flex-col gap-6">
+        <div>
+            <h1 class="text-2xl font-bold text-primary">{{ t('transfer.manage.title') }}</h1>
+            <p class="text-sm text-muted mt-1">{{ t('transfer.manage.subtitle') }}</p>
+        </div>
 
-        <!-- Main -->
-        <main class="flex-1 flex items-start justify-center px-4 py-10">
-            <div class="w-full max-w-xl flex flex-col gap-6">
-                <!-- Title -->
+        <div class="rounded-lg border border-base bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden">
+            <!-- Header row -->
+            <div class="px-5 py-4 flex items-center justify-between border-b border-base">
                 <div>
-                    <h1 class="text-2xl font-bold text-primary">Gérer mon transfert</h1>
-                    <p class="text-sm text-muted mt-1">Consultez les détails et supprimez si nécessaire.</p>
+                    <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.reference') }}</p>
+                    <p class="text-xl font-bold text-primary tracking-widest">{{ reference }}</p>
                 </div>
+                <span
+                    class="text-xs font-bold px-2.5 py-1 rounded-full"
+                    :class="statusClass[status] ?? 'bg-surface-2 text-muted'"
+                >
+                    {{ t(`transfer.status.${status}`, status) }}
+                </span>
+            </div>
 
-                <!-- Info card -->
-                <div class="rounded-2xl border border-base bg-surface shadow-sm overflow-hidden">
-                    <!-- Header row -->
-                    <div class="px-5 py-4 flex items-center justify-between border-b border-base">
-                        <div>
-                            <p class="text-xs text-muted mb-0.5">Référence</p>
-                            <p class="text-xl font-bold text-primary tracking-widest">{{ reference }}</p>
-                        </div>
-                        <span
-                            class="text-xs font-semibold px-2.5 py-1 rounded-full"
-                            :class="statusClass[status] ?? 'bg-surface-2 text-muted'"
-                        >
-                            {{ statusLabel[status] ?? status }}
-                        </span>
-                    </div>
-
-                    <!-- Meta -->
-                    <div class="px-5 py-3 border-b border-base flex items-center gap-6 text-sm">
-                        <div>
-                            <p class="text-xs text-muted">Expiration</p>
-                            <p class="font-medium text-primary">{{ expiresDate }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-muted">Fichiers</p>
-                            <p class="font-medium text-primary">
-                                {{ parsedFiles.length }} · {{ formatSize(totalSize) }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-muted">Destinataires</p>
-                            <p class="font-medium text-primary">{{ parsedRecipients.length }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Files -->
-                    <div class="px-5 py-3 border-b border-base">
-                        <p class="text-xs font-semibold text-muted uppercase tracking-wide mb-2">Fichiers</p>
-                        <ul class="flex flex-col gap-1.5">
-                            <li
-                                v-for="(file, index) in parsedFiles"
-                                :key="index"
-                                class="flex items-center gap-2 text-sm"
-                            >
-                                <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <span class="truncate text-primary font-medium">{{ file.name }}</span>
-                                <span class="text-muted shrink-0">{{ formatSize(file.size) }}</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Recipients -->
-                    <div class="px-5 py-3">
-                        <p class="text-xs font-semibold text-muted uppercase tracking-wide mb-2">Destinataires</p>
-                        <ul class="flex flex-col gap-1.5">
-                            <li
-                                v-for="(recipient, index) in parsedRecipients"
-                                :key="index"
-                                class="flex items-center justify-between gap-2 text-sm"
-                            >
-                                <span class="truncate text-primary">{{ recipient.email }}</span>
-                                <span
-                                    class="text-xs font-medium shrink-0 flex items-center gap-1"
-                                    :class="recipient.downloaded ? 'text-green-600' : 'text-muted'"
-                                >
-                                    <svg
-                                        v-if="recipient.downloaded"
-                                        class="w-3.5 h-3.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    {{ recipient.downloaded ? 'Téléchargé' : 'En attente' }}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
+            <!-- Meta -->
+            <div class="px-5 py-3 border-b border-base flex items-center gap-6 text-sm bg-surface-2">
+                <div>
+                    <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.expires') }}</p>
+                    <p class="font-medium text-primary">{{ expiresDate }}</p>
                 </div>
-
-                <!-- Delete -->
-                <div class="rounded-2xl border border-red-200 bg-surface shadow-sm p-5">
-                    <h2 class="text-sm font-semibold text-red-600 mb-1">Zone de danger</h2>
-                    <p class="text-xs text-muted mb-4">
-                        La suppression est définitive. Les fichiers seront effacés et les destinataires ne pourront plus télécharger.
-                    </p>
-
-                    <div v-if="!confirmDelete">
-                        <AppButton variant="danger" size="sm" v-on:click="confirmDelete = true">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Supprimer ce transfert
-                        </AppButton>
-                    </div>
-
-                    <div v-else class="flex items-center gap-3">
-                        <p class="text-sm text-primary font-medium">Confirmer la suppression ?</p>
-                        <form :action="deleteUrl" method="POST" class="flex items-center gap-2">
-                            <AppButton
-                                type="submit"
-                                variant="danger"
-                                size="sm"
-                                :loading="deleting"
-                                v-on:click="deleting = true"
-                            >
-                                Oui, supprimer
-                            </AppButton>
-                            <AppButton type="button" variant="secondary" size="sm" v-on:click="confirmDelete = false">
-                                Annuler
-                            </AppButton>
-                        </form>
-                    </div>
+                <div>
+                    <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.files') }}</p>
+                    <p class="font-medium text-primary">{{ parsedFiles.length }} · {{ formatSize(totalSize) }}</p>
+                </div>
+                <div v-if="!publicMode">
+                    <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.recipients') }}</p>
+                    <p class="font-medium text-primary">{{ parsedRecipients.length }}</p>
                 </div>
             </div>
-        </main>
+
+            <!-- Files -->
+            <div class="px-5 py-3 border-b border-base">
+                <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.files') }}</p>
+                <ul class="flex flex-col gap-1.5">
+                    <li v-for="(file, index) in parsedFiles" :key="index" class="flex items-center gap-2 text-sm">
+                        <FileText class="w-4 h-4 text-muted shrink-0" :stroke-width="2" />
+                        <span class="truncate text-primary font-medium">{{ file.name }}</span>
+                        <span class="text-muted shrink-0">{{ formatSize(file.size) }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Public link -->
+            <div v-if="publicMode" class="px-5 py-3 border-b border-base">
+                <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.public_link') }}</p>
+                <div class="flex items-center gap-2">
+                    <input
+                        :value="publicDownloadUrl"
+                        readonly
+                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                        v-on:click="$event.target.select()"
+                    >
+                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyPublicLink">
+                        <Check v-if="copiedLink" class="w-4 h-4 text-green-500" :stroke-width="2" />
+                        <Copy v-else class="w-4 h-4" :stroke-width="2" />
+                    </AppButton>
+                </div>
+                <p class="text-xs text-muted mt-2 flex items-center gap-1">
+                    <Link class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
+                    {{ t('transfer.manage.public_downloads', { count: downloadCount }) }}
+                </p>
+            </div>
+
+            <!-- Recipients -->
+            <div v-if="!publicMode" class="px-5 py-3">
+                <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.recipients') }}</p>
+                <p v-if="parsedRecipients.length === 0" class="text-sm text-muted">{{ t('transfer.manage.no_recipients') }}</p>
+                <ul v-else class="flex flex-col gap-1.5">
+                    <li v-for="(recipient, index) in parsedRecipients" :key="index" class="flex items-center justify-between gap-2 text-sm">
+                        <span class="truncate text-primary">{{ recipient.email }}</span>
+                        <span
+                            class="text-xs font-bold shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-full"
+                            :class="recipient.downloaded ? 'bg-badge-success-bg text-badge-success-text' : 'bg-surface-2 text-muted'"
+                        >
+                            <Check v-if="recipient.downloaded" class="w-3 h-3" :stroke-width="2.5" />
+                            {{ recipient.downloaded ? t('transfer.manage.downloaded') : t('transfer.manage.pending_download') }}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Delete -->
+        <div class="rounded-2xl border border-rose-900/40 bg-surface p-6">
+            <h2 class="text-lg font-semibold text-rose-400 mb-1">{{ t('transfer.manage.danger_zone') }}</h2>
+            <p class="text-sm text-secondary mt-1 mb-4">{{ t('transfer.manage.danger_description') }}</p>
+
+            <div v-if="!confirmDelete">
+                <AppButton variant="danger" size="sm" v-on:click="confirmDelete = true">
+                    <Trash2 class="w-4 h-4" :stroke-width="2" />
+                    {{ t('transfer.manage.delete_btn') }}
+                </AppButton>
+            </div>
+
+            <div v-else class="flex items-center gap-3">
+                <p class="text-sm text-primary font-medium">{{ t('transfer.manage.confirm_delete') }}</p>
+                <form :action="deleteUrl" method="POST" class="flex items-center gap-2">
+                    <input type="hidden" name="_token" :value="csrfToken">
+                    <AppButton
+                        type="submit"
+                        variant="danger"
+                        size="sm"
+                        :loading="deleting"
+                        v-on:click="deleting = true"
+                    >
+                        {{ t('transfer.manage.confirm_yes') }}
+                    </AppButton>
+                    <AppButton type="button" variant="secondary" size="sm" v-on:click="confirmDelete = false">
+                        {{ t('transfer.manage.cancel') }}
+                    </AppButton>
+                </form>
+            </div>
+        </div>
     </div>
 </template>

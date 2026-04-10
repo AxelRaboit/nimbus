@@ -1,0 +1,14 @@
+<table class="file-list" role="presentation">
+    {% for file in transfer.files %}
+    <tr>
+        <td>📄 {{ file.originalName }}</td>
+        <td align="right" style="color:#9ca3af;white-space:nowrap;">
+            {% if file.fileSize < 1048576 %}
+                {{ (file.fileSize / 1024)|number_format(1) }} Ko
+            {% else %}
+                {{ (file.fileSize / 1048576)|number_format(1) }} Mo
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

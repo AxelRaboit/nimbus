@@ -33,6 +33,9 @@
 # TUS uploads tmp
 /var/uploads/
 
+# App version (generated at deploy time from git tag)
+/VERSION
+
 # IDE
 /.idea/
 /.vscode/

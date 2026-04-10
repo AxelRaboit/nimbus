@@ -1,7 +1,4 @@
-import { createApp } from "vue";
+import { mountApp } from "@/utils/mountApp.js";
 import HomeApp from "./HomeApp.vue";
 
-const el = document.getElementById("app-home");
-if (el) {
-    createApp(HomeApp).mount(el);
-}
+mountApp("app-home", HomeApp);

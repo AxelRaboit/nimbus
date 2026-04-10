@@ -1,0 +1,30 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}Nimbus — Dev Dashboard{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'Dev Dashboard'}) }}
+{% endblock %}
+
+{% block body %}
+<div id="app-dev"
+     data-tab="{{ tab }}"
+     data-stats="{{ tab == 'stats' ? stats|json_encode : '{}' }}"
+     data-transfers="{{ tab == 'transfers' ? transfers|json_encode : '{}' }}"
+     data-status="{{ status ?? '' }}"
+     data-locale="{{ app.request.locale }}"
+     data-stats-path="{{ path('dev_dashboard') }}"
+     data-transfers-path="{{ path('dev_transfers') }}"
+     data-parameter-update-path="{{ path('dev_parameter_update', {key: '__key__'}) }}"
+></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ vite_entry_script_tags('dev') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ vite_entry_link_tags('dev') }}
+{% endblock %}

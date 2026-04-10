@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Entity\Recipient;
 use App\Entity\Transfer;
+use App\Exception\DisallowedFileTypeException;
+use App\Exception\DisallowedZipContentException;
+use App\Exception\FileLimitExceededException;
+use App\Exception\SizeLimitExceededException;
+use App\Repository\ApplicationParameterRepository;
 use App\Repository\TransferRepository;
 use App\Service\TransferManager;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,27 +28,39 @@ class TransferApiController extends AbstractController
     #[Route('/transfer', name: 'transfer_api_create', methods: ['POST'])]
     public function create(
         Request $request,
-        EntityManagerInterface $em,
         ValidatorInterface $validator,
+        ApplicationParameterRepository $params,
+        TransferManager $transferManager,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        $constraints = new Assert\Collection(fields: [
-            'senderEmail' => [new Assert\NotBlank(), new Assert\Email()],
+        $maxRecipients = (int) $params->get('max_recipients_per_transfer');
+        $maxExpiryDays = (int) $params->get('max_expiry_days');
+        $isPublic = isset($data['isPublic']) && true === $data['isPublic'];
+
+        $fields = [
+            'senderEmail' => new Assert\Optional([new Assert\Email()]),
             'senderName' => new Assert\Optional(new Assert\Length(max: 255)),
             'message' => new Assert\Optional(new Assert\Length(max: 2000)),
-            'recipients' => [
-                new Assert\NotBlank(),
-                new Assert\Count(min: 1, max: 20),
-                new Assert\All([new Assert\Email()]),
-            ],
-            'expiresInDays' => new Assert\Optional([
-                new Assert\Range(min: 1, max: 30),
+            'isPublic' => new Assert\Optional(new Assert\Type('bool')),
+            'expiresInHours' => new Assert\Optional([
+                new Assert\Range(min: 1, max: $maxExpiryDays * 24),
             ]),
             'password' => new Assert\Optional(new Assert\Length(min: 4, max: 128)),
-        ]);
+        ];
 
-        $violations = $validator->validate($data ?? [], $constraints);
+        if ($isPublic) {
+            $fields['recipients'] = new Assert\Optional();
+        } else {
+            $fields['senderEmail'] = [new Assert\NotBlank(), new Assert\Email()];
+            $fields['recipients'] = [
+                new Assert\NotBlank(),
+                new Assert\Count(min: 1, max: $maxRecipients),
+                new Assert\All([new Assert\Email()]),
+            ];
+        }
+
+        $violations = $validator->validate($data ?? [], new Assert\Collection(fields: $fields));
 
         if (count($violations) > 0) {
             $errors = [];
@@ -56,29 +71,14 @@ class TransferApiController extends AbstractController
             return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $transfer = new Transfer();
-        $transfer->setSenderEmail($data['senderEmail']);
-        $transfer->setSenderName($data['senderName'] ?? null);
-        $transfer->setMessage($data['message'] ?? null);
-
-        if (isset($data['expiresInDays'])) {
-            $transfer->setExpiresAt(new DateTimeImmutable(sprintf('+%d days', $data['expiresInDays'])));
-        }
-
-        foreach ($data['recipients'] as $email) {
-            $recipient = new Recipient();
-            $recipient->setEmail($email);
-            $transfer->addRecipient($recipient);
-        }
-
-        $em->persist($transfer);
-        $em->flush();
+        $transfer = $transferManager->create(array_merge($data, ['isPublic' => $isPublic]));
 
         return $this->json([
             'token' => $transfer->getToken(),
             'ownerToken' => $transfer->getOwnerToken(),
             'reference' => $transfer->getReference(),
             'uploadKey' => $transfer->getToken(),
+            'isPublic' => $transfer->isPublic(),
         ], Response::HTTP_CREATED);
     }
 
@@ -101,12 +101,22 @@ class TransferApiController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         $uploadKeys = $data['uploadKeys'] ?? [];
+        $plainPassword = isset($data['password']) && '' !== $data['password'] ? (string) $data['password'] : null;
 
         if (empty($uploadKeys)) {
             return $this->json(['error' => 'No upload keys provided'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $transferManager->finalize($transfer, $uploadKeys);
+        try {
+            $transferManager->finalize($transfer, $uploadKeys, $plainPassword);
+        } catch (FileLimitExceededException|SizeLimitExceededException|DisallowedFileTypeException $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (DisallowedZipContentException $e) {
+            return $this->json(
+                ['error' => 'zip_content_not_allowed', 'disallowed_files' => $e->getDisallowedFiles()],
+                Response::HTTP_UNPROCESSABLE_ENTITY,
+            );
+        }
 
         return $this->json([
             'status' => $transfer->getStatus()->value,
@@ -114,6 +124,40 @@ class TransferApiController extends AbstractController
             'downloadUrl' => $this->generateUrl('transfer_show', ['token' => $transfer->getToken()]),
             'manageUrl' => $this->generateUrl('transfer_manage', ['ownerToken' => $transfer->getOwnerToken()]),
         ]);
+    }
+
+    #[Route('/transfer/{token}/resume-check', name: 'transfer_api_resume_check', methods: ['GET'])]
+    public function resumeCheck(string $token, TransferRepository $transferRepository): JsonResponse
+    {
+        $transfer = $transferRepository->findByToken($token);
+
+        if (!$transfer instanceof Transfer || !$transfer->isPending()) {
+            return $this->json(['resumable' => false], Response::HTTP_GONE);
+        }
+
+        $threshold = new DateTimeImmutable('-48 hours');
+        if ($transfer->getCreatedAt() < $threshold) {
+            return $this->json(['resumable' => false], Response::HTTP_GONE);
+        }
+
+        return $this->json(['resumable' => true]);
+    }
+
+    #[Route('/transfer/{token}/abandon', name: 'transfer_api_abandon', methods: ['DELETE'])]
+    public function abandon(
+        string $token,
+        TransferRepository $transferRepository,
+        TransferManager $transferManager,
+    ): JsonResponse {
+        $transfer = $transferRepository->findByToken($token);
+
+        if (!$transfer instanceof Transfer || !$transfer->isPending()) {
+            return $this->json(['ok' => true]);
+        }
+
+        $transferManager->delete($transfer);
+
+        return $this->json(['ok' => true]);
     }
 
     #[Route('/transfer/{token}', name: 'transfer_api_get', methods: ['GET'])]

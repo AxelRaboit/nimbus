@@ -1,0 +1,80 @@
+{% extends 'base_guest.html.twig' %}
+
+{% block title %}{{ 'auth.register.title'|trans }} - Nimbus{% endblock %}
+
+{% block hero %}
+    {{ include('components/auth_hero.html.twig') }}
+{% endblock %}
+
+{% block content %}
+    <h1 class="text-xl font-bold text-primary mb-6">{{ 'auth.register.heading'|trans }}</h1>
+
+    <form method="POST" action="{{ path('app_register') }}" class="flex flex-col gap-4">
+
+        <div>
+            {{ include('components/form_input.html.twig', {
+                id: 'name',
+                type: 'text',
+                name: 'name',
+                label: 'auth.register.name'|trans,
+                placeholder: 'auth.register.name_placeholder'|trans,
+                value: values.name ?? '',
+                error: errors.name is defined ? errors.name : null,
+                required: true,
+                autofocus: true,
+                autocomplete: 'name',
+            }, false) }}
+        </div>
+
+        <div>
+            {{ include('components/form_input.html.twig', {
+                id: 'email',
+                type: 'email',
+                name: 'email',
+                label: 'auth.register.email'|trans,
+                placeholder: 'auth.login.email_placeholder'|trans,
+                value: values.email ?? '',
+                error: errors.email is defined ? errors.email : null,
+                required: true,
+                autocomplete: 'email',
+            }, false) }}
+        </div>
+
+        <div>
+            {{ include('components/form_password_input.html.twig', {
+                id: 'password',
+                name: 'password',
+                label: 'auth.register.password'|trans,
+                error: errors.password is defined ? errors.password : null,
+                required: true,
+                autocomplete: 'new-password',
+            }, false) }}
+        </div>
+
+        <div>
+            {{ include('components/form_password_input.html.twig', {
+                id: 'password_confirmation',
+                name: 'password_confirmation',
+                label: 'auth.register.password_confirm'|trans,
+                error: errors.password_confirmation is defined ? errors.password_confirmation : null,
+                required: true,
+                autocomplete: 'new-password',
+            }, false) }}
+        </div>
+
+        {{ include('components/form_submit_button.html.twig', {
+            text: 'auth.register.submit'|trans,
+        }, false) }}
+    </form>
+
+    <div class="mt-6 flex items-center gap-4">
+        <div class="flex-1 border-t border-base"></div>
+        <span class="text-sm text-muted">{{ 'common.or'|trans }}</span>
+        <div class="flex-1 border-t border-base"></div>
+    </div>
+
+    <p class="mt-4 text-center text-sm text-secondary">
+        {{ 'auth.register.already_account'|trans }}
+        <a href="{{ path('app_login') }}" class="text-link hover:text-link-hover underline font-medium transition-colors">{{ 'auth.register.login_link'|trans }}</a>
+    </p>
+{% endblock %}

@@ -1,6 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_auth.html.twig' %}
 
-{% block title %}Nimbus — Télécharger les fichiers{% endblock %}
+{% block title %}{{ 'transfer.show.title'|trans }} - Nimbus{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'transfer.show.title'|trans}) }}
+{% endblock %}
 
 {% block body %}
     <div id="app-transfer"
@@ -8,7 +12,8 @@
          data-reference="{{ transfer.reference }}"
          data-expires-at="{{ transfer.expiresAt|date('c') }}"
          data-sender-name="{{ transfer.senderName ?? '' }}"
-         data-files="{{ transfer.files|map(f => {name: f.originalName, size: f.fileSize, mimeType: f.mimeType})|json_encode }}">
+         data-files="{{ transfer.files|map(f => {name: f.originalName, size: f.fileSize, mimeType: f.mimeType, filename: f.filename})|json_encode }}"
+         data-locale="{{ app.request.locale }}">
     </div>
 {% endblock %}
 
