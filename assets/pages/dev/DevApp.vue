@@ -37,7 +37,6 @@ const parsedTransfers = computed(() => {
     try { return JSON.parse(props.transfers); } catch { return {}; }
 });
 
-// ── Chart theme (follows CSS vars for dark/light) ───────────────────────────
 const isDark = ref(document.documentElement.classList.contains("dark"));
 const textColor  = computed(() => isDark.value ? "#94a3b8" : "#64748b");
 const gridColor  = computed(() => isDark.value ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)");
@@ -61,7 +60,6 @@ const donutOpts = computed(() => ({
     },
 }));
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 function fmtMonth(yyyyMm) {
     const [y, m] = yyyyMm.split("-");
     return new Intl.DateTimeFormat(locale.value, { month: "short", year: "2-digit" }).format(new Date(+y, +m - 1));
@@ -71,7 +69,6 @@ function fmtDate(iso) {
     return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
 }
 
-// ── Charts data ──────────────────────────────────────────────────────────────
 const usersLineData = computed(() => ({
     labels: parsedStats.value.usersByMonth?.map(m => fmtMonth(m.month)) ?? [],
     datasets: [{
@@ -114,7 +111,6 @@ const statusDonutData = computed(() => {
     };
 });
 
-// ── Parameters inline edit ────────────────────────────────────────────────────
 const editingKey   = ref(null);
 const editingValue = ref("");
 const editSaving   = ref(false);
@@ -147,7 +143,6 @@ async function saveEdit(param) {
     }
 }
 
-// ── Transfers tab ─────────────────────────────────────────────────────────────
 const currentStatus = ref(props.status);
 const currentPage   = ref(parsedTransfers.value.page ?? 1);
 
@@ -172,7 +167,6 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
 
 <template>
     <div>
-        <!-- Tabs -->
         <div class="border-b border-base mb-6 flex gap-1 px-1">
             <a
                 :href="statsPath"
@@ -194,9 +188,7 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
             </a>
         </div>
 
-        <!-- ── Stats tab ─────────────────────────────────────────────────── -->
         <div v-if="activeTab === 'stats'" class="space-y-6">
-            <!-- KPIs -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-surface border border-base rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
@@ -255,7 +247,6 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
                 </div>
             </div>
 
-            <!-- Charts row 1 -->
             <div class="grid lg:grid-cols-2 gap-4">
                 <div class="bg-surface border border-base rounded-xl p-5">
                     <p class="text-sm font-semibold text-primary mb-4">Nouveaux utilisateurs (6 mois)</p>
@@ -271,7 +262,6 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
                 </div>
             </div>
 
-            <!-- Charts row 2 -->
             <div class="grid lg:grid-cols-1 gap-4">
                 <div class="bg-surface border border-base rounded-xl p-5">
                     <p class="text-sm font-semibold text-primary mb-4">Statut des transferts</p>
@@ -281,7 +271,6 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
                 </div>
             </div>
 
-            <!-- Application parameters -->
             <div v-if="parsedStats.parameters?.length" class="bg-surface border border-base rounded-xl overflow-hidden">
                 <div class="px-5 py-3 border-b border-base bg-surface-2">
                     <p class="text-sm font-semibold text-primary">Paramètres applicatifs</p>
@@ -347,9 +336,7 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
             </div>
         </div>
 
-        <!-- ── Transfers tab ──────────────────────────────────────────────── -->
         <div v-else-if="activeTab === 'transfers'" class="space-y-4">
-            <!-- Status filter -->
             <div class="flex items-center gap-2 flex-wrap">
                 <a
                     v-for="s in ['', 'ready', 'pending', 'expired', 'deleted']"
@@ -364,7 +351,6 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
                 </a>
             </div>
 
-            <!-- Table -->
             <div class="bg-surface border border-base rounded-xl overflow-hidden">
                 <table class="w-full text-sm">
                     <thead>
@@ -427,7 +413,6 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
                     </tbody>
                 </table>
 
-                <!-- Pagination -->
                 <div
                     v-if="parsedTransfers.totalPages > 1"
                     class="border-t border-base px-4 py-3 flex items-center justify-between bg-surface-2"

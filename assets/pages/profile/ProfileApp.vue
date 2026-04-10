@@ -17,7 +17,6 @@ const props = defineProps({
     loginPath: { type: String, required: true },
 });
 
-// ── Locale ───────────────────────────────────────────────────────────────────
 const selectedLocale = ref(props.locale);
 
 async function changeLocale() {
@@ -29,7 +28,6 @@ async function changeLocale() {
     window.location.reload();
 }
 
-// ── Profile info ─────────────────────────────────────────────────────────────
 const infoName = ref(props.userName);
 const infoEmail = ref(props.userEmail);
 const infoErrors = ref({});
@@ -59,7 +57,6 @@ async function saveInfo() {
     }
 }
 
-// ── Password ─────────────────────────────────────────────────────────────────
 const currentPassword = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
@@ -97,7 +94,6 @@ async function savePassword() {
     }
 }
 
-// ── Delete account ───────────────────────────────────────────────────────────
 const deleteLoading = ref(false);
 
 async function deleteAccount() {
@@ -114,7 +110,6 @@ async function deleteAccount() {
             window.location.href = props.loginPath;
         }
     } catch {
-        // silently fail
     } finally {
         deleteLoading.value = false;
     }
@@ -123,7 +118,6 @@ async function deleteAccount() {
 
 <template>
     <div class="max-w-2xl mx-auto space-y-6">
-        <!-- Locale -->
         <div class="bg-surface border border-base/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.locale.title') }}</h2>
@@ -144,7 +138,6 @@ async function deleteAccount() {
             </div>
         </div>
 
-        <!-- Profile info -->
         <div class="bg-surface border border-base/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.info.title') }}</h2>
@@ -186,7 +179,6 @@ async function deleteAccount() {
             </form>
         </div>
 
-        <!-- Change password -->
         <div class="bg-surface border border-base/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.password.title') }}</h2>
@@ -243,7 +235,6 @@ async function deleteAccount() {
             </form>
         </div>
 
-        <!-- Danger zone -->
         <div class="bg-surface border border-rose-900/40 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-rose-400">{{ t('profile.danger.title') }}</h2>

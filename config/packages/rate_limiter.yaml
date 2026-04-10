@@ -1,0 +1,6 @@
+framework:
+    rate_limiter:
+        transfer_unlock:
+            policy: fixed_window
+            limit: 5
+            interval: '5 minutes'

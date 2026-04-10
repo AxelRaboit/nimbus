@@ -18,32 +18,21 @@ const { formatSize } = useFileSize();
 const isDragging  = ref(false);
 const dropErrors  = ref([]);
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
 function isAllowedExt(name) {
     const dotIndex = name.lastIndexOf(".");
     const ext = dotIndex !== -1 ? name.slice(dotIndex).toLowerCase() : "";
     return { ext, allowed: ALLOWED_EXTENSIONS.includes(ext) };
 }
 
-/**
- * Wrap a File so its name is the relative path (for folder uploads).
- * Creates a new File backed by the same data — no byte copy.
- */
 function wrapWithPath(file, path) {
     if (!path || path === file.name) return file;
     return new File([file], path, { type: file.type });
 }
 
-/**
- * Recursively read a FileSystemDirectoryEntry and return all File objects
- * with their relative paths (relative to the dropped folder).
- */
 async function readDirectoryEntry(entry, prefix = "") {
     const files = [];
     const reader = entry.createReader();
 
-    // readEntries returns at most 100 entries per call — loop until done
     let batch;
     do {
         batch = await new Promise((res, rej) => reader.readEntries(res, rej));
@@ -61,8 +50,6 @@ async function readDirectoryEntry(entry, prefix = "") {
 
     return files;
 }
-
-// ── Drop handler ─────────────────────────────────────────────────────────────
 
 async function onDrop(e) {
     isDragging.value = false;
@@ -100,8 +87,6 @@ async function onFolderInput(e) {
     e.target.value = "";
 }
 
-// ── Core validation & dedup ───────────────────────────────────────────────────
-
 async function addFiles(newFiles) {
     dropErrors.value = [];
     const valid      = [];
@@ -125,8 +110,8 @@ async function addFiles(newFiles) {
                     zipErrors.push({ fileName: file.name, disallowed });
                     continue;
                 }
-            } catch {
-                // Unreadable ZIP client-side — backend will validate
+            } catch (err) {
+                console.warn("[DropZone] Failed to validate zip contents:", err);
             }
         }
 
@@ -190,7 +175,6 @@ function removeFile(index) {
             </div>
         </div>
 
-        <!-- Folder button — outside the dropzone div to avoid double dialog -->
         <button
             type="button"
             class="mt-2 flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors"
@@ -200,7 +184,6 @@ function removeFile(index) {
             {{ t('transfer.dropzone.upload_folder') }}
         </button>
 
-        <!-- Validation errors -->
         <div v-if="dropErrors.length" class="mt-2 flex flex-col gap-1">
             <p
                 v-for="(err, i) in dropErrors"

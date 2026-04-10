@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\ApplicationParameter;
 use App\Entity\Transfer;
 use App\Enum\TransferStatusEnum;
+use App\Model\Pagination;
 use App\Repository\ApplicationParameterRepository;
 use App\Repository\TransferRepository;
 use App\Repository\UserRepository;
@@ -124,9 +125,6 @@ class DevStatsService
                ->setParameter('status', TransferStatusEnum::from($status));
         }
 
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-
         $countQb = $this->transferRepository->createQueryBuilder('t')
             ->select('COUNT(t.id)');
         if ('' !== $status) {
@@ -134,15 +132,14 @@ class DevStatsService
                     ->setParameter('status', TransferStatusEnum::from($status));
         }
 
-        $total = (int) $countQb->getQuery()->getSingleScalarResult();
-
-        $transfers = $qb->setMaxResults($limit)->setFirstResult($offset)->getQuery()->getResult();
+        $pagination = Pagination::fromPage($page, limit: 20, total: (int) $countQb->getQuery()->getSingleScalarResult());
+        $transfers = $qb->setMaxResults($pagination->limit)->setFirstResult($pagination->offset)->getQuery()->getResult();
 
         return [
             'items' => array_map($this->serializeTransfer(...), $transfers),
-            'total' => $total,
-            'page' => $page,
-            'totalPages' => (int) ceil($total / $limit),
+            'total' => $pagination->total,
+            'page' => $pagination->page,
+            'totalPages' => $pagination->totalPages,
         ];
     }
 

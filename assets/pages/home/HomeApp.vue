@@ -33,7 +33,6 @@ const fileTypeGroups = computed(() => {
 
 const showHelp = ref(false);
 
-// Close modal on Escape
 if (typeof window !== "undefined") {
     window.addEventListener("keydown", (e) => { if (e.key === "Escape") showHelp.value = false; });
 }
@@ -48,9 +47,8 @@ const transferIsPublic = ref(false);
 const uploadKeys = ref([]);
 const apiError = ref(null);
 
-// ── Resume draft ──────────────────────────────────────────────────────────────
 const resumeDraft = ref(null);
-const formKey     = ref(0); // forces TransferForm remount on abandon
+const formKey     = ref(0);
 
 onMounted(async () => {
     const draft = getDraft();
@@ -74,7 +72,7 @@ onMounted(async () => {
 async function abandonResume() {
     const draft = resumeDraft.value;
     resumeDraft.value = null;
-    formKey.value++;       // remount form → champs vides
+    formKey.value++;
     clearDraft();
     clearTusFingerprints();
     if (draft?.token) {
@@ -90,7 +88,6 @@ const manageUrl = computed(() => {
 async function onFormSubmit(formData) {
     apiError.value = null;
 
-    // If resuming an existing pending transfer, skip creation
     const existing = resumeDraft.value ?? (getDraft()?.token ? getDraft() : null);
     if (existing?.token) {
         resumeDraft.value = null;
@@ -195,7 +192,6 @@ function reset() {
 
 <template>
     <div class="w-full max-w-xl mx-auto">
-        <!-- Resume banner -->
         <div v-if="resumeDraft" class="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 flex items-start gap-3">
             <RotateCcw class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" :stroke-width="2" />
             <div class="flex-1 min-w-0">
@@ -247,7 +243,6 @@ function reset() {
         </div>
     </div>
 
-    <!-- Help modal -->
     <Teleport to="body">
         <Transition name="modal">
             <div
@@ -257,7 +252,6 @@ function reset() {
             >
                 <div class="absolute inset-0 bg-black/50" v-on:click="showHelp = false" />
                 <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-                    <!-- Header -->
                     <div class="flex items-center justify-between px-6 py-4 border-b border-base">
                         <h2 class="text-base font-semibold text-primary flex items-center gap-2">
                             <HelpCircle class="w-4 h-4 text-indigo-500" :stroke-width="2" />
@@ -269,7 +263,6 @@ function reset() {
                     </div>
 
                     <div class="px-6 py-5 space-y-6">
-                        <!-- Steps -->
                         <ol class="space-y-4">
                             <li class="flex items-start gap-3">
                                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
@@ -294,7 +287,6 @@ function reset() {
                             </li>
                         </ol>
 
-                        <!-- Stats -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
                             <div class="flex items-center justify-between border-b border-base pb-3">
                                 <span class="text-xs text-muted">Taille max</span>
@@ -314,7 +306,6 @@ function reset() {
                             </div>
                         </div>
 
-                        <!-- Password note -->
                         <p class="text-xs text-muted flex items-center gap-1.5">
                             <svg
                                 class="w-3.5 h-3.5 shrink-0"
@@ -328,7 +319,6 @@ function reset() {
                             Protection par mot de passe optionnelle
                         </p>
 
-                        <!-- Accepted file types -->
                         <div>
                             <p class="text-xs text-muted uppercase tracking-wide mb-3">Formats acceptés</p>
                             <div class="flex flex-col gap-2">

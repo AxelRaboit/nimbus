@@ -7,9 +7,10 @@ namespace App\Controller;
 use App\Entity\Recipient;
 use App\Entity\Transfer;
 use App\Entity\TransferFile;
+use App\Enum\HttpMethodEnum;
+use App\Manager\TransferManager;
 use App\Repository\RecipientRepository;
 use App\Repository\TransferRepository;
-use App\Service\TransferManager;
 use App\Service\TransferNotifierInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -17,18 +18,23 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TransferController extends AbstractController
 {
+    private const SESSION_RECIPIENT_PREFIX = 'transfer_recipient_';
+
+    private const SESSION_UNLOCKED_PREFIX = 'transfer_unlocked_';
+
     #[Route('/t/{token}', name: 'transfer_show')]
     public function show(string $token, Request $request, TransferRepository $transferRepository, RecipientRepository $recipientRepository): Response
     {
         $recipient = $recipientRepository->findByToken($token);
         if ($recipient instanceof Recipient) {
             $transfer = $recipient->getTransfer();
-            $request->getSession()->set('transfer_recipient_'.$transfer->getToken(), $recipient->getToken());
+            $request->getSession()->set(self::SESSION_RECIPIENT_PREFIX.$transfer->getToken(), $recipient->getToken());
         } else {
             $transfer = $transferRepository->findByToken($token);
         }
@@ -41,16 +47,21 @@ class TransferController extends AbstractController
             return $this->render('transfer/unavailable.html.twig', ['transfer' => $transfer]);
         }
 
-        if ($transfer->isPasswordProtected() && !$request->getSession()->get('transfer_unlocked_'.$transfer->getToken())) {
+        if (!$this->isPasswordUnlocked($request, $transfer)) {
             return $this->render('transfer/password.html.twig', ['transfer' => $transfer]);
         }
 
         return $this->render('transfer/show.html.twig', ['transfer' => $transfer]);
     }
 
-    #[Route('/t/{token}/unlock', name: 'transfer_unlock', methods: ['POST'])]
-    public function unlock(string $token, Request $request, TransferRepository $transferRepository, TranslatorInterface $translator): JsonResponse
+    #[Route('/t/{token}/unlock', name: 'transfer_unlock', methods: [HttpMethodEnum::Post->value])]
+    public function unlock(string $token, Request $request, TransferRepository $transferRepository, TransferManager $transferManager, TranslatorInterface $translator, RateLimiterFactory $transferUnlockLimiter): JsonResponse
     {
+        $limiter = $transferUnlockLimiter->create($request->getClientIp().'_'.$token);
+        if (!$limiter->consume()->isAccepted()) {
+            return new JsonResponse(['error' => $translator->trans('error.too_many_attempts')], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         $transfer = $transferRepository->findByToken($token);
 
         if (!$transfer instanceof Transfer || !$transfer->isReady() || $transfer->isExpired()) {
@@ -63,11 +74,11 @@ class TransferController extends AbstractController
             return new JsonResponse(['error' => $translator->trans('error.generic')]);
         }
 
-        if (!password_verify($body['password'] ?? '', (string) $transfer->getPasswordHash())) {
+        if (!$transferManager->verifyPassword($transfer, $body['password'] ?? '')) {
             return new JsonResponse(['error' => $translator->trans('transfer.show.password_error')]);
         }
 
-        $request->getSession()->set('transfer_unlocked_'.$transfer->getToken(), true);
+        $request->getSession()->set(self::SESSION_UNLOCKED_PREFIX.$transfer->getToken(), true);
 
         return new JsonResponse(['success' => true]);
     }
@@ -85,11 +96,11 @@ class TransferController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        if ($transfer->isPasswordProtected() && !$request->getSession()->get('transfer_unlocked_'.$transfer->getToken())) {
+        if (!$this->isPasswordUnlocked($request, $transfer)) {
             return $this->redirectToRoute('transfer_show', ['token' => $token]);
         }
 
-        $recipientToken = $request->getSession()->get('transfer_recipient_'.$transfer->getToken());
+        $recipientToken = $this->getSessionRecipientToken($request, $transfer);
         if ($recipientToken) {
             $transferManager->trackRecipientDownload($transfer, $recipientToken);
         } elseif ($transfer->isPublic()) {
@@ -142,7 +153,7 @@ class TransferController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        if ($transfer->isPasswordProtected() && !$request->getSession()->get('transfer_unlocked_'.$transfer->getToken())) {
+        if (!$this->isPasswordUnlocked($request, $transfer)) {
             return $this->redirectToRoute('transfer_show', ['token' => $token]);
         }
 
@@ -158,7 +169,7 @@ class TransferController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $recipientToken = $request->getSession()->get('transfer_recipient_'.$transfer->getToken());
+        $recipientToken = $this->getSessionRecipientToken($request, $transfer);
         if ($recipientToken) {
             $transferManager->trackRecipientDownload($transfer, $recipientToken);
         } elseif ($transfer->isPublic()) {
@@ -189,7 +200,7 @@ class TransferController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        if ($transfer->isPasswordProtected() && !$request->getSession()->get('transfer_unlocked_'.$transfer->getToken())) {
+        if (!$this->isPasswordUnlocked($request, $transfer)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -230,7 +241,7 @@ class TransferController extends AbstractController
         ]);
     }
 
-    #[Route('/api/manage/{ownerToken}/remind', name: 'transfer_remind', methods: ['POST'])]
+    #[Route('/api/manage/{ownerToken}/remind', name: 'transfer_remind', methods: [HttpMethodEnum::Post->value])]
     public function remind(
         string $ownerToken,
         Request $request,
@@ -265,7 +276,21 @@ class TransferController extends AbstractController
         return $this->json(['error' => 'Recipient not found or already downloaded'], Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/manage/{ownerToken}/delete', name: 'transfer_delete', methods: ['POST'])]
+    private function isPasswordUnlocked(Request $request, Transfer $transfer): bool
+    {
+        if (!$transfer->isPasswordProtected()) {
+            return true;
+        }
+
+        return (bool) $request->getSession()->get(self::SESSION_UNLOCKED_PREFIX.$transfer->getToken());
+    }
+
+    private function getSessionRecipientToken(Request $request, Transfer $transfer): ?string
+    {
+        return $request->getSession()->get(self::SESSION_RECIPIENT_PREFIX.$transfer->getToken()) ?: null;
+    }
+
+    #[Route('/manage/{ownerToken}/delete', name: 'transfer_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(string $ownerToken, Request $request, TransferRepository $transferRepository, TransferManager $transferManager, TranslatorInterface $translator): Response
     {
         $transfer = $transferRepository->findByOwnerToken($ownerToken);
@@ -275,7 +300,7 @@ class TransferController extends AbstractController
         }
 
         if (!$this->isCsrfTokenValid('transfer_delete_'.$ownerToken, $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException('Invalid CSRF token.');
+            throw $this->createAccessDeniedException($translator->trans('error.csrf_invalid'));
         }
 
         $transferManager->delete($transfer);

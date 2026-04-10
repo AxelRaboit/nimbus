@@ -11,11 +11,15 @@ export function useLocale() {
     const { locale } = useI18n();
 
     async function setLocale(code) {
-        await fetch("/locale", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ locale: code }),
-        });
+        try {
+            await fetch("/locale", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ locale: code }),
+            });
+        } catch (e) {
+            console.warn("[useLocale] Failed to persist locale on server:", e);
+        }
         locale.value = code;
         localStorage.setItem("nimbus-locale", code);
     }

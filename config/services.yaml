@@ -25,7 +25,7 @@ services:
             $tusCachePath: '%tus_cache_path%'
             $tusUploadPath: '%tus_upload_path%'
 
-    App\Service\TransferManager:
+    App\Manager\TransferManager:
         arguments:
             $transferStoragePath: '%transfer_storage_path%'
 
@@ -35,7 +35,7 @@ services:
 
     App\Service\TransferNotifier: ~
 
-    App\Twig\AppExtension:
+    App\Twig\VersionExtension:
         arguments:
             $projectDir: '%kernel.project_dir%'
         tags: ['twig.extension']

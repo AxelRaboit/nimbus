@@ -7,6 +7,7 @@ namespace App\Enum;
 enum EmailTypeEnum: string
 {
     case TransferReady = 'transfer_ready';
+    case TransferReminder = 'transfer_reminder';
     case TransferDownloaded = 'transfer_downloaded';
     case TransferExpired = 'transfer_expired';
 }

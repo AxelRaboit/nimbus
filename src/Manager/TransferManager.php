@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Manager;
 
 use App\Entity\Recipient;
 use App\Entity\Transfer;
@@ -11,8 +11,12 @@ use App\Entity\User;
 use App\Enum\TransferStatusEnum;
 use App\Repository\ApplicationParameterRepository;
 use App\Repository\RecipientRepository;
+use App\Service\TransferFileValidator;
+use App\Service\TransferNotifierInterface;
+use App\Service\TusUploadServiceInterface;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use ZipArchive;
 
 final readonly class TransferManager
@@ -25,6 +29,7 @@ final readonly class TransferManager
         private RecipientRepository $recipientRepository,
         private string $transferStoragePath,
         private ApplicationParameterRepository $parameterRepository,
+        private LoggerInterface $logger,
     ) {}
 
     /**
@@ -57,7 +62,7 @@ final readonly class TransferManager
         }
 
         if (!empty($data['password'])) {
-            $transfer->setPasswordHash(password_hash($data['password'], PASSWORD_BCRYPT));
+            $transfer->setPasswordHash(password_hash($data['password'], PASSWORD_DEFAULT));
         }
 
         foreach ($data['recipients'] ?? [] as $email) {
@@ -68,6 +73,12 @@ final readonly class TransferManager
 
         $this->entityManager->persist($transfer);
         $this->entityManager->flush();
+
+        $this->logger->info('Transfer created', [
+            'reference' => $transfer->getReference(),
+            'isPublic' => $transfer->isPublic(),
+            'recipients' => count($data['recipients'] ?? []),
+        ]);
 
         return $transfer;
     }
@@ -142,6 +153,11 @@ final readonly class TransferManager
         $this->entityManager->remove($transfer);
         $this->entityManager->flush();
 
+        $this->logger->info('Transfer deleted', [
+            'reference' => $transfer->getReference(),
+            'filesCount' => $filesCount,
+        ]);
+
         if ($filesCount > 0) {
             $this->parameterRepository->increment('stats.deleted_files_count', $filesCount);
             $this->parameterRepository->increment('stats.deleted_files_size', $filesSize);
@@ -210,5 +226,15 @@ final readonly class TransferManager
     {
         $transfer->incrementPublicDownloadCount();
         $this->entityManager->flush();
+
+        $this->logger->info('Public transfer downloaded', [
+            'reference' => $transfer->getReference(),
+            'downloadCount' => $transfer->getPublicDownloadCount(),
+        ]);
+    }
+
+    public function verifyPassword(Transfer $transfer, string $plainPassword): bool
+    {
+        return password_verify($plainPassword, (string) $transfer->getPasswordHash());
     }
 }

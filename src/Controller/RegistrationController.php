@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\UserManager;
+use App\Manager\UserManager;
+use App\Service\EmailValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ final class RegistrationController extends AbstractController
 
             if ('' === $email || '0' === $email) {
                 $errors['email'] = $translator->trans('auth.register.error_email_required');
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            } elseif (!EmailValidator::isValid($email)) {
                 $errors['email'] = $translator->trans('auth.register.error_email_invalid');
             } elseif ($userManager->isEmailTaken($email)) {
                 $errors['email'] = $translator->trans('auth.register.error_email_taken');

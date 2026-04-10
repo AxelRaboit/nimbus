@@ -60,6 +60,12 @@ final readonly class TransferFileValidator
         }
     }
 
+    /**
+     * 100 MB compressed → hard cap on decompressed size to prevent zip bombs.
+     * Also validates that each inner file has an allowed extension.
+     */
+    private const MAX_DECOMPRESSED_SIZE = 100 * 1024 * 1024;
+
     private function validateZipContents(string $filePath, string $originalName): void
     {
         $zip = new ZipArchive();
@@ -68,6 +74,8 @@ final readonly class TransferFileValidator
         }
 
         $disallowed = [];
+        $totalDecompressedSize = 0;
+
         for ($i = 0; $i < $zip->count(); ++$i) {
             $stat = $zip->statIndex($i);
             if (!$stat) {
@@ -76,6 +84,12 @@ final readonly class TransferFileValidator
 
             if (str_ends_with($stat['name'], '/')) {
                 continue;
+            }
+
+            $totalDecompressedSize += $stat['size'];
+            if ($totalDecompressedSize > self::MAX_DECOMPRESSED_SIZE) {
+                $zip->close();
+                throw new SizeLimitExceededException(self::MAX_DECOMPRESSED_SIZE / 1024 / 1024);
             }
 
             $innerExt = sprintf('.%s', mb_strtolower(pathinfo($stat['name'], PATHINFO_EXTENSION)));

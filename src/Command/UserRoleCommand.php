@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\User;
+use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -52,7 +53,7 @@ class UserRoleCommand extends Command
         $roles = $user->getRoles();
         if (!in_array($role, $roles, true)) {
             $roles[] = $role;
-            $user->setRoles(array_values(array_filter($roles, fn ($r): bool => 'ROLE_USER' !== $r)));
+            $user->setRoles(array_values(array_filter($roles, fn ($r): bool => UserRoleEnum::User->value !== $r)));
             $this->em->flush();
         }
 

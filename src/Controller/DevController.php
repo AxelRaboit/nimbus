@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Enum\HttpMethodEnum;
+use App\Enum\UserRoleEnum;
 use App\Repository\ApplicationParameterRepository;
 use App\Service\DevStatsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/dev')]
-#[IsGranted('ROLE_DEV')]
+#[IsGranted(UserRoleEnum::Dev->value)]
 class DevController extends AbstractController
 {
     public function __construct(
@@ -31,7 +33,7 @@ class DevController extends AbstractController
         ]);
     }
 
-    #[Route('/parameters/{key}', name: 'dev_parameter_update', methods: ['PATCH'])]
+    #[Route('/parameters/{key}', name: 'dev_parameter_update', methods: [HttpMethodEnum::Patch->value])]
     public function updateParameter(string $key, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);

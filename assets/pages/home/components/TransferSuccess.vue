@@ -53,7 +53,6 @@ async function copyLink(text, flag) {
             {{ t('transfer.success.guest_warning') }}
         </div>
 
-        <!-- Download link -->
         <div v-if="downloadUrl" class="w-full flex flex-col gap-2">
             <p class="text-xs text-muted">{{ isPublic ? t('transfer.success.public_link_hint') : t('transfer.success.download_link_hint') }}</p>
             <div class="flex items-center gap-2">
@@ -71,10 +70,8 @@ async function copyLink(text, flag) {
             </div>
         </div>
 
-        <!-- QR Code -->
         <AppQrCode v-if="downloadUrl" :url="downloadUrl" :size="140" />
 
-        <!-- Manage link -->
         <div class="w-full flex flex-col gap-2">
             <p class="text-xs text-muted">{{ t('transfer.success.manage_hint') }}</p>
             <div class="flex items-center gap-2">

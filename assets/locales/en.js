@@ -53,7 +53,7 @@ export default {
             sender_email: "Your email",
             sender_name: "Your name",
             sender_email_placeholder: "you{'@'}example.com",
-            sender_name_placeholder: "Optional",
+            sender_name_placeholder: "John Doe",
             message_label: "Message",
             message_placeholder: "A message for your recipients (optional)",
             advanced_options: "Advanced options",

@@ -175,7 +175,18 @@ schema-validate:
 
 # === Tests ===
 test:
-	$(PHP_BIN) bin/phpunit --testdox --debug
+	$(PHP_BIN) bin/phpunit --testdox
+
+test-unit:
+	$(PHP_BIN) bin/phpunit --testdox --testsuite=Unit
+
+test-integration:
+	$(PHP_BIN) bin/phpunit --testdox --testsuite=Integration
+
+db-test: ## Create and migrate the test database
+	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
+	$(CONSOLE) doctrine:migrations:migrate --env=test --no-interaction
+	$(CONSOLE) app:application-parameter --env=test
 
 # === Code Quality ===
 stan:
@@ -214,6 +225,9 @@ fix:
 
 fd: ## Fix code and build dev assets
 	make fix && make dev
+
+ft: ## Fix code and run all tests
+	make fix && make test
 
 # === Setup ===
 setup-env: ## Create .env.local from .env.dev.example template

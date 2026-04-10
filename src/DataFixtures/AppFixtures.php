@@ -9,6 +9,7 @@ use App\Entity\Transfer;
 use App\Entity\TransferFile;
 use App\Entity\User;
 use App\Enum\TransferStatusEnum;
+use App\Enum\UserRoleEnum;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -24,7 +25,7 @@ class AppFixtures extends Fixture
         $dev = new User();
         $dev->setEmail('dev@nimbus.app');
         $dev->setName('Dev User');
-        $dev->setRoles(['ROLE_DEV']);
+        $dev->setRoles([UserRoleEnum::Dev->value]);
         $dev->setPassword($this->hasher->hashPassword($dev, 'password'));
 
         $manager->persist($dev);

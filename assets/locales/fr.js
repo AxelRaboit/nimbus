@@ -55,7 +55,7 @@ export default {
             sender_email: "Votre email",
             sender_name: "Votre nom",
             sender_email_placeholder: "vous{'@'}exemple.com",
-            sender_name_placeholder: "Optionnel",
+            sender_name_placeholder: "Jean Dupont",
             message_label: "Message",
             message_placeholder:
                 "Un message pour vos destinataires (optionnel)",

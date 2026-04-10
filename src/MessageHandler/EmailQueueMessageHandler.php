@@ -16,6 +16,8 @@ use Symfony\Component\Mime\Email;
 #[AsMessageHandler]
 final readonly class EmailQueueMessageHandler
 {
+    private const SUBJECT_PREFIX = '[Nimbus]';
+
     public function __construct(
         private MailerInterface $mailer,
         private LoggerInterface $logger,
@@ -28,7 +30,7 @@ final readonly class EmailQueueMessageHandler
             $email = (new Email())
                 ->from($this->mailerSender)
                 ->to($message->getRecipientEmail())
-                ->subject(sprintf('[Nimbus] %s', $message->getSubject()))
+                ->subject(sprintf('%s %s', self::SUBJECT_PREFIX, $message->getSubject()))
                 ->html($message->getBody());
 
             $this->mailer->send($email);

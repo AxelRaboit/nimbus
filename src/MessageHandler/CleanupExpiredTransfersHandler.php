@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Enum\TransferStatusEnum;
+use App\Manager\TransferManager;
 use App\Message\CleanupExpiredTransfersMessage;
 use App\Repository\TransferRepository;
-use App\Service\TransferManager;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

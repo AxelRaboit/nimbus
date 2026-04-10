@@ -5,6 +5,7 @@ import { DownloadCloud, FileText, Download, ArrowDownToLine, Eye, X } from "luci
 import AppButton from "@/components/AppButton.vue";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { useDateFormat } from "@/composables/useDateFormat.js";
+import { isImage, isPdf, isPreviewable } from "@/utils/mimeTypes.js";
 
 const { t } = useI18n();
 const { formatSize } = useFileSize();
@@ -19,7 +20,7 @@ const props = defineProps({
 });
 
 const parsedFiles = computed(() => JSON.parse(props.files));
-const expiresDate = computed(() => formatDate(props.expiresAt).value);
+const expiresDate = computed(() => formatDate(props.expiresAt));
 const totalSize = computed(() => parsedFiles.value.reduce((acc, f) => acc + f.size, 0));
 const downloadUrl = computed(() => `/t/${props.token}/download`);
 
@@ -31,22 +32,7 @@ function filePreviewUrl(filename) {
     return `/t/${props.token}/preview/${filename}`;
 }
 
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml", "image/avif"];
-const PDF_TYPE = "application/pdf";
 
-function isImage(mimeType) {
-    return IMAGE_TYPES.includes(mimeType);
-}
-
-function isPdf(mimeType) {
-    return mimeType === PDF_TYPE;
-}
-
-function isPreviewable(mimeType) {
-    return isImage(mimeType) || isPdf(mimeType);
-}
-
-// Preview modal
 const previewFile = ref(null);
 
 function openPreview(file) {
@@ -86,7 +72,6 @@ if (typeof window !== "undefined") {
 
                 <ul class="divide-y divide-base">
                     <li v-for="(file, index) in parsedFiles" :key="index">
-                        <!-- Image preview thumbnail -->
                         <div
                             v-if="isImage(file.mimeType)"
                             class="cursor-pointer overflow-hidden bg-surface-2 border-b border-base"
@@ -148,7 +133,6 @@ if (typeof window !== "undefined") {
         </div>
     </div>
 
-    <!-- Preview modal -->
     <Teleport to="body">
         <Transition name="modal">
             <div
@@ -158,7 +142,6 @@ if (typeof window !== "undefined") {
                 <div class="absolute inset-0 bg-black/80" v-on:click="closePreview" />
 
                 <div class="relative w-full max-w-3xl max-h-[90vh] flex flex-col">
-                    <!-- Header -->
                     <div class="flex items-center justify-between px-4 py-3 bg-surface border border-base rounded-t-xl">
                         <p class="text-sm font-medium text-primary truncate">{{ previewFile.name }}</p>
                         <button class="ml-3 shrink-0 text-muted hover:text-primary transition-colors" v-on:click="closePreview">
@@ -166,7 +149,6 @@ if (typeof window !== "undefined") {
                         </button>
                     </div>
 
-                    <!-- Content -->
                     <div class="relative overflow-hidden rounded-b-xl bg-black/50 flex items-center justify-center" style="max-height: calc(90vh - 52px)">
                         <img
                             v-if="isImage(previewFile.mimeType)"

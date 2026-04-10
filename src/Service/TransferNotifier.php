@@ -97,7 +97,7 @@ final readonly class TransferNotifier implements TransferNotifierInterface
         ]);
 
         $this->messageBus->dispatch(new EmailQueueMessage(
-            type: EmailTypeEnum::TransferReady->value,
+            type: EmailTypeEnum::TransferReminder->value,
             recipientEmail: $recipient->getEmail(),
             subject: $subject,
             body: $body,

@@ -64,16 +64,13 @@ const devActive       = props.activeRoute?.startsWith("dev_");
 </script>
 
 <template>
-    <!-- Desktop sidebar -->
     <aside
         id="sidebar"
         class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-base z-30 overflow-hidden"
     >
-        <!-- Header -->
         <div
             class="sh-wrap flex items-center h-16 border-b border-base shrink-0 transition-all duration-200"
         >
-            <!-- Expanded: icon + name + version -->
             <a :href="homePath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
                 <div
                     class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0"
@@ -90,7 +87,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 </div>
             </a>
 
-            <!-- Collapsed: icon only -->
             <a :href="homePath" class="sh-logo-collapsed">
                 <div
                     class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center"
@@ -99,7 +95,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 </div>
             </a>
 
-            <!-- Collapse button -->
             <button
                 class="sh-collapse-btn ml-2 p-1.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors shrink-0"
                 v-on:click="collapse"
@@ -108,7 +103,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
             </button>
         </div>
 
-        <!-- Nav -->
         <nav class="sidebar-nav flex-1 py-4 space-y-0.5">
             <a
                 :href="homePath"
@@ -149,9 +143,7 @@ const devActive       = props.activeRoute?.startsWith("dev_");
             </a>
         </nav>
 
-        <!-- Bottom -->
         <div class="sidebar-bottom shrink-0 border-t border-base py-3 space-y-0.5">
-            <!-- Expand button (collapsed only) -->
             <button
                 class="sh-expand-btn w-full items-center justify-center py-2.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors"
                 v-on:click="expand"
@@ -159,7 +151,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 <ChevronsRight class="w-4 h-4" />
             </button>
 
-            <!-- Theme toggle -->
             <button
                 class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
                 v-on:click="toggleTheme"
@@ -176,7 +167,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 </span>
             </button>
 
-            <!-- Guest: login link -->
             <template v-if="isGuest">
                 <a
                     :href="loginPath"
@@ -190,7 +180,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 </a>
             </template>
 
-            <!-- Authenticated: profile + logout -->
             <template v-else>
                 <a
                     :href="profilePath"
@@ -229,7 +218,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
         </div>
     </aside>
 
-    <!-- Mobile topbar -->
     <div
         class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-base z-30 flex items-center justify-between px-4"
     >
@@ -249,22 +237,18 @@ const devActive       = props.activeRoute?.startsWith("dev_");
         </button>
     </div>
 
-    <!-- Mobile overlay + drawer -->
     <div
         class="lg:hidden fixed inset-0 z-50 transition-opacity duration-200"
         :class="
             mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         "
     >
-        <!-- Backdrop -->
         <div class="absolute inset-0 bg-black/60" v-on:click="closeMobile" />
 
-        <!-- Drawer -->
         <div
             class="relative w-72 max-w-[85vw] bg-surface h-full flex flex-col shadow-2xl transition-transform duration-200"
             :class="mobileOpen ? 'translate-x-0' : '-translate-x-full'"
         >
-            <!-- Drawer header -->
             <div
                 class="flex items-center justify-between px-5 h-14 border-b border-base shrink-0"
             >
@@ -289,7 +273,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 </button>
             </div>
 
-            <!-- Drawer nav -->
             <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
                 <a
                     :href="homePath"
@@ -321,9 +304,7 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 </a>
             </nav>
 
-            <!-- Drawer bottom -->
             <div class="shrink-0 border-t border-base px-3 py-3 space-y-1">
-                <!-- Theme toggle -->
                 <button
                     class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
                     v-on:click="toggleTheme"
@@ -333,7 +314,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                     <span>{{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}</span>
                 </button>
 
-                <!-- Guest: login link -->
                 <template v-if="isGuest">
                     <a
                         :href="loginPath"
@@ -344,7 +324,6 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                     </a>
                 </template>
 
-                <!-- Authenticated: user info + profile + logout -->
                 <template v-else>
                     <div class="px-3 py-2">
                         <p class="text-sm font-medium text-primary">{{ userName }}</p>

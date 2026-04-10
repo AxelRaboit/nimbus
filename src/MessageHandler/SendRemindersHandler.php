@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
-use App\Enum\TransferStatusEnum;
 use App\Message\SendRemindersMessage;
 use App\Repository\RecipientRepository;
 use App\Service\TransferNotifierInterface;
@@ -27,17 +26,7 @@ final readonly class SendRemindersHandler
     {
         $now = new DateTimeImmutable();
 
-        // Candidates: not downloaded, not yet reminded, transfer ready and not expired
-        $recipients = $this->recipientRepository->createQueryBuilder('r')
-            ->join('r.transfer', 't')
-            ->where('r.downloadedAt IS NULL')
-            ->andWhere('r.lastReminderSentAt IS NULL')
-            ->andWhere('t.status = :status')
-            ->andWhere('t.expiresAt > :now')
-            ->setParameter('status', TransferStatusEnum::Ready)
-            ->setParameter('now', $now)
-            ->getQuery()
-            ->getResult();
+        $recipients = $this->recipientRepository->findPendingUnreminded();
 
         $count = 0;
         foreach ($recipients as $recipient) {

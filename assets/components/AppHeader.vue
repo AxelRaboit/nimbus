@@ -28,7 +28,6 @@ async function switchLocale(code) {
             </a>
 
             <div class="flex items-center gap-1">
-                <!-- Language selector -->
                 <div class="relative">
                     <button
                         type="button"
@@ -58,7 +57,6 @@ async function switchLocale(code) {
                     </div>
                 </div>
 
-                <!-- Theme toggle -->
                 <button
                     type="button"
                     class="w-8 h-8 flex items-center justify-center rounded text-secondary hover:text-primary hover:bg-surface-2 transition"

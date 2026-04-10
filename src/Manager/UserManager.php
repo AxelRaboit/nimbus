@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Manager;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -48,6 +48,11 @@ final readonly class UserManager
     {
         $this->entityManager->remove($user);
         $this->entityManager->flush();
+    }
+
+    public function isPasswordValid(User $user, string $plainPassword): bool
+    {
+        return $this->passwordHasher->isPasswordValid($user, $plainPassword);
     }
 
     public function isEmailTaken(string $email, ?User $excludeUser = null): bool

@@ -4,7 +4,9 @@ export function useTransferDraft() {
     function saveDraft(context) {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(context));
-        } catch {}
+        } catch (e) {
+            console.warn("[useTransferDraft] Failed to save draft:", e);
+        }
     }
 
     function getDraft() {

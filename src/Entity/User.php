@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use App\Trait\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -61,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
+        $roles[] = UserRoleEnum::User->value;
 
         return array_unique($roles);
     }

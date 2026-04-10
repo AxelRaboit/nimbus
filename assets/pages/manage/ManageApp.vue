@@ -28,33 +28,22 @@ const parsedFiles = computed(() => JSON.parse(props.files));
 const parsedRecipients = computed(() => JSON.parse(props.recipients));
 const publicMode = computed(() => props.isPublic === "true");
 const downloadCount = computed(() => parseInt(props.publicDownloadCount, 10));
-const publicDownloadUrl = computed(() =>
-    props.transferToken ? `${window.location.origin}/t/${props.transferToken}` : ""
-);
-
-const expiresDate = computed(() => formatDate(props.expiresAt).value);
-
 const downloadUrl = computed(() =>
     props.transferToken ? `${window.location.origin}/t/${props.transferToken}` : ""
 );
 
+const expiresDate = computed(() => formatDate(props.expiresAt));
+
 const copiedLink = ref(false);
-async function copyPublicLink() {
+async function copyLink(text, flag) {
     try {
-        await navigator.clipboard.writeText(publicDownloadUrl.value);
-        copiedLink.value = true;
-        setTimeout(() => (copiedLink.value = false), 2000);
+        await navigator.clipboard.writeText(text);
+        flag.value = true;
+        setTimeout(() => (flag.value = false), 2000);
     } catch {}
 }
 
 const copiedDownload = ref(false);
-async function copyDownloadLink() {
-    try {
-        await navigator.clipboard.writeText(downloadUrl.value);
-        copiedDownload.value = true;
-        setTimeout(() => (copiedDownload.value = false), 2000);
-    } catch {}
-}
 
 const totalSize = computed(() =>
     parsedFiles.value.reduce((acc, f) => acc + f.size, 0)
@@ -98,7 +87,6 @@ async function remind(email) {
         </div>
 
         <div class="rounded-lg border border-base bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden">
-            <!-- Header row -->
             <div class="px-5 py-4 flex items-center justify-between border-b border-base">
                 <div>
                     <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.reference') }}</p>
@@ -112,7 +100,6 @@ async function remind(email) {
                 </span>
             </div>
 
-            <!-- Meta -->
             <div class="px-5 py-3 border-b border-base flex flex-wrap items-center gap-x-6 gap-y-2 text-sm bg-surface-2">
                 <div>
                     <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.expires') }}</p>
@@ -128,7 +115,6 @@ async function remind(email) {
                 </div>
             </div>
 
-            <!-- Files -->
             <div class="px-5 py-3 border-b border-base">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.files') }}</p>
                 <ul class="flex flex-col gap-1.5">
@@ -140,22 +126,20 @@ async function remind(email) {
                 </ul>
             </div>
 
-            <!-- QR Code -->
             <div class="px-5 py-4 border-b border-base flex justify-center">
-                <AppQrCode :url="publicMode ? publicDownloadUrl : downloadUrl" :size="140" />
+                <AppQrCode :url="downloadUrl" :size="140" />
             </div>
 
-            <!-- Public link -->
             <div v-if="publicMode" class="px-5 py-3 border-b border-base">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.public_link') }}</p>
                 <div class="flex items-center gap-2">
                     <input
-                        :value="publicDownloadUrl"
+                        :value="downloadUrl"
                         readonly
                         class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
-                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyPublicLink">
+                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(downloadUrl, copiedLink)">
                         <Check v-if="copiedLink" class="w-4 h-4 text-green-500" :stroke-width="2" />
                         <Copy v-else class="w-4 h-4" :stroke-width="2" />
                     </AppButton>
@@ -166,7 +150,6 @@ async function remind(email) {
                 </p>
             </div>
 
-            <!-- Download link (email transfers) -->
             <div v-if="!publicMode" class="px-5 py-3 border-b border-base">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.download_link') }}</p>
                 <div class="flex items-center gap-2">
@@ -176,14 +159,13 @@ async function remind(email) {
                         class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
-                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copiedDownload ? null : copyDownloadLink()">
+                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copiedDownload ? null : copyLink(downloadUrl, copiedDownload)">
                         <Check v-if="copiedDownload" class="w-4 h-4 text-green-500" :stroke-width="2" />
                         <Copy v-else class="w-4 h-4" :stroke-width="2" />
                     </AppButton>
                 </div>
             </div>
 
-            <!-- Recipients -->
             <div v-if="!publicMode" class="px-5 py-3">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.recipients') }}</p>
                 <p v-if="parsedRecipients.length === 0" class="text-sm text-muted">{{ t('transfer.manage.no_recipients') }}</p>
@@ -219,7 +201,6 @@ async function remind(email) {
             </div>
         </div>
 
-        <!-- Delete -->
         <div class="rounded-2xl border border-rose-900/40 bg-surface p-6">
             <h2 class="text-lg font-semibold text-rose-400 mb-1">{{ t('transfer.manage.danger_zone') }}</h2>
             <p class="text-sm text-secondary mt-1 mb-4">{{ t('transfer.manage.danger_description') }}</p>

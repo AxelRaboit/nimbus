@@ -6,13 +6,15 @@ namespace App\Controller\Api;
 
 use App\Entity\Transfer;
 use App\Entity\User;
+use App\Enum\HttpMethodEnum;
 use App\Exception\DisallowedFileTypeException;
 use App\Exception\DisallowedZipContentException;
 use App\Exception\FileLimitExceededException;
 use App\Exception\SizeLimitExceededException;
+use App\Manager\TransferManager;
+use App\Model\Pagination;
 use App\Repository\ApplicationParameterRepository;
 use App\Repository\TransferRepository;
-use App\Service\TransferManager;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +28,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api')]
 class TransferApiController extends AbstractController
 {
-    #[Route('/transfers', name: 'transfer_api_list', methods: ['GET'])]
+    #[Route('/transfers', name: 'transfer_api_list', methods: [HttpMethodEnum::Get->value])]
     public function list(Request $request, TransferRepository $transferRepository): JsonResponse
     {
         $user = $this->getUser();
@@ -35,44 +37,20 @@ class TransferApiController extends AbstractController
             return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $limit = 10;
         $offset = max(0, (int) $request->query->get('offset', 0));
-
-        $transfers = $transferRepository->findByUser($user, $limit, $offset);
         $total = $transferRepository->countByUser($user);
+        $pagination = Pagination::fromOffset($offset, limit: 10, total: $total);
 
-        $data = array_map(function (Transfer $t): array {
-            $recipients = array_map(fn ($r): array => [
-                'email' => $r->getEmail(),
-                'downloaded' => $r->hasDownloaded(),
-            ], $t->getRecipients()->toArray());
-
-            $files = array_map(fn ($f): array => [
-                'name' => $f->getOriginalName(),
-                'size' => $f->getFileSize(),
-            ], $t->getFiles()->toArray());
-
-            return [
-                'reference' => $t->getReference(),
-                'ownerToken' => $t->getOwnerToken(),
-                'token' => $t->getToken(),
-                'status' => $t->getStatus()->value,
-                'isPublic' => $t->isPublic(),
-                'files' => $files,
-                'recipients' => $recipients,
-                'publicDownloadCount' => $t->getPublicDownloadCount(),
-                'expiresAt' => $t->getExpiresAt()->format(DateTimeInterface::ATOM),
-                'createdAt' => $t->getCreatedAt()->format(DateTimeInterface::ATOM),
-            ];
-        }, $transfers);
+        $transfers = $transferRepository->findByUser($user, $pagination->limit, $pagination->offset);
+        $data = array_map($this->serializeTransferSummary(...), $transfers);
 
         return $this->json([
             'items' => $data,
-            'hasMore' => ($offset + $limit) < $total,
+            'hasMore' => $pagination->hasMore,
         ]);
     }
 
-    #[Route('/transfer', name: 'transfer_api_create', methods: ['POST'])]
+    #[Route('/transfer', name: 'transfer_api_create', methods: [HttpMethodEnum::Post->value])]
     public function create(
         Request $request,
         ValidatorInterface $validator,
@@ -133,7 +111,7 @@ class TransferApiController extends AbstractController
         ], Response::HTTP_CREATED);
     }
 
-    #[Route('/transfer/{token}/finalize', name: 'transfer_api_finalize', methods: ['POST'])]
+    #[Route('/transfer/{token}/finalize', name: 'transfer_api_finalize', methods: [HttpMethodEnum::Post->value])]
     public function finalize(
         string $token,
         Request $request,
@@ -177,7 +155,7 @@ class TransferApiController extends AbstractController
         ]);
     }
 
-    #[Route('/transfer/{token}/resume-check', name: 'transfer_api_resume_check', methods: ['GET'])]
+    #[Route('/transfer/{token}/resume-check', name: 'transfer_api_resume_check', methods: [HttpMethodEnum::Get->value])]
     public function resumeCheck(string $token, TransferRepository $transferRepository): JsonResponse
     {
         $transfer = $transferRepository->findByToken($token);
@@ -194,7 +172,7 @@ class TransferApiController extends AbstractController
         return $this->json(['resumable' => true]);
     }
 
-    #[Route('/transfer/{token}/abandon', name: 'transfer_api_abandon', methods: ['DELETE'])]
+    #[Route('/transfer/{token}/abandon', name: 'transfer_api_abandon', methods: [HttpMethodEnum::Delete->value])]
     public function abandon(
         string $token,
         TransferRepository $transferRepository,
@@ -211,7 +189,29 @@ class TransferApiController extends AbstractController
         return $this->json(['ok' => true]);
     }
 
-    #[Route('/transfer/{token}', name: 'transfer_api_get', methods: ['GET'])]
+    private function serializeTransferSummary(Transfer $t): array
+    {
+        return [
+            'reference' => $t->getReference(),
+            'ownerToken' => $t->getOwnerToken(),
+            'token' => $t->getToken(),
+            'status' => $t->getStatus()->value,
+            'isPublic' => $t->isPublic(),
+            'files' => array_map(fn ($f): array => [
+                'name' => $f->getOriginalName(),
+                'size' => $f->getFileSize(),
+            ], $t->getFiles()->toArray()),
+            'recipients' => array_map(fn ($r): array => [
+                'email' => $r->getEmail(),
+                'downloaded' => $r->hasDownloaded(),
+            ], $t->getRecipients()->toArray()),
+            'publicDownloadCount' => $t->getPublicDownloadCount(),
+            'expiresAt' => $t->getExpiresAt()->format(DateTimeInterface::ATOM),
+            'createdAt' => $t->getCreatedAt()->format(DateTimeInterface::ATOM),
+        ];
+    }
+
+    #[Route('/transfer/{token}', name: 'transfer_api_get', methods: [HttpMethodEnum::Get->value])]
     public function get(string $token, TransferRepository $transferRepository): JsonResponse
     {
         $transfer = $transferRepository->findByToken($token);

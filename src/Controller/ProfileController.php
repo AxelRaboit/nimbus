@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Service\UserManager;
+use App\Enum\HttpMethodEnum;
+use App\Enum\UserRoleEnum;
+use App\Manager\UserManager;
+use App\Service\EmailValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted(UserRoleEnum::User->value)]
 final class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_profile')]
@@ -24,7 +26,7 @@ final class ProfileController extends AbstractController
         return $this->render('profile/edit.html.twig');
     }
 
-    #[Route('/profile/update', name: 'app_profile_update', methods: ['POST'])]
+    #[Route('/profile/update', name: 'app_profile_update', methods: [HttpMethodEnum::Post->value])]
     public function update(
         Request $request,
         UserManager $userManager,
@@ -44,7 +46,7 @@ final class ProfileController extends AbstractController
 
         if ('' === $email || '0' === $email) {
             $errors['email'] = $translator->trans('auth.register.error_email_required');
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!EmailValidator::isValid($email)) {
             $errors['email'] = $translator->trans('auth.register.error_email_invalid');
         } elseif ($userManager->isEmailTaken($email, $user)) {
             $errors['email'] = $translator->trans('auth.register.error_email_taken');
@@ -59,11 +61,10 @@ final class ProfileController extends AbstractController
         return new JsonResponse(['errors' => $errors]);
     }
 
-    #[Route('/profile/password', name: 'app_profile_password', methods: ['POST'])]
+    #[Route('/profile/password', name: 'app_profile_password', methods: [HttpMethodEnum::Post->value])]
     public function changePassword(
         Request $request,
         UserManager $userManager,
-        UserPasswordHasherInterface $hasher,
         TranslatorInterface $translator,
     ): JsonResponse {
         /** @var User $user */
@@ -75,7 +76,7 @@ final class ProfileController extends AbstractController
         $new = $body['password'] ?? '';
         $confirm = $body['password_confirmation'] ?? '';
 
-        if (!$hasher->isPasswordValid($user, $current)) {
+        if (!$userManager->isPasswordValid($user, $current)) {
             $errors['current_password'] = $translator->trans('profile.password.error_current');
         } elseif (mb_strlen((string) $new) < 8) {
             $errors['password'] = $translator->trans('auth.register.error_password_length');
@@ -92,10 +93,11 @@ final class ProfileController extends AbstractController
         return new JsonResponse(['errors' => $errors]);
     }
 
-    #[Route('/profile/delete', name: 'app_profile_delete', methods: ['POST'])]
+    #[Route('/profile/delete', name: 'app_profile_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(
         Request $request,
         UserManager $userManager,
+        TranslatorInterface $translator,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -103,7 +105,7 @@ final class ProfileController extends AbstractController
         $body = json_decode($request->getContent(), true) ?? [];
 
         if (!$this->isCsrfTokenValid('delete_account', $body['_token'] ?? '')) {
-            throw $this->createAccessDeniedException('Invalid CSRF token.');
+            throw $this->createAccessDeniedException($translator->trans('error.csrf_invalid'));
         }
 
         $userManager->delete($user);

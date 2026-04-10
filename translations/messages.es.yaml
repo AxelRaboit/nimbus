@@ -8,6 +8,8 @@ error:
   default: Error
   generic: 'Se produjo un error al procesar su solicitud.'
   not_found: 'La página solicitada no se pudo encontrar.'
+  too_many_attempts: 'Demasiados intentos. Por favor, inténtelo de nuevo en unos minutos.'
+  csrf_invalid: 'Token de seguridad inválido. Por favor, recargue la página e inténtelo de nuevo.'
   back: 'Volver'
   home: Inicio
 

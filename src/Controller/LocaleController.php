@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Enum\HttpMethodEnum;
+use App\Enum\LocaleEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,15 +14,13 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class LocaleController extends AbstractController
 {
-    private const SUPPORTED = ['fr', 'en', 'es', 'de'];
-
-    #[Route('/locale', name: 'app_locale_switch', methods: ['POST'])]
+    #[Route('/locale', name: 'app_locale_switch', methods: [HttpMethodEnum::Post->value])]
     public function switch(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $locale = $data['locale'] ?? 'fr';
+        $locale = $data['locale'] ?? LocaleEnum::default()->value;
 
-        if (!in_array($locale, self::SUPPORTED, true)) {
+        if (!LocaleEnum::isSupported($locale)) {
             return $this->json(['error' => 'Unsupported locale'], Response::HTTP_BAD_REQUEST);
         }
 

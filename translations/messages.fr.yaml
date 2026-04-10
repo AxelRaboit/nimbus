@@ -8,6 +8,8 @@ error:
   default: Erreur
   generic: "Une erreur s'est produite lors du traitement de votre demande."
   not_found: 'La page demandée est introuvable.'
+  too_many_attempts: 'Trop de tentatives. Veuillez réessayer dans quelques minutes.'
+  csrf_invalid: 'Token de sécurité invalide. Veuillez recharger la page et réessayer.'
   back: 'Page précédente'
   home: Accueil
 

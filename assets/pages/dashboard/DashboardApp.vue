@@ -71,17 +71,14 @@ function totalSize(files) {
 
 <template>
     <div class="max-w-3xl mx-auto">
-        <!-- Loading -->
         <div v-if="loading" class="flex items-center justify-center py-20 text-muted text-sm">
             {{ t('dashboard.loading') }}
         </div>
 
-        <!-- Error -->
         <div v-else-if="error" class="text-sm text-red-500 py-10 text-center">
             {{ t('dashboard.error') }}
         </div>
 
-        <!-- Empty -->
         <div v-else-if="transfers.length === 0" class="flex flex-col items-center justify-center py-20 gap-4 text-center">
             <div class="w-14 h-14 rounded-full bg-surface-2 flex items-center justify-center">
                 <UploadCloud class="w-6 h-6 text-muted" :stroke-width="1.5" />
@@ -95,14 +92,12 @@ function totalSize(files) {
             </a>
         </div>
 
-        <!-- List -->
         <div v-else class="flex flex-col gap-3">
             <div
                 v-for="transfer in transfers"
                 :key="transfer.reference"
                 class="rounded-xl border border-base bg-surface p-4 flex flex-col sm:flex-row sm:items-center gap-4"
             >
-                <!-- Left: info -->
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-sm font-bold text-primary tracking-widest">{{ transfer.reference }}</span>
@@ -128,11 +123,10 @@ function totalSize(files) {
                             {{ downloadedCount(transfer.recipients) }}/{{ transfer.recipients.length }} {{ t('dashboard.downloaded') }}
                         </span>
 
-                        <span>{{ t('dashboard.expires') }} {{ formatDate(transfer.expiresAt).value }}</span>
+                        <span>{{ t('dashboard.expires') }} {{ formatDate(transfer.expiresAt) }}</span>
                     </div>
                 </div>
 
-                <!-- Right: action -->
                 <a
                     :href="manageUrl(transfer.ownerToken)"
                     class="shrink-0 flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary border border-base rounded-lg px-3 py-2 transition-colors hover:bg-surface-2"
@@ -142,7 +136,6 @@ function totalSize(files) {
                 </a>
             </div>
 
-            <!-- Load more -->
             <div v-if="hasMore" class="flex justify-center pt-2">
                 <AppButton variant="secondary" size="sm" :loading="loadingMore" v-on:click="loadMore">
                     {{ t('dashboard.load_more') }}
