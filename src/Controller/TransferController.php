@@ -24,9 +24,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TransferController extends AbstractController
 {
-    private const SESSION_RECIPIENT_PREFIX = 'transfer_recipient_';
+    private const string SESSION_RECIPIENT_PREFIX = 'transfer_recipient_';
 
-    private const SESSION_UNLOCKED_PREFIX = 'transfer_unlocked_';
+    private const string SESSION_UNLOCKED_PREFIX = 'transfer_unlocked_';
 
     #[Route('/t/{token}', name: 'transfer_show')]
     public function show(string $token, Request $request, TransferRepository $transferRepository, RecipientRepository $recipientRepository): Response
