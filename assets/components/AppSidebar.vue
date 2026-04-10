@@ -2,8 +2,8 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/composables/useTheme.js";
+import AppLogo from "@/components/AppLogo.vue";
 import {
-    Cloud,
     UploadCloud,
     User,
     LogOut,
@@ -72,11 +72,7 @@ const devActive       = props.activeRoute?.startsWith("dev_");
             class="sh-wrap flex items-center h-16 border-b border-base shrink-0 transition-all duration-200"
         >
             <a :href="homePath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
-                <div
-                    class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0"
-                >
-                    <Cloud class="w-4 h-4 text-white" />
-                </div>
+                <AppLogo :size="32" class="shrink-0" />
                 <div class="flex flex-col min-w-0">
                     <span
                         class="text-primary font-bold text-lg tracking-tight truncate leading-tight"
@@ -88,11 +84,7 @@ const devActive       = props.activeRoute?.startsWith("dev_");
             </a>
 
             <a :href="homePath" class="sh-logo-collapsed">
-                <div
-                    class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center"
-                >
-                    <Cloud class="w-4 h-4 text-white" />
-                </div>
+                <AppLogo :size="32" />
             </a>
 
             <button
@@ -222,11 +214,7 @@ const devActive       = props.activeRoute?.startsWith("dev_");
         class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-base z-30 flex items-center justify-between px-4"
     >
         <a :href="homePath" class="flex items-center gap-2">
-            <div
-                class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center"
-            >
-                <Cloud class="w-3.5 h-3.5 text-white" />
-            </div>
+            <AppLogo :size="28" />
             <span class="text-primary font-bold text-base tracking-tight">Nimbus</span>
         </a>
         <button
@@ -253,11 +241,7 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 class="flex items-center justify-between px-5 h-14 border-b border-base shrink-0"
             >
                 <div class="flex items-center gap-2">
-                    <div
-                        class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center"
-                    >
-                        <Cloud class="w-3.5 h-3.5 text-white" />
-                    </div>
+                    <AppLogo :size="28" />
                     <div class="flex flex-col">
                         <span class="text-primary font-bold text-base leading-tight">Nimbus</span>
                         <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{
