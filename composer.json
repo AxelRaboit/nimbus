@@ -15,6 +15,7 @@
         "doctrine/orm": "^3.6",
         "dragonmantank/cron-expression": "^3.6",
         "pentatrion/vite-bundle": "^8.2",
+        "symfony/apache-pack": "*",
         "symfony/asset": "7.4.*",
         "symfony/console": "7.4.*",
         "symfony/doctrine-messenger": "7.4.*",
