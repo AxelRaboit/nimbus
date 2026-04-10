@@ -75,6 +75,7 @@ export default {
         },
         dropzone: {
             drag: "Dateien hierher ziehen oder klicken zum Durchsuchen",
+            upload_folder: "Ordner hochladen",
             drop: "Dateien hier ablegen",
             hint: "Bilder, Dokumente, Videos, Audio und ZIP-Archive",
             error_type: "Typ nicht erlaubt: {files}",

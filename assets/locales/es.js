@@ -75,6 +75,7 @@ export default {
         },
         dropzone: {
             drag: "Arrastra tus archivos o haz clic para explorar",
+            upload_folder: "Subir una carpeta",
             drop: "Suelta tus archivos aquí",
             hint: "Imágenes, documentos, vídeos, audio y archivos ZIP",
             error_type: "Tipo no permitido: {files}",

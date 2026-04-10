@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { UploadCloud, FileText, X, AlertCircle } from "lucide-vue-next";
+import { UploadCloud, FileText, X, AlertCircle, FolderOpen } from "lucide-vue-next";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { ALLOWED_EXTENSIONS, ALLOWED_EXTENSIONS_ACCEPT } from "@/utils/allowedExtensions.js";
 import { getDisallowedZipFiles } from "@/utils/zipValidator.js";
@@ -18,15 +18,89 @@ const { formatSize } = useFileSize();
 const isDragging  = ref(false);
 const dropErrors  = ref([]);
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function isAllowedExt(name) {
+    const dotIndex = name.lastIndexOf(".");
+    const ext = dotIndex !== -1 ? name.slice(dotIndex).toLowerCase() : "";
+    return { ext, allowed: ALLOWED_EXTENSIONS.includes(ext) };
+}
+
+/**
+ * Wrap a File so its name is the relative path (for folder uploads).
+ * Creates a new File backed by the same data — no byte copy.
+ */
+function wrapWithPath(file, path) {
+    if (!path || path === file.name) return file;
+    return new File([file], path, { type: file.type });
+}
+
+/**
+ * Recursively read a FileSystemDirectoryEntry and return all File objects
+ * with their relative paths (relative to the dropped folder).
+ */
+async function readDirectoryEntry(entry, prefix = "") {
+    const files = [];
+    const reader = entry.createReader();
+
+    // readEntries returns at most 100 entries per call — loop until done
+    let batch;
+    do {
+        batch = await new Promise((res, rej) => reader.readEntries(res, rej));
+        for (const child of batch) {
+            const childPath = prefix ? `${prefix}/${child.name}` : child.name;
+            if (child.isFile) {
+                const file = await new Promise((res, rej) => child.file(res, rej));
+                files.push(wrapWithPath(file, childPath));
+            } else if (child.isDirectory) {
+                const sub = await readDirectoryEntry(child, childPath);
+                files.push(...sub);
+            }
+        }
+    } while (batch.length > 0);
+
+    return files;
+}
+
+// ── Drop handler ─────────────────────────────────────────────────────────────
+
 async function onDrop(e) {
     isDragging.value = false;
-    await addFiles(Array.from(e.dataTransfer.files));
+    const rawFiles = [];
+
+    if (e.dataTransfer.items) {
+        for (const item of e.dataTransfer.items) {
+            const entry = item.webkitGetAsEntry?.();
+            if (!entry) continue;
+            if (entry.isDirectory) {
+                const dirFiles = await readDirectoryEntry(entry, entry.name);
+                rawFiles.push(...dirFiles);
+            } else {
+                const file = item.getAsFile();
+                if (file) rawFiles.push(file);
+            }
+        }
+    } else {
+        rawFiles.push(...Array.from(e.dataTransfer.files));
+    }
+
+    await addFiles(rawFiles);
 }
 
 async function onFileInput(e) {
     await addFiles(Array.from(e.target.files));
     e.target.value = "";
 }
+
+async function onFolderInput(e) {
+    const wrapped = Array.from(e.target.files).map((f) =>
+        wrapWithPath(f, f.webkitRelativePath || f.name)
+    );
+    await addFiles(wrapped);
+    e.target.value = "";
+}
+
+// ── Core validation & dedup ───────────────────────────────────────────────────
 
 async function addFiles(newFiles) {
     dropErrors.value = [];
@@ -35,13 +109,11 @@ async function addFiles(newFiles) {
     const zipErrors  = [];
 
     for (const file of newFiles) {
-        // Skip duplicates
         if (props.files.find((f) => f.name === file.name && f.size === file.size)) continue;
 
-        const dotIndex = file.name.lastIndexOf(".");
-        const ext = dotIndex !== -1 ? file.name.slice(dotIndex).toLowerCase() : "";
+        const { ext, allowed } = isAllowedExt(file.name);
 
-        if (!ALLOWED_EXTENSIONS.includes(ext)) {
+        if (!allowed) {
             typeErrors.push(file.name);
             continue;
         }
@@ -75,13 +147,28 @@ async function addFiles(newFiles) {
 }
 
 function removeFile(index) {
-    const updated = props.files.filter((_, i) => i !== index);
-    emit("update:files", updated);
+    emit("update:files", props.files.filter((_, i) => i !== index));
 }
 </script>
 
 <template>
     <div>
+        <input
+            ref="fileInput"
+            type="file"
+            multiple
+            :accept="ALLOWED_EXTENSIONS_ACCEPT"
+            class="hidden"
+            v-on:change="onFileInput"
+        >
+        <input
+            ref="folderInput"
+            type="file"
+            webkitdirectory
+            class="hidden"
+            v-on:change="onFolderInput"
+        >
+
         <div
             class="relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed transition-colors cursor-pointer p-8"
             :class="isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-base hover:border-indigo-400 bg-surface-2'"
@@ -90,15 +177,6 @@ function removeFile(index) {
             v-on:drop.prevent="onDrop"
             v-on:click="$refs.fileInput.click()"
         >
-            <input
-                ref="fileInput"
-                type="file"
-                multiple
-                :accept="ALLOWED_EXTENSIONS_ACCEPT"
-                class="hidden"
-                v-on:change="onFileInput"
-            >
-
             <div class="flex flex-col items-center gap-2 text-center pointer-events-none">
                 <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
                     <UploadCloud class="w-6 h-6 text-indigo-600" :stroke-width="2" />
@@ -111,6 +189,16 @@ function removeFile(index) {
                 </div>
             </div>
         </div>
+
+        <!-- Folder button — outside the dropzone div to avoid double dialog -->
+        <button
+            type="button"
+            class="mt-2 flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors"
+            v-on:click="$refs.folderInput.click()"
+        >
+            <FolderOpen class="w-3.5 h-3.5" :stroke-width="2" />
+            {{ t('transfer.dropzone.upload_folder') }}
+        </button>
 
         <!-- Validation errors -->
         <div v-if="dropErrors.length" class="mt-2 flex flex-col gap-1">
