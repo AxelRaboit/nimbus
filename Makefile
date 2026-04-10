@@ -58,13 +58,13 @@ install-prod:
 	make cc-prod
 
 deploy-prod: ## Deploy to production (requires a git tag on HEAD)
-	@APP_VERSION=$$(git describe --exact-match --tags HEAD 2>/dev/null); \
+	@git pull; \
+	APP_VERSION=$$(git describe --exact-match --tags HEAD 2>/dev/null); \
 	if [ -z "$$APP_VERSION" ]; then \
 		echo "❌ Deployment blocked: no release tag on current commit. Create a git tag first (e.g. git tag v1.0.0)."; \
 		exit 1; \
 	fi; \
 	echo "🚀 Deploying $$APP_VERSION..."; \
-	git pull; \
 	echo "$$APP_VERSION" > VERSION; \
 	$(COMPOSER) install --no-dev --optimize-autoloader; \
 	make cc-prod; \
