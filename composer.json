@@ -1,4 +1,6 @@
 {
+    "name": "axelraboit/nimbus",
+    "description": "Secure file transfer application built with Symfony and Vue.js.",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
