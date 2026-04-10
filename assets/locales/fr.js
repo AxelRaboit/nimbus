@@ -111,6 +111,7 @@ export default {
             files_count: "0 fichier | 1 fichier | {n} fichiers",
             download: "Télécharger",
             download_all: "Tout télécharger",
+            preview: "Aperçu",
         },
         manage: {
             title: "Gérer mon transfert",

@@ -105,6 +105,7 @@ export default {
             files_count: "0 Dateien | 1 Datei | {n} Dateien",
             download: "Herunterladen",
             download_all: "Alle herunterladen",
+            preview: "Vorschau",
         },
         manage: {
             title: "Meine Übertragung verwalten",

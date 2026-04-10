@@ -174,6 +174,46 @@ class TransferController extends AbstractController
         );
     }
 
+    #[Route('/t/{token}/preview/{filename}', name: 'transfer_preview_file')]
+    public function previewFile(
+        string $token,
+        string $filename,
+        Request $request,
+        TransferRepository $transferRepository,
+        TransferManager $transferManager,
+    ): Response {
+        $transfer = $transferRepository->findByToken($token);
+
+        if (!$transfer instanceof Transfer || !$transfer->isReady() || $transfer->isExpired()) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($transfer->isPasswordProtected() && !$request->getSession()->get('transfer_unlocked_'.$transfer->getToken())) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $file = $transferManager->findFileByFilename($transfer, $filename);
+
+        if (!$file instanceof TransferFile) {
+            throw $this->createNotFoundException();
+        }
+
+        $path = $transferManager->resolveFilePath($transfer, $file);
+
+        if (!file_exists($path)) {
+            throw $this->createNotFoundException();
+        }
+
+        return new BinaryFileResponse(
+            $path,
+            Response::HTTP_OK,
+            [
+                'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, $file->getOriginalName()),
+                'Content-Type' => $file->getMimeType() ?: 'application/octet-stream',
+            ],
+        );
+    }
+
     #[Route('/manage/{ownerToken}', name: 'transfer_manage')]
     public function manage(string $ownerToken, TransferRepository $transferRepository): Response
     {
