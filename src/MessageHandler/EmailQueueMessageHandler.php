@@ -16,7 +16,7 @@ use Symfony\Component\Mime\Email;
 #[AsMessageHandler]
 final readonly class EmailQueueMessageHandler
 {
-    private const SUBJECT_PREFIX = '[Nimbus]';
+    private const string SUBJECT_PREFIX = '[Nimbus]';
 
     public function __construct(
         private MailerInterface $mailer,
@@ -27,7 +27,7 @@ final readonly class EmailQueueMessageHandler
     public function __invoke(EmailQueueMessage $message): void
     {
         try {
-            $email = (new Email())
+            $email = new Email()
                 ->from($this->mailerSender)
                 ->to($message->getRecipientEmail())
                 ->subject(sprintf('%s %s', self::SUBJECT_PREFIX, $message->getSubject()))

@@ -21,7 +21,7 @@ final readonly class MainSchedule implements ScheduleProviderInterface
 
     public function getSchedule(): Schedule
     {
-        return (new Schedule())
+        return new Schedule()
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
             ->add(

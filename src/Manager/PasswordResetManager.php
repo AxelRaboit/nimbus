@@ -56,7 +56,7 @@ final readonly class PasswordResetManager
             'token' => $plainToken,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $message = (new Email())
+        $message = new Email()
             ->from($_ENV['MAILER_FROM_ADDRESS'] ?? 'noreply@nimbus.dev')
             ->to($user->getEmail())
             ->subject($this->translator->trans('auth.forgot_password.email_subject'))

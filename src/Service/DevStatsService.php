@@ -179,7 +179,7 @@ class DevStatsService
 
         $result = [];
         for ($i = $months - 1; $i >= 0; --$i) {
-            $month = (new DateTimeImmutable(sprintf('first day of -%d months', $i)))->format('Y-m');
+            $month = new DateTimeImmutable(sprintf('first day of -%d months', $i))->format('Y-m');
             $result[] = ['month' => $month, 'count' => $indexed[$month] ?? 0];
         }
 
