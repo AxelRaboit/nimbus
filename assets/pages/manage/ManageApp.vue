@@ -19,15 +19,15 @@ const props = defineProps({
     files: { type: String, default: "[]" },
     recipients: { type: String, default: "[]" },
     csrfToken: { type: String, default: "" },
-    isPublic: { type: String, default: "false" },
-    publicDownloadCount: { type: String, default: "0" },
+    isPublic: { type: Boolean, default: false },
+    publicDownloadCount: { type: Number, default: 0 },
     transferToken: { type: String, default: "" },
 });
 
 const parsedFiles = computed(() => JSON.parse(props.files));
 const parsedRecipients = computed(() => JSON.parse(props.recipients));
-const publicMode = computed(() => props.isPublic === "true");
-const downloadCount = computed(() => parseInt(props.publicDownloadCount, 10));
+const publicMode = computed(() => props.isPublic);
+const downloadCount = computed(() => props.publicDownloadCount);
 const downloadUrl = computed(() =>
     props.transferToken ? `${window.location.origin}/t/${props.transferToken}` : ""
 );
@@ -76,6 +76,11 @@ async function remind(email) {
     } finally {
         reminding.value = new Set([...reminding.value].filter((e) => e !== email));
     }
+}
+
+function submitDeleteForm(e) {
+    deleting.value = true;
+    e.currentTarget.submit();
 }
 </script>
 
@@ -214,14 +219,13 @@ async function remind(email) {
 
             <div v-else class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <p class="text-sm text-primary font-medium">{{ t('transfer.manage.confirm_delete') }}</p>
-                <form :action="deleteUrl" method="POST" class="flex items-center gap-2">
+                <form :action="deleteUrl" method="POST" class="flex items-center gap-2" v-on:submit.prevent="submitDeleteForm">
                     <input type="hidden" name="_token" :value="csrfToken">
                     <AppButton
                         type="submit"
                         variant="danger"
                         size="sm"
                         :loading="deleting"
-                        v-on:click="deleting = true"
                     >
                         {{ t('transfer.manage.confirm_yes') }}
                     </AppButton>
