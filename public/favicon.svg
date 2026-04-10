@@ -6,13 +6,6 @@
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="14" fill="url(#bg)"/>
-  <path
-    transform="translate(8, 8) scale(2)"
-    fill="none"
-    stroke="white"
-    stroke-width="1.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-  />
+  <text x="32" y="45" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">N</text>
+  <line x1="20" y1="52" x2="44" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
