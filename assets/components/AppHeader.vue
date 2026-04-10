@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { Cloud, ChevronDown, Check, Sun, Moon } from "lucide-vue-next";
+import { ChevronDown, Check, Sun, Moon } from "lucide-vue-next";
 import { useTheme } from "@/composables/useTheme.js";
+import AppLogo from "@/components/AppLogo.vue";
 import { useLocale, SUPPORTED_LOCALES } from "@/composables/useLocale.js";
 
 const { t } = useI18n();
@@ -21,9 +22,7 @@ async function switchLocale(code) {
     <header class="border-b border-base bg-surface">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <a href="/" class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                    <Cloud class="w-4 h-4 text-white" :stroke-width="2" />
-                </div>
+                <AppLogo :size="32" />
                 <span class="text-base font-bold text-primary">Nimbus</span>
             </a>
 

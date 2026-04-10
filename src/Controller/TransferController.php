@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -55,7 +55,7 @@ class TransferController extends AbstractController
     }
 
     #[Route('/t/{token}/unlock', name: 'transfer_unlock', methods: [HttpMethodEnum::Post->value])]
-    public function unlock(string $token, Request $request, TransferRepository $transferRepository, TransferManager $transferManager, TranslatorInterface $translator, RateLimiterFactory $transferUnlockLimiter): JsonResponse
+    public function unlock(string $token, Request $request, TransferRepository $transferRepository, TransferManager $transferManager, TranslatorInterface $translator, RateLimiterFactoryInterface $transferUnlockLimiter): JsonResponse
     {
         $limiter = $transferUnlockLimiter->create($request->getClientIp().'_'.$token);
         if (!$limiter->consume()->isAccepted()) {
