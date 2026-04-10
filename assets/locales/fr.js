@@ -98,6 +98,8 @@ export default {
             copy: "Copier",
             copied: "Copié !",
             new_transfer: "Envoyer un nouveau transfert",
+            download_link_hint:
+                "Partagez ce lien pour donner accès aux fichiers",
             public_link_hint:
                 "Partagez ce lien — n'importe qui peut télécharger vos fichiers",
             guest_warning:

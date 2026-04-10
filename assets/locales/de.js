@@ -94,6 +94,8 @@ export default {
             copy: "Kopieren",
             copied: "Kopiert!",
             new_transfer: "Neue Übertragung senden",
+            download_link_hint:
+                "Teile diesen Link, um Zugang zu den Dateien zu geben",
             guest_warning:
                 "Speichere diesen Link! Ohne Konto ist er die einzige Möglichkeit, deine Übertragung zu verwalten oder zu löschen.",
         },

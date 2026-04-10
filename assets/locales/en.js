@@ -94,6 +94,7 @@ export default {
             copy: "Copy",
             copied: "Copied!",
             new_transfer: "Send a new transfer",
+            download_link_hint: "Share this link to give access to the files",
             public_link_hint:
                 "Share this link — anyone can download your files",
             guest_warning:
