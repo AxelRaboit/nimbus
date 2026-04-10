@@ -1,6 +1,7 @@
 export default {
     common: {
         save: "Enregistrer",
+        download_qr: "Télécharger le QR code",
     },
     app: {
         theme_dark: "Passer en mode sombre",

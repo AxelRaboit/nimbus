@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { FileText, Check, Trash2, Copy, Link } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
+import AppQrCode from "@/components/AppQrCode.vue";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { useDateFormat } from "@/composables/useDateFormat.js";
 
@@ -119,6 +120,11 @@ const deleteUrl = computed(() => `/manage/${props.ownerToken}/delete`);
                         <span class="text-muted shrink-0">{{ formatSize(file.size) }}</span>
                     </li>
                 </ul>
+            </div>
+
+            <!-- QR Code -->
+            <div class="px-5 py-4 border-b border-base flex justify-center">
+                <AppQrCode :url="publicMode ? publicDownloadUrl : downloadUrl" :size="140" />
             </div>
 
             <!-- Public link -->

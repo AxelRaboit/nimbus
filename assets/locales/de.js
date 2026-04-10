@@ -1,6 +1,7 @@
 export default {
     common: {
         save: "Speichern",
+        download_qr: "QR-Code herunterladen",
     },
     app: {
         theme_dark: "Dunkelmodus aktivieren",

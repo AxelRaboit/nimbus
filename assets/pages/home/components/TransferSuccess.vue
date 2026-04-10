@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Check, Copy } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
+import AppQrCode from "@/components/AppQrCode.vue";
 
 const { t } = useI18n();
 
@@ -69,6 +70,9 @@ async function copyLink(text, flag) {
                 </AppButton>
             </div>
         </div>
+
+        <!-- QR Code -->
+        <AppQrCode v-if="downloadUrl" :url="downloadUrl" :size="140" />
 
         <!-- Manage link -->
         <div class="w-full flex flex-col gap-2">
