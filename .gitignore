@@ -15,7 +15,6 @@
 
 # Node
 /node_modules/
-/pnpm-lock.yaml
 
 # Vite build
 /public/build/
