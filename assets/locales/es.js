@@ -18,6 +18,13 @@ export default {
         my_transfers: "Mis transferencias",
     },
     home: {
+        access_password: {
+            title: "Acceso protegido",
+            subtitle:
+                "Se requiere una contraseña para enviar una transferencia.",
+            submit: "Continuar",
+            error: "Contraseña incorrecta.",
+        },
         hero: {
             heading: "¿Cómo",
             heading_accent: "funciona?",

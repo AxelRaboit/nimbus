@@ -18,6 +18,12 @@ export default {
         my_transfers: "Mes transferts",
     },
     home: {
+        access_password: {
+            title: "Accès protégé",
+            subtitle: "Un mot de passe est requis pour envoyer un transfert.",
+            submit: "Continuer",
+            error: "Mot de passe incorrect.",
+        },
         hero: {
             heading: "Comment",
             heading_accent: "ça marche ?",

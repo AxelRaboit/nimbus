@@ -17,6 +17,8 @@
          data-max-expiry-days="{{ maxExpiryDays }}"
          data-expiry-options="{{ expiryOptions|json_encode }}"
          data-extension-groups="{{ extensionGroups|json_encode }}"
+         data-access-password-enabled="{{ accessPasswordEnabled ? 'true' : 'false' }}"
+         data-access-granted="{{ accessGranted ? 'true' : 'false' }}"
          class="flex-1"></div>
 {% endblock %}
 
