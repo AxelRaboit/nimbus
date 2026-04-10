@@ -33,12 +33,25 @@ const publicDownloadUrl = computed(() =>
 
 const expiresDate = computed(() => formatDate(props.expiresAt).value);
 
+const downloadUrl = computed(() =>
+    props.transferToken ? `${window.location.origin}/t/${props.transferToken}` : ""
+);
+
 const copiedLink = ref(false);
 async function copyPublicLink() {
     try {
         await navigator.clipboard.writeText(publicDownloadUrl.value);
         copiedLink.value = true;
         setTimeout(() => (copiedLink.value = false), 2000);
+    } catch {}
+}
+
+const copiedDownload = ref(false);
+async function copyDownloadLink() {
+    try {
+        await navigator.clipboard.writeText(downloadUrl.value);
+        copiedDownload.value = true;
+        setTimeout(() => (copiedDownload.value = false), 2000);
     } catch {}
 }
 
@@ -127,6 +140,23 @@ const deleteUrl = computed(() => `/manage/${props.ownerToken}/delete`);
                     <Link class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
                     {{ t('transfer.manage.public_downloads', { count: downloadCount }) }}
                 </p>
+            </div>
+
+            <!-- Download link (email transfers) -->
+            <div v-if="!publicMode" class="px-5 py-3 border-b border-base">
+                <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.download_link') }}</p>
+                <div class="flex items-center gap-2">
+                    <input
+                        :value="downloadUrl"
+                        readonly
+                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate"
+                        v-on:click="$event.target.select()"
+                    >
+                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copiedDownload ? null : copyDownloadLink()">
+                        <Check v-if="copiedDownload" class="w-4 h-4 text-green-500" :stroke-width="2" />
+                        <Copy v-else class="w-4 h-4" :stroke-width="2" />
+                    </AppButton>
+                </div>
             </div>
 
             <!-- Recipients -->

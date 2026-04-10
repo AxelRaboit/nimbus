@@ -115,6 +115,7 @@ export default {
             files: "Dateien",
             recipients: "Empfänger",
             downloaded: "Heruntergeladen",
+            download_link: "Download-Link",
             pending_download: "Ausstehend",
             no_recipients: "Keine Empfänger.",
             danger_zone: "Gefahrenzone",

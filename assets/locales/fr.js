@@ -123,6 +123,7 @@ export default {
             downloaded: "Téléchargé",
             pending_download: "En attente",
             no_recipients: "Aucun destinataire.",
+            download_link: "Lien de téléchargement",
             public_link: "Lien public",
             public_downloads:
                 "{count} téléchargement | {count} téléchargements",

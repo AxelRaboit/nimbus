@@ -119,6 +119,7 @@ export default {
             downloaded: "Downloaded",
             pending_download: "Pending",
             no_recipients: "No recipients.",
+            download_link: "Download link",
             public_link: "Public link",
             public_downloads: "{count} download | {count} downloads",
             danger_zone: "Danger zone",
