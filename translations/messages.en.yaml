@@ -245,3 +245,5 @@ plan:
   flash:
     upgraded: 'You are now on the Pro plan!'
     downgraded: 'You have been downgraded to the Free plan.'
+  trial_banner: 'Your Pro trial ends in %days% day(s).'
+  trial_banner_cta: 'See plans'

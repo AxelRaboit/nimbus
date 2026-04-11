@@ -11,10 +11,13 @@
         {% block stylesheets %}
             {{ vite_entry_link_tags('app') }}
             {{ vite_entry_link_tags('sidebar') }}
+            {{ vite_entry_link_tags('flash') }}
         {% endblock %}
+        <script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
         {% block javascripts %}
             {{ vite_entry_script_tags('app') }}
             {{ vite_entry_script_tags('sidebar') }}
+            {{ vite_entry_script_tags('flash') }}
         {% endblock %}
     </head>
     <body class="transition-colors duration-200">
@@ -43,15 +46,7 @@
 
                 {% block page_header_slot %}{% endblock %}
 
-                {% for label, messages in app.flashes %}
-                    {% for message in messages %}
-                        <div class="px-6 py-3 text-sm font-medium
-                                    {{ label == 'success' ? 'bg-green-500/10 text-green-600 border-b border-green-500/20' : '' }}
-                                    {{ label == 'error' ? 'bg-red-500/10 text-red-600 border-b border-red-500/20' : '' }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endfor %}
+                {{ include('components/trial_banner.html.twig') }}
 
                 <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
                     {% block body %}{% endblock %}
