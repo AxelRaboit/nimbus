@@ -46,6 +46,8 @@
 
                 {% block page_header_slot %}{% endblock %}
 
+                {{ include('components/trial_banner.html.twig') }}
+
                 <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
                     {% block body %}{% endblock %}
                 </main>

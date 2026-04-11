@@ -245,3 +245,5 @@ plan:
   flash:
     upgraded: 'Sie sind jetzt im Pro-Plan!'
     downgraded: 'Sie sind zum Free-Plan gewechselt.'
+  trial_banner: 'Ihr Pro-Testzeitraum endet in %days% Tag(en).'
+  trial_banner_cta: 'Tarife ansehen'

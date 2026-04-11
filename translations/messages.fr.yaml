@@ -251,3 +251,5 @@ plan:
   flash:
     upgraded: 'Vous êtes maintenant sur le plan Pro !'
     downgraded: 'Vous êtes revenu au plan Free.'
+  trial_banner: "Votre période d'essai Pro se termine dans %days% jour(s)."
+  trial_banner_cta: 'Voir les formules'
