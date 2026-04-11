@@ -6,6 +6,7 @@ parameters:
     tus_cache_path: '%kernel.project_dir%/var/cache/tus'
     transfer_storage_path: '%kernel.project_dir%/var/uploads/transfers'
     mailer.sender: '%env(MAILER_FROM_ADDRESS)%'
+    mailer.sender_name: '%env(MAILER_FROM_NAME)%'
 
 services:
     _defaults:
@@ -36,6 +37,7 @@ services:
     App\MessageHandler\EmailQueueMessageHandler:
         arguments:
             $mailerSender: '%mailer.sender%'
+            $mailerSenderName: '%mailer.sender_name%'
 
     App\Service\TransferNotifier: ~
 

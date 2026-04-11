@@ -11,26 +11,26 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\RejectRedeliveredMessageException;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
 #[AsMessageHandler]
 final readonly class EmailQueueMessageHandler
 {
-    private const string SUBJECT_PREFIX = '[Nimbus]';
-
     public function __construct(
         private MailerInterface $mailer,
         private LoggerInterface $logger,
         private string $mailerSender,
+        private string $mailerSenderName,
     ) {}
 
     public function __invoke(EmailQueueMessage $message): void
     {
         try {
             $email = new Email()
-                ->from($this->mailerSender)
+                ->from(new Address($this->mailerSender, $this->mailerSenderName))
                 ->to($message->getRecipientEmail())
-                ->subject(sprintf('%s %s', self::SUBJECT_PREFIX, $message->getSubject()))
+                ->subject($message->getSubject())
                 ->html($message->getBody());
 
             $this->mailer->send($email);

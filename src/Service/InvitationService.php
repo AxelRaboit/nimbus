@@ -7,6 +7,8 @@ namespace App\Service;
 use App\Enum\EmailTypeEnum;
 use App\Message\EmailQueueMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 final readonly class InvitationService
@@ -14,6 +16,8 @@ final readonly class InvitationService
     public function __construct(
         private TwigEnvironment $twig,
         private MessageBusInterface $messageBus,
+        private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
     ) {}
 
     public function send(
@@ -26,12 +30,13 @@ final readonly class InvitationService
             'customMessage' => $message ?: null,
             'credentialEmail' => $credentialEmail ?: null,
             'credentialPassword' => $credentialPassword ?: null,
+            'loginUrl' => $this->urlGenerator->generate('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
 
         $this->messageBus->dispatch(new EmailQueueMessage(
             EmailTypeEnum::Invitation->value,
             $email,
-            'Vous êtes invité sur Nimbus',
+            $this->translator->trans('mail.invitation.subject'),
             $body,
         ));
     }

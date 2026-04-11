@@ -213,6 +213,13 @@ locales:
   de: Deutsch
 
 mail:
+  invitation:
+    subject: 'Vous êtes invité à rejoindre Nimbus'
+    greeting: 'Bonjour !'
+    intro: 'Vous avez été invité à rejoindre Nimbus, la plateforme de transfert de fichiers sécurisée.'
+    credentials_heading: 'Vos identifiants de connexion'
+    login_button: 'Se connecter'
+    footer: 'Si vous pensez avoir reçu cet e-mail par erreur, vous pouvez l''ignorer.'
   transfer_ready:
     subject: '%senderName% vous a envoyé des fichiers via Nimbus'
     heading: 'Vous avez reçu des fichiers'

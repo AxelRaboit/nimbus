@@ -207,6 +207,13 @@ locales:
   de: Deutsch
 
 mail:
+  invitation:
+    subject: 'You have been invited to join Nimbus'
+    greeting: 'Hello!'
+    intro: 'You have been invited to join Nimbus, the secure file transfer platform.'
+    credentials_heading: 'Your login credentials'
+    login_button: 'Sign in'
+    footer: 'If you think you received this email by mistake, you can ignore it.'
   transfer_ready:
     subject: '%senderName% sent you files via Nimbus'
     heading: 'You received files'
