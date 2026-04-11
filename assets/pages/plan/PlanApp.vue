@@ -9,7 +9,7 @@ const { t, locale } = useI18n();
 
 const props = defineProps({
     isPro:               { type: Boolean, default: false },
-    proUntil:            { type: String,  default: null },
+    trialEndsAt:            { type: String,  default: null },
     proPrice:            { type: Number,  default: 9.99 },
     freeMaxSizeMb:       { type: Number,  default: 100 },
     freeMaxFiles:        { type: Number,  default: 3 },
@@ -25,9 +25,9 @@ const props = defineProps({
 const upgradeLoading   = ref(false);
 const downgradeLoading = ref(false);
 
-const proUntilFormatted = computed(() => {
-    if (!props.proUntil) return null;
-    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "long", year: "numeric" }).format(new Date(props.proUntil));
+const trialEndsAtFormatted = computed(() => {
+    if (!props.trialEndsAt) return null;
+    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "long", year: "numeric" }).format(new Date(props.trialEndsAt));
 });
 
 function submitForm(path) {
@@ -191,7 +191,7 @@ function downgrade() {
                     </div>
                     <div v-else class="text-center py-2">
                         <p class="text-sm text-indigo-400 font-medium">{{ t("plan.alreadyPro") }}</p>
-                        <p v-if="proUntilFormatted" class="text-xs text-muted mt-1">{{ t("plan.trialUntil", { date: proUntilFormatted }) }}</p>
+                        <p v-if="trialEndsAtFormatted" class="text-xs text-muted mt-1">{{ t("plan.trialUntil", { date: trialEndsAtFormatted }) }}</p>
                     </div>
                 </div>
             </div>

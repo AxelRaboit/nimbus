@@ -31,7 +31,7 @@ class PlanController extends AbstractController
 
         return $this->render('plan/index.html.twig', [
             'isPro' => $this->planService->isPro($user),
-            'proUntil' => $user->getProUntil()?->format('c'),
+            'trialEndsAt' => $user->getTrialEndsAt()?->format('c'),
             'proPrice' => PlanService::PRO_PRICE,
             'freeMaxSizeMb' => $this->planService->getFreeMaxSizeMb(),
             'freeMaxFiles' => $this->planService->getFreeMaxFiles(),

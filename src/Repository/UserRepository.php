@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Model\Pagination;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,6 +31,31 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @return array{items: User[], total: int, page: int, totalPages: int}
+     */
+    public function findPaginatedForAdmin(int $page, ?string $search = null): array
+    {
+        $qb = $this->createQueryBuilder('u')->orderBy('u.createdAt', 'DESC');
+        $countQb = $this->createQueryBuilder('u')->select('COUNT(u.id)');
+
+        if ($search) {
+            $condition = 'LOWER(u.name) LIKE :search OR LOWER(u.email) LIKE :search';
+            $param = '%'.mb_strtolower($search).'%';
+            $qb->andWhere($condition)->setParameter('search', $param);
+            $countQb->andWhere($condition)->setParameter('search', $param);
+        }
+
+        $pagination = Pagination::fromPage($page, limit: 20, total: (int) $countQb->getQuery()->getSingleScalarResult());
+
+        return [
+            'items' => $qb->setMaxResults($pagination->limit)->setFirstResult($pagination->offset)->getQuery()->getResult(),
+            'total' => $pagination->total,
+            'page' => $pagination->page,
+            'totalPages' => $pagination->totalPages,
+        ];
     }
 
     public function countNewThisMonth(): int

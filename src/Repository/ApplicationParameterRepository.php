@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\ApplicationParameter;
+use App\Model\Pagination;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -54,5 +55,28 @@ class ApplicationParameterRepository extends ServiceEntityRepository
     public function findAllIndexed(): array
     {
         return $this->findAll();
+    }
+
+    /**
+     * @return array{items: ApplicationParameter[], total: int, page: int, totalPages: int}
+     */
+    public function findPaginated(int $page): array
+    {
+        $total = (int) $this->createQueryBuilder('p')->select('COUNT(p.key)')->getQuery()->getSingleScalarResult();
+        $pagination = Pagination::fromPage($page, limit: 20, total: $total);
+
+        $items = $this->createQueryBuilder('p')
+            ->orderBy('p.key', 'ASC')
+            ->setMaxResults($pagination->limit)
+            ->setFirstResult($pagination->offset)
+            ->getQuery()
+            ->getResult();
+
+        return [
+            'items' => $items,
+            'total' => $pagination->total,
+            'page' => $pagination->page,
+            'totalPages' => $pagination->totalPages,
+        ];
     }
 }

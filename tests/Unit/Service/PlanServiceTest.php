@@ -26,7 +26,7 @@ final class PlanServiceTest extends TestCase
     {
         $user = new User();
         $user->setPlan(PlanEnum::Pro);
-        $user->setProUntil(new DateTimeImmutable('+7 days'));
+        $user->setTrialEndsAt(new DateTimeImmutable('+7 days'));
 
         self::assertTrue($this->buildService()->isPro($user));
     }
@@ -35,7 +35,7 @@ final class PlanServiceTest extends TestCase
     {
         $user = new User();
         $user->setPlan(PlanEnum::Pro);
-        $user->setProUntil(new DateTimeImmutable('-1 day'));
+        $user->setTrialEndsAt(new DateTimeImmutable('-1 day'));
 
         self::assertFalse($this->buildService()->isPro($user));
     }
@@ -51,14 +51,14 @@ final class PlanServiceTest extends TestCase
     {
         $user = new User();
         $user->setPlan(PlanEnum::Pro);
-        $user->setProUntil(new DateTimeImmutable('-1 day'));
+        $user->setTrialEndsAt(new DateTimeImmutable('-1 day'));
 
         $this->buildService()->isPro($user);
 
         self::assertSame(PlanEnum::Pro, $user->getPlan(), 'isPro() must not mutate the entity');
     }
 
-    public function testUpgradeSetsPlanProAndProUntil(): void
+    public function testUpgradeSetsPlanProAndTrialEndsAt(): void
     {
         $user = new User();
 
@@ -71,15 +71,15 @@ final class PlanServiceTest extends TestCase
         $this->buildService(params: $params, em: $em)->upgrade($user);
 
         self::assertSame(PlanEnum::Pro, $user->getPlan());
-        self::assertNotNull($user->getProUntil());
-        self::assertGreaterThan(new DateTimeImmutable('+29 days'), $user->getProUntil());
+        self::assertNotNull($user->getTrialEndsAt());
+        self::assertGreaterThan(new DateTimeImmutable('+29 days'), $user->getTrialEndsAt());
     }
 
-    public function testDowngradeSetsPlanFreeAndClearsProUntil(): void
+    public function testDowngradeSetsPlanFreeAndClearsTrialEndsAt(): void
     {
         $user = new User();
         $user->setPlan(PlanEnum::Pro);
-        $user->setProUntil(new DateTimeImmutable('+10 days'));
+        $user->setTrialEndsAt(new DateTimeImmutable('+10 days'));
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())->method('flush');
@@ -87,7 +87,7 @@ final class PlanServiceTest extends TestCase
         $this->buildService(em: $em)->downgrade($user);
 
         self::assertSame(PlanEnum::Free, $user->getPlan());
-        self::assertNull($user->getProUntil());
+        self::assertNull($user->getTrialEndsAt());
     }
 
     public function testCanAccessMyTransfersOnlyForPro(): void

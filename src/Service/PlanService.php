@@ -26,7 +26,12 @@ readonly class PlanService
             return false;
         }
 
-        return !($user->getProUntil() instanceof DateTimeImmutable && $user->getProUntil() < new DateTimeImmutable());
+        return !($user->getTrialEndsAt() instanceof DateTimeImmutable && $user->getTrialEndsAt() < new DateTimeImmutable());
+    }
+
+    public function isTrialing(User $user): bool
+    {
+        return $user->getTrialEndsAt() instanceof DateTimeImmutable && $user->getTrialEndsAt() > new DateTimeImmutable();
     }
 
     public function isFree(User $user): bool
@@ -107,7 +112,7 @@ readonly class PlanService
     public function upgrade(User $user): void
     {
         $user->setPlan(PlanEnum::Pro);
-        $user->setProUntil(new DateTimeImmutable(sprintf('+%d days midnight', $this->getTrialDays())));
+        $user->setTrialEndsAt(new DateTimeImmutable(sprintf('+%d days midnight', $this->getTrialDays())));
 
         $this->entityManager->flush();
     }
@@ -115,7 +120,7 @@ readonly class PlanService
     public function downgrade(User $user): void
     {
         $user->setPlan(PlanEnum::Free);
-        $user->setProUntil(null);
+        $user->setTrialEndsAt(null);
 
         $this->entityManager->flush();
     }
