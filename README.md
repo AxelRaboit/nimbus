@@ -141,6 +141,52 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 
 ---
 
+## Uploads résumables — protocole TUS
+
+Les fichiers peuvent peser plusieurs gigaoctets. Un upload HTTP classique n'offre aucune reprise en cas d'interruption réseau : tout recommence de zéro. Nimbus utilise le [protocole TUS](https://tus.io) pour résoudre ce problème.
+
+### Ce que fait TUS
+
+TUS découpe chaque fichier en **fragments de 5 Mo** envoyés séquentiellement. Le serveur conserve un pointeur d'offset : si la connexion est coupée en cours de route, le client reprend exactement là où il s'est arrêté au lieu de tout renvoyer. Chaque fragment est un `PATCH` HTTP standard ; le serveur répond avec la position courante, et le client continue.
+
+### Flow dans Nimbus
+
+```
+[Navigateur]                          [Serveur]
+    │                                     │
+    │  POST /api/transfer                 │  Crée un Transfer (statut: Pending)
+    │ ──────────────────────────────────► │  Retourne un token
+    │                                     │
+    │  POST /tus  (création upload)       │  Initialise un slot TUS
+    │ ──────────────────────────────────► │  var/uploads/tus_tmp/
+    │                                     │
+    │  PATCH /tus/{key}  (fragment 1)     │
+    │  PATCH /tus/{key}  (fragment 2)     │  Assemble les chunks au fil des PATCH
+    │  PATCH /tus/{key}  (...)            │
+    │ ──────────────────────────────────► │
+    │                                     │
+    │  POST /api/transfer/{token}/finalize│  Valide + déplace vers
+    │ ──────────────────────────────────► │  var/uploads/transfers/{token}/
+    │                                     │  Crée les entités TransferFile
+    │                                     │  Statut → Ready / envoi e-mail
+```
+
+1. **Création** — un enregistrement `Transfer` (statut `Pending`) est créé en base avant même le premier octet uploadé.
+2. **Upload fragmenté** — `tus-js-client` envoie les fichiers chunk par chunk vers `/tus`. Les métadonnées (nom original, MIME type, token de transfert) voyagent dans les en-têtes TUS. En cas d'erreur réseau, la bibliothèque retente automatiquement après 0 s, 3 s, 5 s, puis 10 s.
+3. **Reprise** — l'empreinte de chaque upload est persistée en `localStorage`. Si l'utilisateur recharge la page, `findPreviousUploads()` retrouve les uploads en cours et les reprend depuis leur offset.
+4. **Finalisation** — une fois tous les fichiers reçus, un appel `/finalize` valide les contraintes (quota du plan, extensions autorisées, protection anti-zip-bomb), déplace les fichiers de `tus_tmp/` vers leur répertoire définitif et passe le transfert en `Ready`.
+5. **Nettoyage** — un scheduler périodique supprime les uploads orphelins (jamais finalisés) et les transferts expirés.
+
+### Pourquoi ce choix
+
+| Approche classique | TUS |
+|---|---|
+| Tout ou rien — interruption = reprise à zéro | Reprise depuis l'offset exact |
+| Timeout serveur sur gros fichiers | Fragments courts, pas de timeout |
+| Pas de feedback granulaire | Progression par fichier en temps réel |
+
+---
+
 ## Stack technique
 
 | Couche | Technologie |
