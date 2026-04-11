@@ -163,7 +163,7 @@ function removeFile(index) {
             v-on:click="$refs.fileInput.click()"
         >
             <div class="flex flex-col items-center gap-2 text-center pointer-events-none">
-                <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-indigo-500/15 flex items-center justify-center">
                     <UploadCloud class="w-6 h-6 text-indigo-600" :stroke-width="2" />
                 </div>
                 <div>
