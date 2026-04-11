@@ -48,6 +48,7 @@ class HomeController extends AbstractController
             'accessPasswordEnabled' => $accessPasswordEnabled,
             'accessGranted' => $accessGranted,
             'isPro' => $user && $this->planService->isPro($user),
+            'registrationEnabled' => '0' !== $params->get('registration_enabled', '1'),
         ]);
     }
 }

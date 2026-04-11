@@ -26,11 +26,7 @@ readonly class PlanService
             return false;
         }
 
-        if ($user->getProUntil() !== null && $user->getProUntil() < new DateTimeImmutable()) {
-            return false;
-        }
-
-        return true;
+        return !($user->getProUntil() instanceof DateTimeImmutable && $user->getProUntil() < new DateTimeImmutable());
     }
 
     public function isFree(User $user): bool
@@ -112,6 +108,7 @@ readonly class PlanService
     {
         $user->setPlan(PlanEnum::Pro);
         $user->setProUntil(new DateTimeImmutable(sprintf('+%d days midnight', $this->getTrialDays())));
+
         $this->entityManager->flush();
     }
 
@@ -119,6 +116,7 @@ readonly class PlanService
     {
         $user->setPlan(PlanEnum::Free);
         $user->setProUntil(null);
+
         $this->entityManager->flush();
     }
 }

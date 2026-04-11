@@ -14,4 +14,7 @@ mountApp("app-home", HomeApp, (data) => ({
     accessGranted: data.accessGranted !== "false",
     isPro: data.isPro === "true",
     planPath: data.planPath || "/plan",
+    loginPath: data.loginPath || "/login",
+    registerPath: data.registerPath || "/register",
+    registrationEnabled: data.registrationEnabled !== "false",
 }));

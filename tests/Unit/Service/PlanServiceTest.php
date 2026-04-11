@@ -93,7 +93,7 @@ final class PlanServiceTest extends TestCase
     public function testCanAccessMyTransfersOnlyForPro(): void
     {
         $freeUser = new User();
-        $proUser  = new User();
+        $proUser = new User();
         $proUser->setPlan(PlanEnum::Pro);
 
         $service = $this->buildService();

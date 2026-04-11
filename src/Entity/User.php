@@ -6,9 +6,9 @@ namespace App\Entity;
 
 use App\Enum\PlanEnum;
 use App\Enum\UserRoleEnum;
-use DateTimeImmutable;
 use App\Repository\UserRepository;
 use App\Trait\TimestampableTrait;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
