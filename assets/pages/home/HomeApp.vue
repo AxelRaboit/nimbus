@@ -195,6 +195,7 @@ async function onFormSubmit(formData) {
             token: data.token,
             ownerToken: data.ownerToken,
             reference: data.reference,
+            isPublic: formData.isPublic ?? false,
             senderEmail: formData.senderEmail,
             senderName: formData.senderName,
             recipients: formData.recipients,

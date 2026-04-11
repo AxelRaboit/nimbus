@@ -37,6 +37,10 @@ class TransferController extends AbstractController
             $request->getSession()->set(self::SESSION_RECIPIENT_PREFIX.$transfer->getToken(), $recipient->getToken());
         } else {
             $transfer = $transferRepository->findByToken($token);
+
+            if ($transfer instanceof Transfer && !$transfer->isPublic()) {
+                throw $this->createNotFoundException();
+            }
         }
 
         if (!$transfer instanceof Transfer) {

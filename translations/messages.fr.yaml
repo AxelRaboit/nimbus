@@ -192,9 +192,9 @@ transfer:
     deleted_desc: 'L''expéditeur a supprimé ce transfert. Les fichiers ne sont plus disponibles.'
     other_desc: 'Ce transfert n''est pas encore prêt ou n''existe pas.'
     back: '← Envoyer des fichiers'
-    page_title: 'Nimbus — Transfert indisponible'
+    page_title: 'Transfert indisponible - Nimbus'
   password:
-    page_title: 'Nimbus — Transfert protégé'
+    page_title: 'Transfert protégé - Nimbus'
     title: 'Transfert protégé'
     subtitle: 'Entrez le mot de passe pour accéder aux fichiers.'
     label: 'Mot de passe'
@@ -221,7 +221,7 @@ mail:
     login_button: 'Se connecter'
     footer: 'Si vous pensez avoir reçu cet e-mail par erreur, vous pouvez l''ignorer.'
   transfer_ready:
-    subject: '%senderName% vous a envoyé des fichiers via Nimbus'
+    subject: '%senderName% vous a envoyé des fichiers'
     heading: 'Vous avez reçu des fichiers'
     intro: '%senderName% vous a envoyé %count% fichier(s) via Nimbus.'
     message_label: Message

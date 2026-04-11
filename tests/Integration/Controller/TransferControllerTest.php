@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller;
 
+use App\Entity\Recipient;
 use App\Entity\Transfer;
 use App\Enum\TransferStatusEnum;
 use App\Tests\Integration\IntegrationTestCase;
@@ -11,7 +12,19 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class TransferControllerTest extends IntegrationTestCase
 {
-    public function testShowReadyTransferIsAccessible(): void
+    public function testShowPublicTransferViaTransferTokenIsAccessible(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $transfer = $this->findReadyPublicTransfer($em);
+
+        $client->request('GET', '/t/'.$transfer->getToken());
+
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testShowPrivateTransferViaTransferTokenReturns404(): void
     {
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
@@ -19,6 +32,18 @@ final class TransferControllerTest extends IntegrationTestCase
         $transfer = $this->findReadyUnprotectedTransfer($em);
 
         $client->request('GET', '/t/'.$transfer->getToken());
+
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testShowReadyTransferViaRecipientTokenIsAccessible(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        $recipient = $this->findRecipientForReadyUnprotectedTransfer($em);
+
+        $client->request('GET', '/t/'.$recipient->getToken());
 
         self::assertResponseIsSuccessful();
     }
@@ -28,9 +53,9 @@ final class TransferControllerTest extends IntegrationTestCase
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
-        $transfer = $this->findReadyPasswordProtectedTransfer($em);
+        $recipient = $this->findRecipientForReadyPasswordProtectedTransfer($em);
 
-        $client->request('GET', '/t/'.$transfer->getToken());
+        $client->request('GET', '/t/'.$recipient->getToken());
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('#app-transfer-password');
@@ -43,8 +68,10 @@ final class TransferControllerTest extends IntegrationTestCase
 
         $transfer = $em->getRepository(Transfer::class)->findOneBy(['status' => TransferStatusEnum::Expired]);
         self::assertNotNull($transfer, 'No expired transfer found in fixtures');
+        $recipient = $transfer->getRecipients()->first();
+        self::assertNotFalse($recipient, 'No recipient found for expired transfer');
 
-        $client->request('GET', '/t/'.$transfer->getToken());
+        $client->request('GET', '/t/'.$recipient->getToken());
 
         self::assertResponseIsSuccessful();
         self::assertRouteSame('transfer_show');
@@ -78,29 +105,54 @@ final class TransferControllerTest extends IntegrationTestCase
         self::assertResponseStatusCodeSame(404);
     }
 
+    private function findReadyPublicTransfer(EntityManagerInterface $em): Transfer
+    {
+        $transfers = $em->getRepository(Transfer::class)->findBy(['status' => TransferStatusEnum::Ready]);
+
+        foreach ($transfers as $transfer) {
+            if ($transfer->isPublic()) {
+                return $transfer;
+            }
+        }
+
+        self::fail('No ready public transfer found in fixtures');
+    }
+
     private function findReadyUnprotectedTransfer(EntityManagerInterface $em): Transfer
     {
         $transfers = $em->getRepository(Transfer::class)->findBy(['status' => TransferStatusEnum::Ready]);
 
         foreach ($transfers as $transfer) {
-            if (!$transfer->isPasswordProtected()) {
+            if (!$transfer->isPasswordProtected() && !$transfer->isPublic()) {
                 return $transfer;
             }
         }
 
-        self::fail('No ready unprotected transfer found in fixtures');
+        self::fail('No ready unprotected private transfer found in fixtures');
     }
 
-    private function findReadyPasswordProtectedTransfer(EntityManagerInterface $em): Transfer
+    private function findRecipientForReadyUnprotectedTransfer(EntityManagerInterface $em): Recipient
+    {
+        $transfer = $this->findReadyUnprotectedTransfer($em);
+        $recipient = $transfer->getRecipients()->first();
+        self::assertNotFalse($recipient, 'No recipient found for ready unprotected transfer');
+
+        return $recipient;
+    }
+
+    private function findRecipientForReadyPasswordProtectedTransfer(EntityManagerInterface $em): Recipient
     {
         $transfers = $em->getRepository(Transfer::class)->findBy(['status' => TransferStatusEnum::Ready]);
 
         foreach ($transfers as $transfer) {
             if ($transfer->isPasswordProtected()) {
-                return $transfer;
+                $recipient = $transfer->getRecipients()->first();
+                if ($recipient) {
+                    return $recipient;
+                }
             }
         }
 
-        self::fail('No ready password-protected transfer found in fixtures');
+        self::fail('No ready password-protected transfer with recipient found in fixtures');
     }
 }
