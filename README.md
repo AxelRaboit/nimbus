@@ -132,6 +132,14 @@ Le destinataire reçoit un lien personnel par e-mail. Le téléchargement est tr
 
 ---
 
+### Notification de téléchargement
+
+![Notification téléchargement](docs/readme/screenshots/email/email-telechargement.png)
+
+> L'expéditeur reçoit un e-mail dès qu'un destinataire télécharge ses fichiers, avec la référence du transfert et un lien vers la gestion si besoin de supprimer.
+
+---
+
 ## Parcours — Lien public
 
 Le transfert génère un lien unique partageable librement. N'importe qui avec le lien peut télécharger.
