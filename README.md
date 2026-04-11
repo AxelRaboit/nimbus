@@ -6,8 +6,9 @@
 
 [![Symfony](https://img.shields.io/badge/Symfony-7.4-000000?style=flat-square&logo=symfony&logoColor=white)](https://symfony.com)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3-4FC08D?style=flat-square&logo=vue.js&logoColor=white)](https://vuejs.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38BDF8?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38BDF8?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![PHP](https://img.shields.io/badge/PHP-8.4+-777BB4?style=flat-square&logo=php&logoColor=white)](https://php.net)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
 
 </div>
 
@@ -15,7 +16,7 @@
 
 ## Présentation
 
-Nimbus est une application web auto-hébergée pour envoyer des fichiers en toute sécurité à vos contacts. Pas de cloud tiers, pas de tracking. Les fichiers sont chiffrés en transit, les transferts expirent automatiquement et les destinataires reçoivent un lien par e-mail.
+Nimbus est une application web auto-hébergée pour envoyer des fichiers en toute sécurité à vos contacts. Pas de cloud tiers, pas de tracking. Les transferts expirent automatiquement et les destinataires reçoivent un lien personnel par e-mail.
 
 Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volumineux via le protocole TUS (uploads fragmentés et résumables), la protection par mot de passe, et un système de formules Free/Pro.
 
@@ -23,121 +24,207 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 
 ## Fonctionnalités
 
-- **Glisser-déposer** — fichiers ou dossiers entiers, jusqu'à 10 Go par transfert (Pro)
-- **Envoi par lien ou par e-mail** — partagez via un lien direct ou envoyez directement aux destinataires
+- **Glisser-déposer** — fichiers individuels ou dossiers entiers (non zippés), avec sélection via parcourir en alternative. Limites configurables par l'administrateur (taille max, nombre de fichiers, durée d'expiration)
+- **Envoi par e-mail ou lien public** — chaque destinataire reçoit un lien personnel, ou partagez via un lien public direct
 - **Protection par mot de passe** — accès conditionnel pour les destinataires
-- **Expiration configurable** — de 1 heure à 7 jours selon la formule
-- **Mes transferts** — les utilisateurs Pro peuvent consulter, gérer et supprimer leurs transferts passés
-- **Tableau de bord admin** — statistiques globales, liste des transferts filtrables, paramètres applicatifs en base
-- **Formules Free/Pro** — limites configurables stockées en base de données, période d'essai incluse
+- **Expiration configurable** — durées disponibles paramétrables par l'administrateur
+- **Aperçu des fichiers** — prévisualisation inline avant téléchargement
+- **Suivi des téléchargements** — statut par destinataire en temps réel
+- **Mes transferts** — les utilisateurs Pro consultent, gèrent et suppriment leurs transferts passés
+- **Tableau de bord admin** — statistiques globales, liste des transferts, paramètres applicatifs
+- **Formules Free/Pro** — limites configurables en base de données, période d'essai incluse
 - **Internationalisation** — français, anglais, espagnol, allemand
-- **Mode sombre** — détection automatique de la préférence système, bascule disponible dans la barre latérale
+- **Thème** — mode sombre et mode clair
 
 ---
 
 ## Aperçu
 
-### Envoi de fichiers
-
-![Formulaire de transfert](docs/readme/transfer-form.png)
-
-> Le formulaire principal : déposez vos fichiers, ajoutez des destinataires, rédigez un message, choisissez la durée d'expiration et protégez éventuellement par mot de passe.
-
----
-
-### Modal de bienvenue (visiteurs)
-
-![Modal visiteur](docs/readme/home-guest-modal.png)
-
-> Lorsqu'un visiteur non connecté arrive sur l'application, une modale l'invite à se connecter ou créer un compte pour accéder au plan Pro.
-
----
-
-### Comment ça marche ?
-
-![Comment ça marche](docs/readme/how-it-works.png)
-
-> Explication du processus en 3 étapes, récapitulatif des limites de la formule active et liste des formats acceptés.
-
----
-
 ### Connexion
 
-![Connexion](docs/readme/login.png)
+![Connexion](docs/readme/screenshots/email/login.jpg)
 
-> Page de connexion avec présentation des avantages de l'application.
+> Page de connexion avec présentation des avantages de l'application : transferts chiffrés, expiration automatique, notifications par e-mail et connexion non obligatoire.
 
 ---
 
 ### Inscription
 
-![Inscription](docs/readme/register.png)
+![Inscription](docs/readme/screenshots/email/inscription.jpg)
 
-> Création de compte avec nom complet, adresse e-mail et mot de passe.
-
----
-
-### Mes transferts (Pro)
-
-![Mes transferts](docs/readme/my-transfers.png)
-
-> Vue des transferts envoyés : référence, statut, taille, nombre de téléchargements et date d'expiration.
+> Formulaire d'inscription : nom complet, adresse e-mail, mot de passe et confirmation.
 
 ---
 
-### Gérer un transfert
+### Comment ça marche ?
 
-![Gérer mon transfert](docs/readme/manage-transfer.png)
+![Comment ça marche](docs/readme/screenshots/email/comment-ca-marche.jpg)
 
-> Page de gestion d'un transfert : lien de téléchargement avec QR code, gestion des destinataires et zone de suppression.
+> Explication du processus en 3 étapes, récapitulatif des limites du plan actif et liste complète des formats acceptés. Les limites affichées reflètent le paramétrage de l'administrateur.
+
+---
+
+## Parcours — Envoi par e-mail
+
+Le destinataire reçoit un lien personnel par e-mail. Le téléchargement est tracké individuellement par destinataire.
+
+### Formulaire d'envoi
+
+![Formulaire d'envoi](docs/readme/screenshots/email/formulaire.jpg)
+
+> Mode e-mail : ajoutez un ou plusieurs destinataires, un message optionnel, une durée d'expiration et un mot de passe éventuel.
+
+---
+
+### Confirmation d'envoi
+
+![Confirmation](docs/readme/screenshots/email/confirmation.jpg)
+
+> Après l'envoi : référence du transfert et lien de gestion à conserver. Les destinataires reçoivent leur lien personnel par e-mail.
+
+---
+
+### E-mail reçu par le destinataire
+
+![E-mail](docs/readme/screenshots/email/email.png)
+
+> L'e-mail reçu : nom du fichier, taille, indication du mot de passe si protégé, date d'expiration et bouton de téléchargement.
 
 ---
 
 ### Transfert protégé
 
-![Transfert protégé](docs/readme/password-protected.png)
+![Transfert protégé](docs/readme/screenshots/email/transfert-protege.jpg)
 
-> Page d'accès conditionnel — les destinataires doivent saisir le mot de passe défini à l'envoi.
+> Page d'accès conditionnel — le destinataire saisit le mot de passe défini à l'envoi avant d'accéder aux fichiers.
 
 ---
 
 ### Téléchargement
 
-![Téléchargement](docs/readme/download.png)
+![Téléchargement](docs/readme/screenshots/email/telechargement.jpg)
 
-> Page de téléchargement pour le destinataire : aperçu des fichiers disponibles, taille totale et bouton de téléchargement.
-
----
-
-### Tableau de bord — Statistiques
-
-![Tableau de bord statistiques](docs/readme/dashboard-stats.png)
-
-> Indicateurs globaux (utilisateurs, transferts, destinataires, téléchargements), graphiques d'évolution et paramètres applicatifs.
+> Page de téléchargement : aperçu du fichier, expéditeur, date d'expiration et bouton de téléchargement.
 
 ---
 
-### Tableau de bord — Transferts
+### Aperçu fichier
 
-![Tableau de bord transferts](docs/readme/dashboard-transfers.png)
+![Aperçu fichier](docs/readme/screenshots/email/apercu-fichier.jpg)
 
-> Liste complète des transferts avec filtres par statut (Tous, Ready, Pending, Expired, Deleted).
-
----
-
-### Formules & Tarifs
-
-![Formules](docs/readme/plan.png)
-
-> Comparaison des formules Free et Pro avec les limites détaillées. Passage en Pro instantané (essai gratuit 30 jours).
+> Prévisualisation inline d'un fichier directement dans le navigateur avant téléchargement.
 
 ---
 
-### Profil
+### Mes transferts
 
-![Profil](docs/readme/profile.png)
+![Mes transferts](docs/readme/screenshots/email/mes-transferts.jpg)
 
-> Gestion du profil : langue d'affichage, informations personnelles, changement de mot de passe et suppression du compte.
+> Liste des transferts envoyés avec référence, statut, taille, nombre de destinataires ayant téléchargé et date d'expiration.
+
+---
+
+### Gérer un transfert
+
+![Gérer mon transfert](docs/readme/screenshots/email/gerer-transfert.jpg)
+
+> Page de gestion : QR code, lien de téléchargement, statut par destinataire et suppression définitive.
+
+---
+
+## Parcours — Lien public
+
+Le transfert génère un lien unique partageable librement. N'importe qui avec le lien peut télécharger.
+
+### Formulaire d'envoi
+
+![Formulaire d'envoi public](docs/readme/screenshots/public/formulaire.jpg)
+
+> Mode lien public : pas de destinataires, le lien et le QR code sont générés à la confirmation.
+
+---
+
+### Confirmation d'envoi
+
+![Confirmation publique](docs/readme/screenshots/public/confirmation.jpg)
+
+> Après l'envoi : lien public à partager avec QR code téléchargeable, et lien de gestion séparé.
+
+---
+
+### Transfert protégé
+
+![Transfert protégé public](docs/readme/screenshots/public/transfert-protege.jpg)
+
+> Même page d'accès conditionnel par mot de passe, disponible aussi en mode lien public.
+
+---
+
+### Téléchargement
+
+![Téléchargement public](docs/readme/screenshots/public/telechargement.jpg)
+
+> Page de téléchargement accessible via le lien public — sans identification du visiteur.
+
+---
+
+### Aperçu fichier
+
+![Aperçu fichier public](docs/readme/screenshots/public/apercu-fichier.jpg)
+
+> Prévisualisation inline identique au parcours e-mail.
+
+---
+
+### Mes transferts
+
+![Mes transferts](docs/readme/screenshots/public/mes-transferts.jpg)
+
+> Les deux modes coexistent dans la liste : le badge "Lien public" distingue les transferts publics des transferts par e-mail.
+
+---
+
+## Administration
+
+### Vue d'ensemble
+
+![Administration - Vue d'ensemble](docs/readme/screenshots/email/admin-vue-ensemble.jpg)
+
+> Dashboard admin : nombre d'utilisateurs, transferts, fichiers et téléchargements depuis le début, avec graphiques d'évolution sur 6 mois.
+
+---
+
+### Transferts
+
+![Administration - Transferts](docs/readme/screenshots/public/admin-transferts.jpg)
+
+> Liste complète de tous les transferts avec filtres par statut, expéditeur, destinataires et date d'expiration.
+
+---
+
+## Upload résumable — protocole TUS
+
+### Sélection des fichiers
+
+![Sélection fichiers](docs/readme/screenshots/upload/formulaire-fichiers.jpg)
+
+> Plusieurs fichiers volumineux ajoutés avant l'envoi — glisser-déposer ou sélection via le parcourir.
+
+---
+
+### Reprise automatique détectée
+
+![Reprise détectée](docs/readme/screenshots/upload/reprise-detectee.jpg)
+
+> Si la page est rechargée ou la connexion coupée, Nimbus détecte l'upload interrompu et propose de le reprendre automatiquement — les fichiers et le formulaire sont restaurés.
+
+---
+
+### Progression par fichier
+
+![Progression upload](docs/readme/screenshots/upload/progression.jpg)
+
+> La progression est affichée fichier par fichier. Les fichiers déjà uploadés (100%) ne sont pas renvoyés, l'upload reprend à l'offset exact des fichiers en cours.
 
 ---
 
@@ -185,6 +272,10 @@ TUS découpe chaque fichier en **fragments de 5 Mo** envoyés séquentiellement.
 | Timeout serveur sur gros fichiers | Fragments courts, pas de timeout |
 | Pas de feedback granulaire | Progression par fichier en temps réel |
 
+### Stockage
+
+Actuellement, les fichiers sont stockés directement sur le serveur (`var/uploads/`). Une intégration avec un stockage cloud (AWS S3, Cloudflare R2, etc.) est prévue pour permettre de déléguer le stockage et de passer à l'échelle sans contrainte d'espace disque.
+
 ---
 
 ## Stack technique
@@ -196,7 +287,7 @@ TUS découpe chaque fichier en **fragments de 5 Mo** envoyés séquentiellement.
 | Upload | Protocole TUS (fragmenté, résumable) |
 | Queue & Scheduler | Symfony Messenger, Symfony Scheduler |
 | Frontend | Vue 3, Vue i18n, vue-chartjs |
-| Style | Tailwind CSS 3 |
+| Style | Tailwind CSS 4 |
 | Emails | Symfony Mailer (SMTP) |
 | Build | Vite 8 |
 
