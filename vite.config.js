@@ -14,7 +14,7 @@ export default defineConfig({
         },
     },
     build: {
-        rollupOptions: {
+        rolldownOptions: {
             input: {
                 app: './assets/app.js',
                 sidebar: './assets/sidebar.js',
