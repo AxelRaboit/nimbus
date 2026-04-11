@@ -37,6 +37,7 @@ const { errors, validate } = useForm();
 
 watch(() => props.draft, (draft) => {
     if (!draft) return;
+    isPublic.value    = draft.isPublic ?? false;
     if (draft.recipients?.length) recipients.value = [...draft.recipients];
     senderEmail.value = draft.senderEmail ?? props.prefillEmail;
     senderName.value  = draft.senderName ?? "";

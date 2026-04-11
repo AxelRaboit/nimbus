@@ -26,7 +26,7 @@ function isAllowedExt(name) {
 
 function wrapWithPath(file, path) {
     if (!path || path === file.name) return file;
-    return new File([file], path, { type: file.type });
+    return new File([file], path, { type: file.type, lastModified: file.lastModified });
 }
 
 async function readDirectoryEntry(entry, prefix = "") {
