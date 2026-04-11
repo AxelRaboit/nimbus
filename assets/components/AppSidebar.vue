@@ -33,7 +33,7 @@ const props = defineProps({
     isGuest: { type: Boolean, default: false },
     isDev: { type: Boolean, default: false },
     devPath: { type: String, default: "/dev" },
-    dashboardPath: { type: String, default: "/dashboard" },
+    dashboardPath: { type: String, default: "/transferts" },
     userPlan: { type: String, default: "free" },
     planPath: { type: String, default: "/plan" },
 });

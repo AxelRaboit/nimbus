@@ -1,6 +1,6 @@
 export const Route = Object.freeze({
     Home: "home",
-    Dashboard: "app_dashboard",
+    Dashboard: "transfers",
     Plan: "plan",
     Profile: "profile",
     Dev: "dev",
