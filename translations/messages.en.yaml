@@ -214,6 +214,7 @@ mail:
     message_label: Message
     download_button: 'Download files'
     expires: 'This transfer expires on %date%.'
+    password_label: 'Password required'
     footer: 'If you do not wish to download these files, ignore this e-mail.'
   transfer_downloaded:
     subject: 'Your files were downloaded [Ref. %reference%]'
@@ -235,6 +236,9 @@ mail:
 
 dashboard:
   title: 'My transfers'
+
+dev:
+  title: 'Dashboard'
 
 plan:
   title: 'Plans & Pricing'

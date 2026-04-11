@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\LocaleEnum;
 use App\Enum\PlanEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
@@ -44,6 +45,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $proUntil = null;
+
+    #[ORM\Column(length: 5, enumType: LocaleEnum::class)]
+    private LocaleEnum $locale = LocaleEnum::French;
 
     public function getId(): ?int
     {
@@ -128,6 +132,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProUntil(?DateTimeImmutable $proUntil): static
     {
         $this->proUntil = $proUntil;
+
+        return $this;
+    }
+
+    public function getLocale(): LocaleEnum
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(LocaleEnum $locale): static
+    {
+        $this->locale = $locale;
 
         return $this;
     }

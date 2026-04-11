@@ -14,6 +14,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class PasswordResetManager
@@ -26,6 +27,7 @@ final readonly class PasswordResetManager
         private MailerInterface $mailer,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
+        private LocaleSwitcher $localeSwitcher,
     ) {}
 
     /**
@@ -56,17 +58,22 @@ final readonly class PasswordResetManager
             'token' => $plainToken,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $message = new Email()
-            ->from($_ENV['MAILER_FROM_ADDRESS'] ?? 'noreply@nimbus.dev')
-            ->to($user->getEmail())
-            ->subject($this->translator->trans('auth.forgot_password.email_subject'))
-            ->html(sprintf(
+        [$subject, $html] = $this->localeSwitcher->runWithLocale($user->getLocale()->value, fn (): array => [
+            $this->translator->trans('auth.forgot_password.email_subject'),
+            sprintf(
                 '<p>%s</p><p><a href="%s">%s</a></p><p>%s</p>',
                 $this->translator->trans('auth.forgot_password.email_body'),
                 $resetUrl,
                 $resetUrl,
                 $this->translator->trans('auth.forgot_password.email_expiry'),
-            ));
+            ),
+        ]);
+
+        $message = new Email()
+            ->from($_ENV['MAILER_FROM_ADDRESS'] ?? 'noreply@nimbus.dev')
+            ->to($user->getEmail())
+            ->subject($subject)
+            ->html($html);
 
         $this->mailer->send($message);
     }

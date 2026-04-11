@@ -214,6 +214,7 @@ mail:
     message_label: Nachricht
     download_button: 'Dateien herunterladen'
     expires: 'Diese Übertragung läuft ab am %date%.'
+    password_label: 'Passwort erforderlich'
     footer: 'Wenn Sie diese Dateien nicht herunterladen möchten, ignorieren Sie diese E-Mail.'
   transfer_downloaded:
     subject: 'Ihre Dateien wurden heruntergeladen [Ref. %reference%]'
@@ -235,6 +236,9 @@ mail:
 
 dashboard:
   title: 'Meine Übertragungen'
+
+dev:
+  title: 'Dashboard'
 
 plan:
   title: 'Tarife & Preise'
