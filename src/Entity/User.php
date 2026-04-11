@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private PlanEnum $plan = PlanEnum::Free;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTimeImmutable $proUntil = null;
+    private ?DateTimeImmutable $trialEndsAt = null;
 
     #[ORM\Column(length: 5, enumType: LocaleEnum::class)]
     private LocaleEnum $locale = LocaleEnum::French;
@@ -124,14 +124,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getProUntil(): ?DateTimeImmutable
+    public function getTrialEndsAt(): ?DateTimeImmutable
     {
-        return $this->proUntil;
+        return $this->trialEndsAt;
     }
 
-    public function setProUntil(?DateTimeImmutable $proUntil): static
+    public function setTrialEndsAt(?DateTimeImmutable $trialEndsAt): static
     {
-        $this->proUntil = $proUntil;
+        $this->trialEndsAt = $trialEndsAt;
 
         return $this;
     }

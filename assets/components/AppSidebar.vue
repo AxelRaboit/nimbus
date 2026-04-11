@@ -15,7 +15,7 @@ import {
     ChevronsRight,
     Menu,
     X,
-    LayoutDashboard,
+    Shield,
     History,
     Sparkles,
 } from "lucide-vue-next";
@@ -103,6 +103,11 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
             </button>
         </div>
 
+        <div v-if="!isGuest" class="sh-logo-expanded flex-col border-b border-base px-4 py-3 shrink-0">
+            <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
+            <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+        </div>
+
         <nav class="sidebar-nav flex-1 py-4 space-y-0.5">
             <a
                 :href="homePath"
@@ -146,9 +151,9 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 v-if="isDev"
                 :href="devPath"
                 class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                :class="devActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                :class="devActive ? 'bg-rose-600/15 text-rose-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
             >
-                <LayoutDashboard class="w-5 h-5 shrink-0" :class="devActive ? 'text-indigo-400' : 'text-muted'" />
+                <Shield class="w-5 h-5 shrink-0" :class="devActive ? 'text-rose-400' : 'text-muted'" />
                 <span class="si-label truncate">{{ t("nav.dashboard") }}</span>
                 <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                     {{ t("nav.dashboard") }}
@@ -218,11 +223,11 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     "
                 >
                     <User class="w-5 h-5 shrink-0 text-muted" />
-                    <span class="si-label truncate">{{ userName }}</span>
+                    <span class="si-label truncate">{{ t("nav.profile") }}</span>
                     <span
                         class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
                     >
-                        {{ userName }}
+                        {{ t("nav.profile") }}
                     </span>
                 </a>
 
@@ -269,16 +274,16 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
         <div class="absolute inset-0 bg-black/60" v-on:click="closeMobile" />
 
         <div
-            class="relative w-72 max-w-[85vw] bg-surface h-full flex flex-col shadow-2xl transition-transform duration-200"
+            class="relative w-60 max-w-[85vw] bg-surface h-full flex flex-col shadow-2xl transition-transform duration-200"
             :class="mobileOpen ? 'translate-x-0' : '-translate-x-full'"
         >
             <div
-                class="flex items-center justify-between px-5 h-14 border-b border-base shrink-0"
+                class="flex items-center justify-between px-4 h-16 border-b border-base shrink-0"
             >
-                <div class="flex items-center gap-2">
-                    <AppLogo :size="28" />
-                    <div class="flex flex-col">
-                        <span class="text-primary font-bold text-base leading-tight">Nimbus</span>
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <AppLogo :size="32" class="shrink-0" />
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-primary font-bold text-lg tracking-tight truncate leading-tight">Nimbus</span>
                         <span v-if="appVersion" class="text-xs text-muted/50 leading-none">{{
                             appVersion
                         }}</span>
@@ -290,6 +295,11 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 >
                     <X class="w-5 h-5" />
                 </button>
+            </div>
+
+            <div v-if="!isGuest" class="px-4 py-3 border-b border-base shrink-0">
+                <p class="text-sm font-medium text-primary">{{ userName }}</p>
+                <p class="text-xs text-muted truncate">{{ userEmail }}</p>
             </div>
 
             <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
@@ -326,9 +336,9 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     v-if="isDev"
                     :href="devPath"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    :class="devActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    :class="devActive ? 'bg-rose-600/15 text-rose-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
                 >
-                    <LayoutDashboard class="w-5 h-5 shrink-0" :class="devActive ? 'text-indigo-400' : 'text-muted'" />
+                    <Shield class="w-5 h-5 shrink-0" :class="devActive ? 'text-rose-400' : 'text-muted'" />
                     {{ t("nav.dashboard") }}
                 </a>
             </nav>
@@ -365,11 +375,6 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 </template>
 
                 <template v-else>
-                    <div class="px-3 py-2">
-                        <p class="text-sm font-medium text-primary">{{ userName }}</p>
-                        <p class="text-xs text-muted truncate">{{ userEmail }}</p>
-                    </div>
-
                     <a
                         :href="profilePath"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"

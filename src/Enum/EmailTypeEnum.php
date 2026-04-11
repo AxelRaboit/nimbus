@@ -10,4 +10,5 @@ enum EmailTypeEnum: string
     case TransferReminder = 'transfer_reminder';
     case TransferDownloaded = 'transfer_downloaded';
     case TransferExpired = 'transfer_expired';
+    case Invitation = 'invitation';
 }

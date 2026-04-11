@@ -99,7 +99,7 @@ auth:
     closed_desc: 'Registrierungen sind vorübergehend deaktiviert. Bitte versuchen Sie es später erneut.'
 
 profile:
-  title: Profil
+  title: 'Mein Profil'
   subtitle: 'Verwalten Sie Ihre persönlichen Informationen und Sicherheit.'
   locale:
     title: Sprache
@@ -237,8 +237,8 @@ mail:
 dashboard:
   title: 'Meine Übertragungen'
 
-dev:
-  title: 'Dashboard'
+admin:
+  title: 'Administration'
 
 plan:
   title: 'Tarife & Preise'

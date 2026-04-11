@@ -99,7 +99,7 @@ auth:
     closed_desc: "Les inscriptions sont temporairement désactivées. Veuillez réessayer plus tard."
 
 profile:
-  title: Profil
+  title: 'Mon profil'
   subtitle: 'Gérez vos informations personnelles et votre sécurité.'
   locale:
     title: Langue
@@ -243,8 +243,8 @@ mail:
 dashboard:
   title: 'Mes transferts'
 
-dev:
-  title: 'Tableau de bord'
+admin:
+  title: 'Administration'
 
 plan:
   title: 'Formules & Tarifs'

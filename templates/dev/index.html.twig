@@ -1,9 +1,21 @@
 {% extends 'base_auth.html.twig' %}
 
-{% block title %}Nimbus — {{ 'dev.title'|trans }}{% endblock %}
+{% block title %}{{ 'admin.title'|trans }} - Nimbus{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('components/page_header.html.twig', {title: 'dev.title'|trans}) }}
+    {% set tabLabels = {
+        stats: 'Vue d\'ensemble',
+        users: 'Utilisateurs',
+        invitations: 'Invitations',
+        parameters: 'Paramètres',
+        transfers: 'Transferts',
+    } %}
+    {{ include('components/page_header.html.twig', {
+        crumbs: [
+            {label: 'Administration', href: path('dev_dashboard')},
+            {label: tabLabels[tab] ?? tab},
+        ],
+    }) }}
 {% endblock %}
 
 {% block body %}
@@ -11,11 +23,21 @@
      data-tab="{{ tab }}"
      data-stats="{{ tab == 'stats' ? stats|json_encode : '{}' }}"
      data-transfers="{{ tab == 'transfers' ? transfers|json_encode : '{}' }}"
+     data-users="{{ tab == 'users' ? users|json_encode : '{}' }}"
+     data-parameters="{{ tab == 'parameters' ? parameters|json_encode : '{}' }}"
+     data-search="{{ search ?? '' }}"
      data-status="{{ status ?? '' }}"
      data-locale="{{ app.request.locale }}"
      data-stats-path="{{ path('dev_dashboard') }}"
      data-transfers-path="{{ path('dev_transfers') }}"
+     data-users-path="{{ path('dev_users') }}"
+     data-invitations-path="{{ path('dev_invitations') }}"
+     data-invitation-send-path="{{ path('dev_invitation_send') }}"
+     data-parameters-path="{{ path('dev_parameters') }}"
      data-parameter-update-path="{{ path('dev_parameter_update', {key: '__key__'}) }}"
+     data-user-delete-path="{{ path('dev_user_delete', {id: '__id__'}) }}"
+     data-user-toggle-role-path="{{ path('dev_user_toggle_role', {id: '__id__'}) }}"
+     data-csrf-token="{{ csrf_token('dev') }}"
 ></div>
 {% endblock %}
 

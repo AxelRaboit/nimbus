@@ -99,7 +99,7 @@ auth:
     closed_desc: 'Los registros están temporalmente desactivados. Por favor, inténtelo más tarde.'
 
 profile:
-  title: Perfil
+  title: 'Mi perfil'
   subtitle: 'Gestiona tu información personal y seguridad.'
   locale:
     title: Idioma
@@ -237,8 +237,8 @@ mail:
 dashboard:
   title: 'Mis transferencias'
 
-dev:
-  title: 'Panel de control'
+admin:
+  title: 'Administración'
 
 plan:
   title: 'Planes & Precios'

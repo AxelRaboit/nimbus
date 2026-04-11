@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Manager;
 
 use App\Entity\User;
+use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -47,6 +48,22 @@ final readonly class UserManager
     public function delete(User $user): void
     {
         $this->entityManager->remove($user);
+        $this->entityManager->flush();
+    }
+
+    public function toggleDevRole(User $user): void
+    {
+        $roles = array_values(array_filter(
+            $user->getRoles(),
+            fn (string $r): bool => $r !== UserRoleEnum::User->value,
+        ));
+
+        if (in_array(UserRoleEnum::Dev->value, $roles, true)) {
+            $user->setRoles(array_values(array_filter($roles, fn (string $r): bool => $r !== UserRoleEnum::Dev->value)));
+        } else {
+            $user->setRoles([...$roles, UserRoleEnum::Dev->value]);
+        }
+
         $this->entityManager->flush();
     }
 

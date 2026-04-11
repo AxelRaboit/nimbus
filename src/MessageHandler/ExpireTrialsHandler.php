@@ -25,8 +25,8 @@ final readonly class ExpireTrialsHandler
     {
         $expired = $this->userRepository->createQueryBuilder('u')
             ->where('u.plan = :plan')
-            ->andWhere('u.proUntil IS NOT NULL')
-            ->andWhere('u.proUntil < :now')
+            ->andWhere('u.trialEndsAt IS NOT NULL')
+            ->andWhere('u.trialEndsAt < :now')
             ->setParameter('plan', PlanEnum::Pro)
             ->setParameter('now', new DateTimeImmutable())
             ->getQuery()
@@ -35,7 +35,7 @@ final readonly class ExpireTrialsHandler
         $count = 0;
         foreach ($expired as $user) {
             $user->setPlan(PlanEnum::Free);
-            $user->setProUntil(null);
+            $user->setTrialEndsAt(null);
             ++$count;
         }
 
