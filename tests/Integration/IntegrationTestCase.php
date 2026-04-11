@@ -31,7 +31,7 @@ abstract class IntegrationTestCase extends WebTestCase
         $application = new Application($kernel);
         $application->setAutoExit(false);
         $application->run(
-            new ArrayInput(['command' => 'app:application-parameter']),
+            new ArrayInput(['command' => 'nimbus:application-parameter']),
             new NullOutput(),
         );
 

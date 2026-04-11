@@ -57,7 +57,7 @@ install-prod:
 	$(PNPM) install --frozen-lockfile
 	make setup-dirs
 	make migrate-f
-	$(CONSOLE) app:application-parameter
+	$(CONSOLE) nimbus:application-parameter
 	make build
 	make cc-prod
 
@@ -74,7 +74,7 @@ deploy-prod: ## Deploy to production (requires a git tag on HEAD)
 	$(COMPOSER) install --no-dev --optimize-autoloader; \
 	make cc-prod; \
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction; \
-	$(CONSOLE) app:application-parameter; \
+	$(CONSOLE) nimbus:application-parameter; \
 	$(PNPM) install --frozen-lockfile; \
 	$(PNPM) run build; \
 	echo "✅ Deployed $$APP_VERSION successfully."
@@ -146,7 +146,7 @@ fixtures: ## Drop DB, re-run migrations and load fixtures
 	$(CONSOLE) doctrine:database:drop --force --if-exists
 	$(CONSOLE) doctrine:database:create --if-not-exists
 	$(CONSOLE) doctrine:migrations:migrate --no-interaction
-	$(CONSOLE) app:application-parameter
+	$(CONSOLE) nimbus:application-parameter
 	$(CONSOLE) doctrine:fixtures:load --no-interaction
 	@echo "✅ Fixtures loaded"
 
@@ -155,7 +155,7 @@ dev-user: ## Assign ROLE_DEV to a user (usage: make dev-user EMAIL=user@example.
 		echo "❌ Error: EMAIL is required. Usage: make dev-user EMAIL=user@example.com"; \
 		exit 1; \
 	fi
-	$(CONSOLE) app:user:role $(EMAIL) ROLE_DEV
+	$(CONSOLE) nimbus:user:role $(EMAIL) ROLE_DEV
 	@echo "✅ ROLE_DEV assigned to $(EMAIL)"
 
 # === Database ===
@@ -193,7 +193,7 @@ test-integration:
 db-test: ## Create and migrate the test database
 	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
 	$(CONSOLE) doctrine:migrations:migrate --env=test --no-interaction
-	$(CONSOLE) app:application-parameter --env=test
+	$(CONSOLE) nimbus:application-parameter --env=test
 
 # === Code Quality ===
 stan:
