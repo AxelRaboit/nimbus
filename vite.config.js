@@ -29,6 +29,14 @@ export default defineConfig({
                 dashboard: './assets/pages/dashboard/index.js',
                 plan: './assets/pages/plan/index.js',
             },
+            output: {
+                manualChunks: {
+                    'vendor-vue': ['vue', 'vue-i18n', 'vue-sonner'],
+                    'vendor-charts': ['chart.js', 'vue-chartjs'],
+                    'vendor-icons': ['lucide-vue-next'],
+                    'vendor-utils': ['axios', 'qrcode', 'tus-js-client'],
+                },
+            },
         },
     },
 });
