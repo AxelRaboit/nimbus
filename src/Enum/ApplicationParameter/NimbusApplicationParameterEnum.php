@@ -15,6 +15,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
     case MaxRecipientsPerTransferPro = 'max_recipients_per_transfer_pro';
     case MaxRecipientsPerTransferFree = 'max_recipients_per_transfer_free';
     case RegistrationEnabled = 'registration_enabled';
+    case ProTrialDays = 'pro_trial_days';
 
     public function getKey(): string
     {
@@ -33,6 +34,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferPro => 'Destinataires maximum par transfert (Pro)',
             self::MaxRecipientsPerTransferFree => 'Destinataires maximum par transfert (Free)',
             self::RegistrationEnabled => 'Inscription ouverte',
+            self::ProTrialDays => 'Durée du trial Pro (jours)',
         };
     }
 
@@ -48,6 +50,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferPro => 'Nombre maximum de destinataires par transfert (Pro)',
             self::MaxRecipientsPerTransferFree => 'Nombre maximum de destinataires par transfert (Free)',
             self::RegistrationEnabled => 'Inscription ouverte (0 = fermée, 1 = ouverte)',
+            self::ProTrialDays => 'Nombre de jours de trial Pro accordés lors du passage en Pro (demo)',
         };
     }
 
@@ -63,6 +66,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferPro => '20',
             self::MaxRecipientsPerTransferFree => '1',
             self::RegistrationEnabled => '1',
+            self::ProTrialDays => '30',
         };
     }
 

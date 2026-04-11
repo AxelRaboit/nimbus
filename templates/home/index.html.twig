@@ -19,6 +19,11 @@
          data-extension-groups="{{ extensionGroups|json_encode }}"
          data-access-password-enabled="{{ accessPasswordEnabled ? 'true' : 'false' }}"
          data-access-granted="{{ accessGranted ? 'true' : 'false' }}"
+         data-is-pro="{{ isPro ? 'true' : 'false' }}"
+         data-plan-path="{{ path('plan') }}"
+         data-login-path="{{ path('app_login') }}"
+         data-register-path="{{ path('app_register') }}"
+         data-registration-enabled="{{ registrationEnabled ? 'true' : 'false' }}"
          class="flex-1"></div>
 {% endblock %}
 

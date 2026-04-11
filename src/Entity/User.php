@@ -8,6 +8,7 @@ use App\Enum\PlanEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use App\Trait\TimestampableTrait;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -40,6 +41,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 10, enumType: PlanEnum::class)]
     private PlanEnum $plan = PlanEnum::Free;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $proUntil = null;
 
     public function getId(): ?int
     {
@@ -112,6 +116,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlan(PlanEnum $plan): static
     {
         $this->plan = $plan;
+
+        return $this;
+    }
+
+    public function getProUntil(): ?DateTimeImmutable
+    {
+        return $this->proUntil;
+    }
+
+    public function setProUntil(?DateTimeImmutable $proUntil): static
+    {
+        $this->proUntil = $proUntil;
 
         return $this;
     }

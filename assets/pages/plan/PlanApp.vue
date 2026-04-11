@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { Check, X, Sparkles } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
@@ -9,6 +9,7 @@ const { t, locale } = useI18n();
 
 const props = defineProps({
     isPro:               { type: Boolean, default: false },
+    proUntil:            { type: String,  default: null },
     proPrice:            { type: Number,  default: 9.99 },
     freeMaxSizeMb:       { type: Number,  default: 100 },
     freeMaxFiles:        { type: Number,  default: 3 },
@@ -23,6 +24,11 @@ const props = defineProps({
 
 const upgradeLoading   = ref(false);
 const downgradeLoading = ref(false);
+
+const proUntilFormatted = computed(() => {
+    if (!props.proUntil) return null;
+    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "long", year: "numeric" }).format(new Date(props.proUntil));
+});
 
 function submitForm(path) {
     const form = document.createElement("form");
@@ -183,8 +189,9 @@ function downgrade() {
                             🔒 {{ t("plan.stripeSoon") }}
                         </p>
                     </div>
-                    <div v-else class="text-sm text-indigo-400 text-center font-medium py-2">
-                        {{ t("plan.alreadyPro") }}
+                    <div v-else class="text-center py-2">
+                        <p class="text-sm text-indigo-400 font-medium">{{ t("plan.alreadyPro") }}</p>
+                        <p v-if="proUntilFormatted" class="text-xs text-muted mt-1">{{ t("plan.trialUntil", { date: proUntilFormatted }) }}</p>
                     </div>
                 </div>
             </div>

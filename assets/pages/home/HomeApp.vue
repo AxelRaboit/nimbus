@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { RotateCcw, X, HelpCircle, Lock } from "lucide-vue-next";
+import { RotateCcw, X, HelpCircle, Lock, Sparkles } from "lucide-vue-next";
+import AppLogo from "@/components/AppLogo.vue";
 import TransferForm from "./components/TransferForm.vue";
 import UploadProgress from "./components/UploadProgress.vue";
 import TransferSuccess from "./components/TransferSuccess.vue";
@@ -24,6 +25,11 @@ const props = defineProps({
     extensionGroups:        { type: String, default: "{}" },
     accessPasswordEnabled:  { type: Boolean, default: false },
     accessGranted:          { type: Boolean, default: true },
+    isPro:                  { type: Boolean, default: false },
+    planPath:               { type: String, default: "/plan" },
+    loginPath:              { type: String, default: "/login" },
+    registerPath:           { type: String, default: "/register" },
+    registrationEnabled:    { type: Boolean, default: true },
 });
 
 const fileTypeGroups = computed(() => {
@@ -33,6 +39,13 @@ const fileTypeGroups = computed(() => {
         exts,
     }));
 });
+
+const GUEST_MODAL_KEY = "nimbus-guest-modal-dismissed";
+const showGuestModal = ref(props.isGuest && !localStorage.getItem(GUEST_MODAL_KEY));
+function dismissGuestModal() {
+    showGuestModal.value = false;
+    localStorage.setItem(GUEST_MODAL_KEY, "1");
+}
 
 const showHelp = ref(false);
 const showAccessModal = ref(false);
@@ -45,6 +58,7 @@ const pendingSubmit = ref(null);
 if (typeof window !== "undefined") {
     window.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
+            dismissGuestModal();
             showHelp.value = false;
             if (showAccessModal.value) {
                 showAccessModal.value = false;
@@ -297,6 +311,55 @@ function reset() {
     <Teleport to="body">
         <Transition name="modal">
             <div
+                v-if="showGuestModal"
+                class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+            >
+                <div class="absolute inset-0 bg-black/50" v-on:click="dismissGuestModal" />
+                <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-sm">
+                    <button
+                        class="absolute top-3 right-3 text-muted hover:text-primary transition-colors p-1"
+                        v-on:click="dismissGuestModal"
+                    >
+                        <X class="w-4 h-4" :stroke-width="2" />
+                    </button>
+
+                    <div class="px-6 pt-6 pb-4 text-center">
+                        <div class="flex justify-center mb-4">
+                            <AppLogo :size="48" />
+                        </div>
+                        <h2 class="text-base font-bold text-primary">Bienvenue sur Nimbus</h2>
+                        <p class="text-sm text-secondary mt-1.5">
+                            Connectez-vous pour retrouver vos transferts et accéder aux fonctionnalités avancées.
+                        </p>
+                    </div>
+
+                    <div class="px-6 pb-6 flex flex-col gap-2">
+                        <a
+                            :href="loginPath"
+                            class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+                        >
+                            Se connecter
+                        </a>
+                        <a
+                            v-if="registrationEnabled"
+                            :href="registerPath"
+                            class="w-full flex items-center justify-center gap-2 bg-surface-2 hover:bg-surface-3 text-primary text-sm font-medium px-4 py-2.5 rounded-xl transition-colors"
+                        >
+                            Créer un compte
+                        </a>
+                        <button
+                            class="text-xs text-muted hover:text-secondary transition-colors mt-1"
+                            v-on:click="dismissGuestModal"
+                        >
+                            Continuer sans compte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+
+        <Transition name="modal">
+            <div
                 v-if="showAccessModal"
                 class="fixed inset-0 z-50 flex items-center justify-center p-4"
                 v-on:click.self="showAccessModal = false; pendingSubmit = null; accessModalPassword = ''; accessModalError = '';"
@@ -411,6 +474,19 @@ function reset() {
                             </svg>
                             Protection par mot de passe optionnelle
                         </p>
+
+                        <a
+                            v-if="!isPro && !isGuest"
+                            :href="planPath"
+                            class="flex items-center gap-3 bg-indigo-600/10 border border-indigo-500/30 rounded-xl px-4 py-3 hover:bg-indigo-600/15 transition-colors group"
+                        >
+                            <Sparkles class="w-4 h-4 text-indigo-400 shrink-0" :stroke-width="2" />
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-indigo-400">Passer au plan Pro</p>
+                                <p class="text-xs text-secondary mt-0.5">Plus de stockage, plus de fichiers, expiration plus longue.</p>
+                            </div>
+                            <span class="text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
+                        </a>
 
                         <div>
                             <p class="text-xs text-muted uppercase tracking-wide mb-3">Formats acceptés</p>
