@@ -16,6 +16,7 @@ export default {
         login: "Log in",
         dashboard: "Dashboard",
         my_transfers: "My transfers",
+        plan: "Pricing",
     },
     home: {
         access_password: {
@@ -212,6 +213,38 @@ export default {
         public_link: "Public link",
         downloads: "download(s)",
         load_more: "Load more",
+    },
+    plan: {
+        title: "Plans & Pricing",
+        subtitle:
+            "Simple, transparent pricing. Upgrade or downgrade at any time.",
+        currentPlan: "Current plan",
+        perMonth: "month",
+        free: {
+            name: "Free",
+            price: "€0",
+            tagline: "For occasional file sharing.",
+        },
+        pro: {
+            name: "Pro",
+            price: "€9.99",
+            tagline: "For power users.",
+        },
+        features: {
+            maxSize: "Up to {size} per transfer",
+            maxFiles: "{n} file max per transfer | {n} files max per transfer",
+            maxExpiry: "Expiry up to {n} hour | Expiry up to {n} hours",
+            maxExpiryDays: "Expiry up to {n} day | Expiry up to {n} days",
+            password: "Password protection",
+            message: "Custom message",
+            myTransfers: "Access to My transfers",
+        },
+        upgradeCta: "Upgrade to Pro",
+        downgradeFree: "Downgrade to Free",
+        alreadyPro: "You are on the Pro plan",
+        stripeSoon: "Stripe payment coming soon — upgrade is free for now",
+        disclaimer:
+            "Prices will be confirmed when Stripe integration is complete. Change your plan anytime.",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

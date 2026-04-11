@@ -6,6 +6,9 @@ namespace App\Repository;
 
 use App\Entity\Transfer;
 use App\Entity\User;
+use App\Enum\TransferStatusEnum;
+use App\Model\Pagination;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -55,5 +58,80 @@ class TransferRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function countActive(): int
+    {
+        return (int) $this->getEntityManager()->getConnection()->fetchOne(
+            sprintf("SELECT COUNT(*) FROM transfer WHERE status = '%s' AND expires_at > NOW()", TransferStatusEnum::Ready->value)
+        );
+    }
+
+    /**
+     * @return array<array{month: string, count: int}>
+     */
+    public function countByMonth(int $months = 6): array
+    {
+        $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
+            sprintf(
+                "SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month, COUNT(*) AS count
+                 FROM transfer
+                 WHERE created_at >= DATE_TRUNC('month', NOW() - INTERVAL '%d months')
+                 GROUP BY month
+                 ORDER BY month",
+                $months - 1
+            )
+        );
+
+        return $this->fillMonths($rows, $months);
+    }
+
+    /**
+     * @return array{items: Transfer[], total: int, page: int, totalPages: int}
+     */
+    public function findPaginatedAdmin(int $page, string $status = ''): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->leftJoin('t.files', 'f')
+            ->leftJoin('t.recipients', 'r')
+            ->addSelect('f', 'r')
+            ->orderBy('t.createdAt', 'DESC');
+
+        $countQb = $this->createQueryBuilder('t')->select('COUNT(t.id)');
+
+        if ('' !== $status) {
+            $qb->andWhere('t.status = :status')->setParameter('status', TransferStatusEnum::from($status));
+            $countQb->andWhere('t.status = :status')->setParameter('status', TransferStatusEnum::from($status));
+        }
+
+        $pagination = Pagination::fromPage($page, limit: 20, total: (int) $countQb->getQuery()->getSingleScalarResult());
+
+        return [
+            'items' => $qb->setMaxResults($pagination->limit)->setFirstResult($pagination->offset)->getQuery()->getResult(),
+            'total' => $pagination->total,
+            'page' => $pagination->page,
+            'totalPages' => $pagination->totalPages,
+        ];
+    }
+
+    /**
+     * @param array<array{month: string, count: string}> $rows
+     *
+     * @return array<array{month: string, count: int}>
+     */
+    private function fillMonths(array $rows, int $months): array
+    {
+        $indexed = [];
+        foreach ($rows as $row) {
+            $indexed[$row['month']] = (int) $row['count'];
+        }
+
+        $result = [];
+        for ($i = $months - 1; $i >= 0; --$i) {
+            $month = new DateTimeImmutable(sprintf('first day of -%d months', $i))->format('Y-m');
+            $result[] = ['month' => $month, 'count' => $indexed[$month] ?? 0];
+        }
+
+        return $result;
     }
 }

@@ -84,8 +84,8 @@ final class TransferManagerTest extends TestCase
 
         $paramRepo = $this->createStub(ApplicationParameterRepository::class);
         $paramRepo->method('get')->willReturnMap([
-            ['max_files_per_transfer', null, '20'],
-            ['max_transfer_size_mb', null, '10000'],
+            ['max_files_per_transfer_pro', null, '20'],
+            ['max_transfer_size_mb_pro', null, '10000'],
         ]);
 
         $notifier = $this->createMock(TransferNotifierInterface::class);
@@ -120,8 +120,8 @@ final class TransferManagerTest extends TestCase
 
         $paramRepo = $this->createStub(ApplicationParameterRepository::class);
         $paramRepo->method('get')->willReturnMap([
-            ['max_files_per_transfer', null, '20'],
-            ['max_transfer_size_mb', null, '10000'],
+            ['max_files_per_transfer_pro', null, '20'],
+            ['max_transfer_size_mb_pro', null, '10000'],
         ]);
 
         $notifier = $this->createMock(TransferNotifierInterface::class);

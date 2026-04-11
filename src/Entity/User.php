@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\PlanEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use App\Trait\TimestampableTrait;
@@ -36,6 +37,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private string $name = '';
+
+    #[ORM\Column(length: 10, enumType: PlanEnum::class)]
+    private PlanEnum $plan = PlanEnum::Free;
 
     public function getId(): ?int
     {
@@ -96,6 +100,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getPlan(): PlanEnum
+    {
+        return $this->plan;
+    }
+
+    public function setPlan(PlanEnum $plan): static
+    {
+        $this->plan = $plan;
 
         return $this;
     }

@@ -16,6 +16,7 @@ export default {
         login: "Iniciar sesión",
         dashboard: "Dashboard",
         my_transfers: "Mis transferencias",
+        plan: "Planes",
     },
     home: {
         access_password: {
@@ -71,6 +72,9 @@ export default {
             password_label: "Contraseña",
             password_placeholder: "Dejar vacío para sin contraseña",
             submit: "Enviar",
+            mode_label: "Modo de envío",
+            mode_email: "Enviar por correo",
+            mode_link: "Enlace público",
             error_files: "Añade al menos un archivo.",
             error_max_files:
                 "Demasiados archivos (máximo {max} por transferencia).",
@@ -105,6 +109,8 @@ export default {
             new_transfer: "Enviar una nueva transferencia",
             download_link_hint:
                 "Comparte este enlace para dar acceso a los archivos",
+            public_link_hint:
+                "Comparte este enlace — cualquiera puede descargar tus archivos",
             guest_warning:
                 "¡Guarda este enlace! Sin cuenta, es la única forma de gestionar o eliminar tu transferencia.",
         },
@@ -127,6 +133,8 @@ export default {
             recipients: "Destinatarios",
             downloaded: "Descargado",
             download_link: "Enlace de descarga",
+            public_link: "Enlace público",
+            public_downloads: "{count} descarga | {count} descargas",
             pending_download: "Pendiente",
             remind: "Reenviar",
             remind_sent: "¡Enviado!",
@@ -211,6 +219,41 @@ export default {
         public_link: "Enlace público",
         downloads: "descarga(s)",
         load_more: "Cargar más",
+    },
+    plan: {
+        title: "Mi plan",
+        subtitle:
+            "Precios simples y transparentes. Cambia de plan cuando quieras.",
+        currentPlan: "Plan actual",
+        perMonth: "mes",
+        free: {
+            name: "Free",
+            price: "0 €",
+            tagline: "Para compartir archivos ocasionalmente.",
+        },
+        pro: {
+            name: "Pro",
+            price: "9,99 €",
+            tagline: "Para usuarios avanzados.",
+        },
+        features: {
+            maxSize: "Hasta {size} por transferencia",
+            maxFiles:
+                "{n} archivo máx por transferencia | {n} archivos máx por transferencia",
+            maxExpiry: "Expiración hasta {n} hora | Expiración hasta {n} horas",
+            maxExpiryDays:
+                "Expiración hasta {n} día | Expiración hasta {n} días",
+            password: "Protección por contraseña",
+            message: "Mensaje personalizado",
+            myTransfers: "Acceso a Mis transferencias",
+        },
+        upgradeCta: "Actualizar a Pro",
+        downgradeFree: "Volver al plan Free",
+        alreadyPro: "Estás en el plan Pro",
+        stripeSoon:
+            "Pago con Stripe próximamente — la actualización es gratuita por ahora",
+        disclaimer:
+            "Los precios se confirmarán cuando Stripe esté integrado. Cambia tu plan en cualquier momento.",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

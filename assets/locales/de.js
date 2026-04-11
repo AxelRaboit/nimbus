@@ -16,6 +16,7 @@ export default {
         login: "Anmelden",
         dashboard: "Dashboard",
         my_transfers: "Meine Übertragungen",
+        plan: "Tarife",
     },
     home: {
         access_password: {
@@ -72,6 +73,9 @@ export default {
             password_label: "Passwort",
             password_placeholder: "Leer lassen für kein Passwort",
             submit: "Senden",
+            mode_label: "Freigabemodus",
+            mode_email: "Per E-Mail senden",
+            mode_link: "Öffentlicher Link",
             error_files: "Füge mindestens eine Datei hinzu.",
             error_max_files: "Zu viele Dateien (maximal {max} pro Transfer).",
             error_max_size: "Transfer zu groß (maximal {max}).",
@@ -105,6 +109,8 @@ export default {
             new_transfer: "Neue Übertragung senden",
             download_link_hint:
                 "Teile diesen Link, um Zugang zu den Dateien zu geben",
+            public_link_hint:
+                "Teile diesen Link — jeder kann deine Dateien herunterladen",
             guest_warning:
                 "Speichere diesen Link! Ohne Konto ist er die einzige Möglichkeit, deine Übertragung zu verwalten oder zu löschen.",
         },
@@ -127,6 +133,8 @@ export default {
             recipients: "Empfänger",
             downloaded: "Heruntergeladen",
             download_link: "Download-Link",
+            public_link: "Öffentlicher Link",
+            public_downloads: "{count} Download | {count} Downloads",
             pending_download: "Ausstehend",
             remind: "Erneut senden",
             remind_sent: "Gesendet!",
@@ -212,6 +220,35 @@ export default {
         public_link: "Öffentlicher Link",
         downloads: "Download(s)",
         load_more: "Mehr laden",
+    },
+    plan: {
+        title: "Mein Plan",
+        subtitle: "Einfache, transparente Preise. Jederzeit wechseln.",
+        currentPlan: "Aktueller Plan",
+        perMonth: "Monat",
+        free: {
+            name: "Free",
+            price: "0 €",
+            tagline: "Für gelegentliches Teilen von Dateien.",
+        },
+        pro: { name: "Pro", price: "9,99 €", tagline: "Für intensive Nutzer." },
+        features: {
+            maxSize: "Bis zu {size} pro Übertragung",
+            maxFiles:
+                "{n} Datei max pro Übertragung | {n} Dateien max pro Übertragung",
+            maxExpiry: "Ablauf bis zu {n} Stunde | Ablauf bis zu {n} Stunden",
+            maxExpiryDays: "Ablauf bis zu {n} Tag | Ablauf bis zu {n} Tagen",
+            password: "Passwortschutz",
+            message: "Persönliche Nachricht",
+            myTransfers: "Zugang zu Meine Übertragungen",
+        },
+        upgradeCta: "Auf Pro upgraden",
+        downgradeFree: "Zum Free-Plan wechseln",
+        alreadyPro: "Sie sind im Pro-Plan",
+        stripeSoon:
+            "Stripe-Zahlung kommt bald — das Upgrade ist derzeit kostenlos",
+        disclaimer:
+            "Preise werden bestätigt, wenn Stripe integriert ist. Jederzeit änderbar.",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };

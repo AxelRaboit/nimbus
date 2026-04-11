@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Manager\UserManager;
+use App\Repository\ApplicationParameterRepository;
 use App\Service\EmailValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -22,9 +23,18 @@ final class RegistrationController extends AbstractController
         UserManager $userManager,
         TranslatorInterface $translator,
         Security $security,
+        ApplicationParameterRepository $params,
     ): Response {
         if ($this->getUser() instanceof UserInterface) {
             return $this->redirectToRoute('home');
+        }
+
+        if ('0' === $params->get('registration_enabled', '1')) {
+            return $this->render('registration/register.html.twig', [
+                'registrationEnabled' => false,
+                'errors' => [],
+                'values' => [],
+            ]);
         }
 
         $errors = [];
@@ -62,6 +72,7 @@ final class RegistrationController extends AbstractController
         }
 
         return $this->render('registration/register.html.twig', [
+            'registrationEnabled' => true,
             'errors' => $errors,
             'values' => $request->request->all(),
         ]);

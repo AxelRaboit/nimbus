@@ -1,3 +1,4 @@
+import "./css/sidebar.css";
 import { mountApp } from "@/utils/mountApp.js";
 import AppSidebar from "@/components/AppSidebar.vue";
 
@@ -15,4 +16,6 @@ mountApp("app-sidebar", AppSidebar, (data) => ({
     isDev: data.isDev === "true",
     devPath: data.devPath || "/dev",
     dashboardPath: data.dashboardPath || "/dashboard",
+    userPlan: data.userPlan || "free",
+    planPath: data.planPath || "/plan",
 }));

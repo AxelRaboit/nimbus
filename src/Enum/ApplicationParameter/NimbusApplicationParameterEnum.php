@@ -6,11 +6,14 @@ namespace App\Enum\ApplicationParameter;
 
 enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumInterface
 {
-    case MaxTransferSizeMb = 'max_transfer_size_mb';
-    case MaxFilesPerTransfer = 'max_files_per_transfer';
-    case MaxRecipientsPerTransfer = 'max_recipients_per_transfer';
-    case MaxExpiryDays = 'max_expiry_days';
-    case MaintenanceMode = 'maintenance_mode';
+    case MaxTransferSizeMbPro = 'max_transfer_size_mb_pro';
+    case MaxTransferSizeMbFree = 'max_transfer_size_mb_free';
+    case MaxFilesPerTransferPro = 'max_files_per_transfer_pro';
+    case MaxFilesPerTransferFree = 'max_files_per_transfer_free';
+    case MaxExpiryDaysPro = 'max_expiry_days_pro';
+    case MaxExpiryHoursFree = 'max_expiry_hours_free';
+    case MaxRecipientsPerTransferPro = 'max_recipients_per_transfer_pro';
+    case MaxRecipientsPerTransferFree = 'max_recipients_per_transfer_free';
     case RegistrationEnabled = 'registration_enabled';
 
     public function getKey(): string
@@ -21,11 +24,14 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
     public function getLabel(): string
     {
         return match ($this) {
-            self::MaxTransferSizeMb => "Taille maximale d'un transfert",
-            self::MaxFilesPerTransfer => 'Fichiers maximum par transfert',
-            self::MaxRecipientsPerTransfer => 'Destinataires maximum par transfert',
-            self::MaxExpiryDays => 'Expiration maximale (jours)',
-            self::MaintenanceMode => 'Mode maintenance',
+            self::MaxTransferSizeMbPro => "Taille maximale d'un transfert (Pro, Mo)",
+            self::MaxTransferSizeMbFree => "Taille maximale d'un transfert (Free, Mo)",
+            self::MaxFilesPerTransferPro => 'Fichiers maximum par transfert (Pro)',
+            self::MaxFilesPerTransferFree => 'Fichiers maximum par transfert (Free)',
+            self::MaxExpiryDaysPro => 'Expiration maximale (Pro, jours)',
+            self::MaxExpiryHoursFree => 'Expiration maximale (Free, heures)',
+            self::MaxRecipientsPerTransferPro => 'Destinataires maximum par transfert (Pro)',
+            self::MaxRecipientsPerTransferFree => 'Destinataires maximum par transfert (Free)',
             self::RegistrationEnabled => 'Inscription ouverte',
         };
     }
@@ -33,11 +39,14 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
     public function getDescription(): string
     {
         return match ($this) {
-            self::MaxTransferSizeMb => "Taille maximale d'un transfert en Mo",
-            self::MaxFilesPerTransfer => 'Nombre maximum de fichiers par transfert',
-            self::MaxRecipientsPerTransfer => 'Nombre maximum de destinataires par transfert',
-            self::MaxExpiryDays => 'Durée maximale d\'expiration en jours',
-            self::MaintenanceMode => 'Mode maintenance (0 = désactivé, 1 = activé)',
+            self::MaxTransferSizeMbPro => "Taille maximale d'un transfert en Mo pour le plan Pro",
+            self::MaxTransferSizeMbFree => "Taille maximale d'un transfert en Mo pour le plan Free",
+            self::MaxFilesPerTransferPro => 'Nombre maximum de fichiers par transfert pour le plan Pro',
+            self::MaxFilesPerTransferFree => 'Nombre maximum de fichiers par transfert pour le plan Free',
+            self::MaxExpiryDaysPro => "Durée maximale d'expiration en jours pour le plan Pro",
+            self::MaxExpiryHoursFree => "Durée maximale d'expiration en heures pour le plan Free",
+            self::MaxRecipientsPerTransferPro => 'Nombre maximum de destinataires par transfert (Pro)',
+            self::MaxRecipientsPerTransferFree => 'Nombre maximum de destinataires par transfert (Free)',
             self::RegistrationEnabled => 'Inscription ouverte (0 = fermée, 1 = ouverte)',
         };
     }
@@ -45,11 +54,14 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
     public function getDefaultValue(): string
     {
         return match ($this) {
-            self::MaxTransferSizeMb => '500',
-            self::MaxFilesPerTransfer => '20',
-            self::MaxRecipientsPerTransfer => '20',
-            self::MaxExpiryDays => '7',
-            self::MaintenanceMode => '0',
+            self::MaxTransferSizeMbPro => '10000',
+            self::MaxTransferSizeMbFree => '100',
+            self::MaxFilesPerTransferPro => '20',
+            self::MaxFilesPerTransferFree => '3',
+            self::MaxExpiryDaysPro => '7',
+            self::MaxExpiryHoursFree => '24',
+            self::MaxRecipientsPerTransferPro => '20',
+            self::MaxRecipientsPerTransferFree => '1',
             self::RegistrationEnabled => '1',
         };
     }
@@ -61,6 +73,6 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
 
     public function getBoolValue(): bool
     {
-        return (bool) $this->getDefaultValue();
+        return '1' === $this->getDefaultValue();
     }
 }

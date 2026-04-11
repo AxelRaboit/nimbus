@@ -1,0 +1,34 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}{{ 'plan.title'|trans }} - Nimbus{% endblock %}
+
+{% block page_header_slot %}
+    {{ include('components/page_header.html.twig', {title: 'plan.title'|trans}) }}
+{% endblock %}
+
+{% block body %}
+    <div id="app-plan"
+         data-locale="{{ app.request.locale }}"
+         data-is-pro="{{ isPro ? 'true' : 'false' }}"
+         data-pro-price="{{ proPrice }}"
+         data-free-max-size-mb="{{ freeMaxSizeMb }}"
+         data-free-max-files="{{ freeMaxFiles }}"
+         data-free-max-expiry-hours="{{ freeMaxExpiryHours }}"
+         data-pro-max-size-mb="{{ proMaxSizeMb }}"
+         data-pro-max-files="{{ proMaxFiles }}"
+         data-pro-max-expiry-days="{{ proMaxExpiryDays }}"
+         data-upgrade-path="{{ upgradePath }}"
+         data-downgrade-path="{{ downgradePath }}"
+         data-csrf-token="{{ csrf_token('plan_action') }}"
+    ></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ vite_entry_script_tags('plan') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ vite_entry_link_tags('plan') }}
+{% endblock %}

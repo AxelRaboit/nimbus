@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\Enum\HttpMethodEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,7 @@ class HomeApiController extends AbstractController
         private readonly string $accessPassword,
     ) {}
 
-    #[Route('/verify-access', name: 'api_home_verify_access', methods: ['POST'])]
+    #[Route('/verify-access', name: 'api_home_verify_access', methods: [HttpMethodEnum::Post->value])]
     public function verifyAccess(Request $request): JsonResponse
     {
         if ('' === $this->accessPassword) {
