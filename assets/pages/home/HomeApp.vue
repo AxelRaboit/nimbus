@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { RotateCcw, X, HelpCircle, Lock } from "lucide-vue-next";
+import { RotateCcw, X, HelpCircle, Lock, Sparkles } from "lucide-vue-next";
 import TransferForm from "./components/TransferForm.vue";
 import UploadProgress from "./components/UploadProgress.vue";
 import TransferSuccess from "./components/TransferSuccess.vue";
@@ -24,6 +24,8 @@ const props = defineProps({
     extensionGroups:        { type: String, default: "{}" },
     accessPasswordEnabled:  { type: Boolean, default: false },
     accessGranted:          { type: Boolean, default: true },
+    isPro:                  { type: Boolean, default: false },
+    planPath:               { type: String, default: "/plan" },
 });
 
 const fileTypeGroups = computed(() => {
@@ -411,6 +413,19 @@ function reset() {
                             </svg>
                             Protection par mot de passe optionnelle
                         </p>
+
+                        <a
+                            v-if="!isPro && !isGuest"
+                            :href="planPath"
+                            class="flex items-center gap-3 bg-indigo-600/10 border border-indigo-500/30 rounded-xl px-4 py-3 hover:bg-indigo-600/15 transition-colors group"
+                        >
+                            <Sparkles class="w-4 h-4 text-indigo-400 shrink-0" :stroke-width="2" />
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-indigo-400">Passer au plan Pro</p>
+                                <p class="text-xs text-secondary mt-0.5">Plus de stockage, plus de fichiers, expiration plus longue.</p>
+                            </div>
+                            <span class="text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
+                        </a>
 
                         <div>
                             <p class="text-xs text-muted uppercase tracking-wide mb-3">Formats acceptés</p>

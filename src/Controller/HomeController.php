@@ -47,6 +47,7 @@ class HomeController extends AbstractController
             'extensionGroups' => AllowedExtensionEnum::groupedValues(),
             'accessPasswordEnabled' => $accessPasswordEnabled,
             'accessGranted' => $accessGranted,
+            'isPro' => $user && $this->planService->isPro($user),
         ]);
     }
 }
