@@ -2,10 +2,10 @@
 
 {% block content %}
 <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:16px;color:#1e293b;margin:0 0 16px;">
-    Bonjour,
+    {{ 'mail.invitation.greeting'|trans }}
 </p>
 <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:15px;color:#475569;margin:0 0 16px;">
-    Vous avez été invité à rejoindre <strong>Nimbus</strong>, la plateforme de transfert de fichiers sécurisée.
+    {{ 'mail.invitation.intro'|trans }}
 </p>
 {% if customMessage %}
 <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:15px;color:#475569;margin:0 0 16px;padding:12px 16px;background:#f8fafc;border-left:3px solid #6366f1;border-radius:4px;">
@@ -15,7 +15,7 @@
 {% if credentialEmail or credentialPassword %}
 <div style="margin:0 0 16px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
     <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:13px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 12px;">
-        Vos identifiants de connexion
+        {{ 'mail.invitation.credentials_heading'|trans }}
     </p>
     {% if credentialEmail %}
     <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:14px;color:#475569;margin:0 0 8px;">
@@ -30,4 +30,11 @@
     {% endif %}
 </div>
 {% endif %}
+
+{{ include('email/partials/action_button.html.twig', {
+    url: loginUrl,
+    label: 'mail.invitation.login_button'|trans,
+}) }}
+
+<p class="warning">{{ 'mail.invitation.footer'|trans }}</p>
 {% endblock %}

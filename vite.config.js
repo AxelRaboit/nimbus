@@ -29,6 +29,15 @@ export default defineConfig({
                 dashboard: './assets/pages/dashboard/index.js',
                 plan: './assets/pages/plan/index.js',
             },
+            output: {
+                manualChunks(id) {
+                    if (!id.includes('node_modules')) return;
+                    if (id.includes('chart.js') || id.includes('vue-chartjs')) return 'vendor-charts';
+                    if (id.includes('lucide-vue-next')) return 'vendor-icons';
+                    if (id.includes('axios') || id.includes('qrcode') || id.includes('tus-js-client')) return 'vendor-utils';
+                    if (id.includes('vue-i18n') || id.includes('vue-sonner') || id.includes('/vue/') || id.includes('/vue@')) return 'vendor-vue';
+                },
+            },
         },
     },
 });
