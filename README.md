@@ -198,7 +198,7 @@ TUS découpe chaque fichier en **fragments de 5 Mo** envoyés séquentiellement.
 | Frontend | Vue 3, Vue i18n, vue-chartjs |
 | Style | Tailwind CSS 3 |
 | Emails | Symfony Mailer (SMTP) |
-| Build | Vite 6 |
+| Build | Vite 8 |
 
 ---
 
