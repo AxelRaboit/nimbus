@@ -164,20 +164,6 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 <ChevronsRight class="w-4 h-4" />
             </button>
 
-            <a
-                v-if="!isGuest"
-                :href="planPath"
-                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                :class="planActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
-            >
-                <Sparkles class="w-5 h-5 shrink-0" :class="planActive ? 'text-indigo-400' : 'text-muted'" />
-                <span class="si-label truncate flex-1">{{ t("nav.plan") }}</span>
-                <span v-if="!isPro" class="si-label text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("nav.plan") }}
-                </span>
-            </a>
-
             <button
                 class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
                 v-on:click="toggleTheme"
@@ -193,6 +179,20 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     {{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}
                 </span>
             </button>
+
+            <a
+                v-if="!isGuest"
+                :href="planPath"
+                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                :class="planActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+            >
+                <Sparkles class="w-5 h-5 shrink-0" :class="planActive ? 'text-indigo-400' : 'text-muted'" />
+                <span class="si-label truncate flex-1">{{ t("nav.plan") }}</span>
+                <span v-if="!isPro" class="si-label text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    {{ t("nav.plan") }}
+                </span>
+            </a>
 
             <template v-if="isGuest">
                 <a
@@ -334,6 +334,15 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
             </nav>
 
             <div class="shrink-0 border-t border-base px-3 py-3 space-y-1">
+                <button
+                    class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+                    v-on:click="toggleTheme"
+                >
+                    <Moon v-if="theme !== 'dark'" class="w-5 h-5 text-muted shrink-0" />
+                    <Sun v-else class="w-5 h-5 text-muted shrink-0" />
+                    <span>{{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}</span>
+                </button>
+
                 <a
                     v-if="!isGuest"
                     :href="planPath"
@@ -344,15 +353,6 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     <span class="flex-1">{{ t("nav.plan") }}</span>
                     <span v-if="!isPro" class="text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">Pro</span>
                 </a>
-
-                <button
-                    class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
-                    v-on:click="toggleTheme"
-                >
-                    <Moon v-if="theme !== 'dark'" class="w-5 h-5 text-muted shrink-0" />
-                    <Sun v-else class="w-5 h-5 text-muted shrink-0" />
-                    <span>{{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}</span>
-                </button>
 
                 <template v-if="isGuest">
                     <a
