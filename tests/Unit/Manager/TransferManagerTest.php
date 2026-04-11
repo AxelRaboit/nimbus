@@ -8,8 +8,9 @@ use App\Entity\Transfer;
 use App\Entity\TransferFile;
 use App\Enum\TransferStatusEnum;
 use App\Manager\TransferManager;
-use App\Repository\ApplicationParameterRepository;
 use App\Repository\RecipientRepository;
+use App\Repository\TransferStatsRepository;
+use App\Service\PlanService;
 use App\Service\TransferFileValidator;
 use App\Service\TransferNotifierInterface;
 use App\Service\TusUploadServiceInterface;
@@ -82,11 +83,9 @@ final class TransferManagerTest extends TestCase
         $tusService = $this->createStub(TusUploadServiceInterface::class);
         $tusService->method('getUpload')->willReturn(null);
 
-        $paramRepo = $this->createStub(ApplicationParameterRepository::class);
-        $paramRepo->method('get')->willReturnMap([
-            ['max_files_per_transfer_pro', null, '20'],
-            ['max_transfer_size_mb_pro', null, '10000'],
-        ]);
+        $planService = $this->createStub(PlanService::class);
+        $planService->method('getProMaxFiles')->willReturn(20);
+        $planService->method('getProMaxSizeMb')->willReturn(10000);
 
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReady');
@@ -94,7 +93,7 @@ final class TransferManagerTest extends TestCase
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())->method('flush');
 
-        $this->buildManager(em: $em, tusService: $tusService, notifier: $notifier, paramRepo: $paramRepo)
+        $this->buildManager(em: $em, tusService: $tusService, notifier: $notifier, planService: $planService)
             ->finalize($transfer, ['unknown_key']);
 
         self::assertSame(TransferStatusEnum::Ready, $transfer->getStatus());
@@ -118,11 +117,9 @@ final class TransferManagerTest extends TestCase
         $tusService = $this->createStub(TusUploadServiceInterface::class);
         $tusService->method('getUpload')->willReturn($uploadData);
 
-        $paramRepo = $this->createStub(ApplicationParameterRepository::class);
-        $paramRepo->method('get')->willReturnMap([
-            ['max_files_per_transfer_pro', null, '20'],
-            ['max_transfer_size_mb_pro', null, '10000'],
-        ]);
+        $planService = $this->createStub(PlanService::class);
+        $planService->method('getProMaxFiles')->willReturn(20);
+        $planService->method('getProMaxSizeMb')->willReturn(10000);
 
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReady')->with($transfer);
@@ -130,7 +127,7 @@ final class TransferManagerTest extends TestCase
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())->method('flush');
 
-        $this->buildManager(em: $em, tusService: $tusService, notifier: $notifier, paramRepo: $paramRepo)
+        $this->buildManager(em: $em, tusService: $tusService, notifier: $notifier, planService: $planService)
             ->finalize($transfer, ['upload_key_1']);
 
         self::assertSame(TransferStatusEnum::Ready, $transfer->getStatus());
@@ -171,7 +168,7 @@ final class TransferManagerTest extends TestCase
         ?EntityManagerInterface $em = null,
         ?TusUploadServiceInterface $tusService = null,
         ?TransferNotifierInterface $notifier = null,
-        ?ApplicationParameterRepository $paramRepo = null,
+        ?PlanService $planService = null,
     ): TransferManager {
         $tusService ??= $this->createStub(TusUploadServiceInterface::class);
 
@@ -182,7 +179,8 @@ final class TransferManagerTest extends TestCase
             new TransferFileValidator($tusService),
             $this->createStub(RecipientRepository::class),
             $this->storagePath,
-            $paramRepo ?? $this->createStub(ApplicationParameterRepository::class),
+            $this->createStub(TransferStatsRepository::class),
+            $planService ?? $this->createStub(PlanService::class),
             new NullLogger(),
         );
     }
