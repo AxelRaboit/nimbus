@@ -9,7 +9,7 @@ use App\Enum\PlanEnum;
 use App\Repository\ApplicationParameterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-final readonly class PlanService
+readonly class PlanService
 {
     public const float PRO_PRICE = 9.99;
 
