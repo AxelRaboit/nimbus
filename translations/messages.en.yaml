@@ -186,9 +186,9 @@ transfer:
     deleted_desc: 'The sender deleted this transfer. Files are no longer available.'
     other_desc: 'This transfer is not ready yet or does not exist.'
     back: '← Send files'
-    page_title: 'Nimbus — Transfer unavailable'
+    page_title: 'Transfer unavailable - Nimbus'
   password:
-    page_title: 'Nimbus — Protected transfer'
+    page_title: 'Protected transfer - Nimbus'
     title: 'Protected transfer'
     subtitle: 'Enter the password to access the files.'
     label: Password
@@ -215,7 +215,7 @@ mail:
     login_button: 'Sign in'
     footer: 'If you think you received this email by mistake, you can ignore it.'
   transfer_ready:
-    subject: '%senderName% sent you files via Nimbus'
+    subject: '%senderName% sent you files'
     heading: 'You received files'
     intro: '%senderName% sent you %count% file(s) via Nimbus.'
     message_label: Message

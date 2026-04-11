@@ -186,9 +186,9 @@ transfer:
     deleted_desc: 'Der Absender hat diese Übertragung gelöscht. Die Dateien sind nicht mehr verfügbar.'
     other_desc: 'Diese Übertragung ist noch nicht bereit oder existiert nicht.'
     back: '← Dateien senden'
-    page_title: 'Nimbus — Übertragung nicht verfügbar'
+    page_title: 'Übertragung nicht verfügbar - Nimbus'
   password:
-    page_title: 'Nimbus — Geschützte Übertragung'
+    page_title: 'Geschützte Übertragung - Nimbus'
     title: 'Geschützte Übertragung'
     subtitle: 'Geben Sie das Passwort ein, um auf die Dateien zuzugreifen.'
     label: Passwort
@@ -215,7 +215,7 @@ mail:
     login_button: 'Anmelden'
     footer: 'Wenn Sie glauben, diese E-Mail irrtümlich erhalten zu haben, können Sie sie ignorieren.'
   transfer_ready:
-    subject: '%senderName% hat Ihnen Dateien über Nimbus gesendet'
+    subject: '%senderName% hat Ihnen Dateien gesendet'
     heading: 'Sie haben Dateien erhalten'
     intro: '%senderName% hat Ihnen %count% Datei(en) über Nimbus gesendet.'
     message_label: Nachricht
