@@ -181,7 +181,7 @@ schema-validate:
 	$(CONSOLE) doctrine:schema:validate -vvv
 
 # === Tests ===
-test:
+test: db-test
 	$(PHP_BIN) bin/phpunit --testdox
 
 test-unit:

@@ -7,9 +7,11 @@ namespace App\Service;
 use App\Entity\Recipient;
 use App\Entity\Transfer;
 use App\Enum\EmailTypeEnum;
+use App\Enum\LocaleEnum;
 use App\Message\EmailQueueMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
@@ -20,6 +22,7 @@ final readonly class TransferNotifier implements TransferNotifierInterface
         private TwigEnvironment $twig,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
+        private LocaleSwitcher $localeSwitcher,
     ) {}
 
     public function notifyReady(Transfer $transfer, ?string $plainPassword = null): void
@@ -36,13 +39,16 @@ final readonly class TransferNotifier implements TransferNotifierInterface
             return;
         }
 
-        $body = $this->twig->render('email/transfer_downloaded.html.twig', [
-            'transfer' => $transfer,
-            'recipient' => $recipient,
-        ]);
+        $locale = $transfer->getUser()?->getLocale() ?? LocaleEnum::default();
 
-        $subject = $this->translator->trans('mail.transfer_downloaded.subject', [
-            '%reference%' => $transfer->getReference(),
+        [$body, $subject] = $this->localeSwitcher->runWithLocale($locale->value, fn (): array => [
+            $this->twig->render('email/transfer_downloaded.html.twig', [
+                'transfer' => $transfer,
+                'recipient' => $recipient,
+            ]),
+            $this->translator->trans('mail.transfer_downloaded.subject', [
+                '%reference%' => $transfer->getReference(),
+            ]),
         ]);
 
         $this->messageBus->dispatch(new EmailQueueMessage(
@@ -60,12 +66,15 @@ final readonly class TransferNotifier implements TransferNotifierInterface
             return;
         }
 
-        $body = $this->twig->render('email/transfer_expired.html.twig', [
-            'transfer' => $transfer,
-        ]);
+        $locale = $transfer->getUser()?->getLocale() ?? LocaleEnum::default();
 
-        $subject = $this->translator->trans('mail.transfer_expired.subject', [
-            '%reference%' => $transfer->getReference(),
+        [$body, $subject] = $this->localeSwitcher->runWithLocale($locale->value, fn (): array => [
+            $this->twig->render('email/transfer_expired.html.twig', [
+                'transfer' => $transfer,
+            ]),
+            $this->translator->trans('mail.transfer_expired.subject', [
+                '%reference%' => $transfer->getReference(),
+            ]),
         ]);
 
         $this->messageBus->dispatch(new EmailQueueMessage(
@@ -84,16 +93,17 @@ final readonly class TransferNotifier implements TransferNotifierInterface
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
 
-        $body = $this->twig->render('email/transfer_reminder.html.twig', [
-            'transfer' => $transfer,
-            'recipient' => $recipient,
-            'downloadUrl' => $downloadUrl,
-        ]);
+        $locale = $transfer->getUser()?->getLocale() ?? LocaleEnum::default();
 
-        $senderName = $transfer->getSenderName() ?? $transfer->getSenderEmail() ?? 'Nimbus';
-
-        $subject = $this->translator->trans('mail.transfer_reminder.subject', [
-            '%reference%' => $transfer->getReference(),
+        [$body, $subject] = $this->localeSwitcher->runWithLocale($locale->value, fn (): array => [
+            $this->twig->render('email/transfer_reminder.html.twig', [
+                'transfer' => $transfer,
+                'recipient' => $recipient,
+                'downloadUrl' => $downloadUrl,
+            ]),
+            $this->translator->trans('mail.transfer_reminder.subject', [
+                '%reference%' => $transfer->getReference(),
+            ]),
         ]);
 
         $this->messageBus->dispatch(new EmailQueueMessage(
@@ -112,17 +122,19 @@ final readonly class TransferNotifier implements TransferNotifierInterface
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
 
-        $body = $this->twig->render('email/transfer_ready.html.twig', [
-            'transfer' => $transfer,
-            'recipient' => $recipient,
-            'downloadUrl' => $downloadUrl,
-            'plainPassword' => $plainPassword,
-        ]);
-
+        $locale = $transfer->getUser()?->getLocale() ?? LocaleEnum::default();
         $senderName = $transfer->getSenderName() ?? $transfer->getSenderEmail() ?? 'Nimbus';
 
-        $subject = $this->translator->trans('mail.transfer_ready.subject', [
-            '%senderName%' => $senderName,
+        [$body, $subject] = $this->localeSwitcher->runWithLocale($locale->value, fn (): array => [
+            $this->twig->render('email/transfer_ready.html.twig', [
+                'transfer' => $transfer,
+                'recipient' => $recipient,
+                'downloadUrl' => $downloadUrl,
+                'plainPassword' => $plainPassword,
+            ]),
+            $this->translator->trans('mail.transfer_ready.subject', [
+                '%senderName%' => $senderName,
+            ]),
         ]);
 
         $this->messageBus->dispatch(new EmailQueueMessage(

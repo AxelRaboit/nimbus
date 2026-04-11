@@ -214,6 +214,7 @@ mail:
     message_label: Mensaje
     download_button: 'Descargar archivos'
     expires: 'Esta transferencia vence el %date%.'
+    password_label: 'Contraseña requerida'
     footer: 'Si no deseas descargar estos archivos, ignora este correo.'
   transfer_downloaded:
     subject: 'Tus archivos fueron descargados [Ref. %reference%]'
@@ -235,6 +236,9 @@ mail:
 
 dashboard:
   title: 'Mis transferencias'
+
+dev:
+  title: 'Panel de control'
 
 plan:
   title: 'Planes & Precios'

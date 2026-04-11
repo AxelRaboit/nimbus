@@ -1,9 +1,9 @@
 {% extends 'base_auth.html.twig' %}
 
-{% block title %}Nimbus — Dev Dashboard{% endblock %}
+{% block title %}Nimbus — {{ 'dev.title'|trans }}{% endblock %}
 
 {% block page_header_slot %}
-    {{ include('components/page_header.html.twig', {title: 'Dev Dashboard'}) }}
+    {{ include('components/page_header.html.twig', {title: 'dev.title'|trans}) }}
 {% endblock %}
 
 {% block body %}
