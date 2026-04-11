@@ -329,7 +329,7 @@ function reset() {
                         </div>
                         <h2 class="text-base font-bold text-primary">Bienvenue sur Nimbus</h2>
                         <p class="text-sm text-secondary mt-1.5">
-                            Connectez-vous pour retrouver vos transferts et accéder aux fonctionnalités avancées.
+                            L'envoi est gratuit et sans inscription. Créez un compte pour accéder au plan Pro et débloquer plus de limites.
                         </p>
                     </div>
 
