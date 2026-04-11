@@ -18,6 +18,7 @@ export default defineConfig({
             input: {
                 app: './assets/app.js',
                 sidebar: './assets/sidebar.js',
+                flash: './assets/flash.js',
                 home: './assets/pages/home/index.js',
                 transfer: './assets/pages/transfer/index.js',
                 manage: './assets/pages/manage/index.js',
