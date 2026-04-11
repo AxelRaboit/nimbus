@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Scheduler;
 
 use App\Message\CleanupExpiredTransfersMessage;
+use App\Message\ExpireTrialsMessage;
 use App\Message\SendRemindersMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
@@ -29,6 +30,9 @@ final readonly class MainSchedule implements ScheduleProviderInterface
             )
             ->add(
                 RecurringMessage::cron('0 * * * *', new SendRemindersMessage()),
+            )
+            ->add(
+                RecurringMessage::cron('0 0 * * *', new ExpireTrialsMessage()),
             );
     }
 }

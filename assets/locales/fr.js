@@ -252,6 +252,7 @@ export default {
         upgradeCta: "Passer à Pro",
         downgradeFree: "Revenir au plan Free",
         alreadyPro: "Vous êtes sur le plan Pro",
+        trialUntil: "Accès Pro jusqu'au {date}",
         stripeSoon:
             "Paiement Stripe bientôt disponible — l'upgrade est gratuit pour l'instant",
         disclaimer:

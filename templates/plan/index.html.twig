@@ -10,6 +10,7 @@
     <div id="app-plan"
          data-locale="{{ app.request.locale }}"
          data-is-pro="{{ isPro ? 'true' : 'false' }}"
+         data-pro-until="{{ proUntil ?? '' }}"
          data-pro-price="{{ proPrice }}"
          data-free-max-size-mb="{{ freeMaxSizeMb }}"
          data-free-max-files="{{ freeMaxFiles }}"

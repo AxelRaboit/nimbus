@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\User;
+use App\Enum\ApplicationParameter\NimbusApplicationParameterEnum;
 use App\Enum\PlanEnum;
 use App\Repository\ApplicationParameterRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 
 readonly class PlanService
@@ -20,7 +22,15 @@ readonly class PlanService
 
     public function isPro(User $user): bool
     {
-        return PlanEnum::Pro === $user->getPlan();
+        if (PlanEnum::Pro !== $user->getPlan()) {
+            return false;
+        }
+
+        if ($user->getProUntil() !== null && $user->getProUntil() < new DateTimeImmutable()) {
+            return false;
+        }
+
+        return true;
     }
 
     public function isFree(User $user): bool
@@ -93,15 +103,22 @@ readonly class PlanService
         return (int) $this->params->get('max_recipients_per_transfer_free', '1');
     }
 
+    public function getTrialDays(): int
+    {
+        return (int) $this->params->get(NimbusApplicationParameterEnum::ProTrialDays->value, '30');
+    }
+
     public function upgrade(User $user): void
     {
         $user->setPlan(PlanEnum::Pro);
+        $user->setProUntil(new DateTimeImmutable(sprintf('+%d days midnight', $this->getTrialDays())));
         $this->entityManager->flush();
     }
 
     public function downgrade(User $user): void
     {
         $user->setPlan(PlanEnum::Free);
+        $user->setProUntil(null);
         $this->entityManager->flush();
     }
 }
