@@ -164,6 +164,7 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 - PostgreSQL
 - Node.js 20+
 - Composer
+- pnpm
 
 ### Mise en place
 
@@ -171,13 +172,18 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 git clone https://github.com/axelraboit/nimbus.git
 cd nimbus
 
-composer install
-npm install
+make install-dev
+```
 
+`make install-dev` installe les dépendances Composer (app + outils), pnpm, crée les répertoires runtime et exécute les migrations.
+
+Copier et configurer l'environnement :
+
+```bash
 cp .env .env.local
 ```
 
-Configurer `.env.local` — variables minimales :
+Variables minimales à renseigner dans `.env.local` :
 
 ```dotenv
 DATABASE_URL="postgresql://user:password@127.0.0.1:5432/nimbus"
@@ -185,23 +191,30 @@ MAILER_DSN="smtp://localhost:25"
 APP_SECRET=your-secret-here
 ```
 
+Charger des données de démonstration (optionnel — recrée la base entièrement) :
+
 ```bash
-make db          # crée la base et exécute les migrations
-make db-fixtures # (optionnel) données de démonstration
+make fixtures
 ```
 
 ### Développement
 
 ```bash
-make dev   # démarre le serveur Symfony + Vite HMR en parallèle
+make start              # serveur Symfony + mailer Docker
+make dev                # Vite HMR (dans un second terminal)
+make start-dev-worker   # worker Messenger + Scheduler (dans un troisième terminal)
 ```
 
 ### Production
 
 ```bash
-npm run build
-APP_ENV=prod composer install --no-dev --optimize-autoloader
-php bin/console doctrine:migrations:migrate --env=prod
+make install-prod   # dépendances, migrations, paramètres, build assets
+```
+
+Pour les déploiements suivants (nécessite un tag git sur le commit courant) :
+
+```bash
+make deploy-prod
 ```
 
 ---
@@ -209,12 +222,20 @@ php bin/console doctrine:migrations:migrate --env=prod
 ## Commandes utiles
 
 ```bash
-make test   # tests unitaires + intégration
-make cs     # PHP-CS-Fixer
-make stan   # PHPStan
-make lint   # tous les linters
+# Tests
+make test                # suite complète
+make test-unit           # tests unitaires uniquement
+make test-integration    # tests d'intégration uniquement
 
-# Gérer les paramètres applicatifs
+# Qualité du code
+make fix     # auto-correction (JS, Twig, Rector, PHP-CS-Fixer + PHPStan)
+make stan    # PHPStan seul
+
+# Base de données
+make migrate             # exécuter les migrations
+make migration           # générer une nouvelle migration
+
+# Paramètres applicatifs
 php bin/console nimbus:application-parameter
 
 # Promouvoir un utilisateur en admin
