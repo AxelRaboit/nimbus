@@ -19,7 +19,7 @@ class DashboardController extends AbstractController
         private readonly PlanService $planService,
     ) {}
 
-    #[Route('/dashboard', name: 'app_dashboard')]
+    #[Route('/transferts', name: 'transfers')]
     public function index(): Response
     {
         /** @var User $user */
