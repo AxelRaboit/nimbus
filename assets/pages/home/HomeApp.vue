@@ -312,7 +312,7 @@ function reset() {
         <Transition name="modal">
             <div
                 v-if="showGuestModal"
-                class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+                class="fixed inset-0 z-50 flex items-center justify-center p-4"
             >
                 <div class="absolute inset-0 bg-black/50" v-on:click="dismissGuestModal" />
                 <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-sm">
