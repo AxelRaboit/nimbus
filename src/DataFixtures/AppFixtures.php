@@ -68,6 +68,10 @@ class AppFixtures extends Fixture
             ['draft.txt', 12_000],
         ], ['pending-recipient@example.com']);
 
+        $this->createTransfer($manager, 'frank@example.com', 'Frank Public', TransferStatusEnum::Ready, '+7 days', [
+            ['public-file.pdf', 500_000],
+        ], [], isPublic: true);
+
         $manager->flush();
     }
 
@@ -81,6 +85,7 @@ class AppFixtures extends Fixture
         array $recipientEmails,
         int $downloadedIndex = -1,
         bool $isPasswordProtected = false,
+        bool $isPublic = false,
     ): void {
         $transfer = new Transfer();
         $transfer->setSenderEmail($senderEmail);
@@ -91,6 +96,8 @@ class AppFixtures extends Fixture
         if ($isPasswordProtected) {
             $transfer->setPasswordHash(password_hash('secret', PASSWORD_BCRYPT));
         }
+
+        $transfer->setIsPublic($isPublic);
 
         foreach ($files as [$name, $size]) {
             $file = new TransferFile();
