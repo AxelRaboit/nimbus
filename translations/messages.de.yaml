@@ -95,6 +95,8 @@ auth:
     error_email_taken: 'Diese E-Mail-Adresse wird bereits verwendet.'
     error_password_length: 'Das Passwort muss mindestens 8 Zeichen lang sein.'
     error_password_mismatch: 'Die Passwörter stimmen nicht überein.'
+    closed_title: 'Registrierungen geschlossen'
+    closed_desc: 'Registrierungen sind vorübergehend deaktiviert. Bitte versuchen Sie es später erneut.'
 
 profile:
   title: Profil
@@ -233,3 +235,9 @@ mail:
 
 dashboard:
   title: 'Meine Übertragungen'
+
+plan:
+  title: 'Tarife & Preise'
+  flash:
+    upgraded: 'Sie sind jetzt im Pro-Plan!'
+    downgraded: 'Sie sind zum Free-Plan gewechselt.'

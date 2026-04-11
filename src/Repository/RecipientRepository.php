@@ -20,6 +20,16 @@ class RecipientRepository extends ServiceEntityRepository
         parent::__construct($registry, Recipient::class);
     }
 
+    public function countAll(): int
+    {
+        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM recipient');
+    }
+
+    public function countDownloaded(): int
+    {
+        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM recipient WHERE downloaded_at IS NOT NULL');
+    }
+
     public function findByToken(string $token): ?Recipient
     {
         return $this->findOneBy(['token' => $token]);

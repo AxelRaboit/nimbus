@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "@/composables/useTheme.js";
 import AppLogo from "@/components/AppLogo.vue";
+import { Route } from "@/utils/routes.js";
+import { Plan } from "@/utils/plans.js";
 import {
     UploadCloud,
     User,
@@ -15,6 +17,7 @@ import {
     X,
     LayoutDashboard,
     History,
+    Sparkles,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -31,7 +34,12 @@ const props = defineProps({
     isDev: { type: Boolean, default: false },
     devPath: { type: String, default: "/dev" },
     dashboardPath: { type: String, default: "/dashboard" },
+    userPlan: { type: String, default: "free" },
+    planPath: { type: String, default: "/plan" },
 });
+
+const isPro = computed(() => props.userPlan === Plan.Pro);
+const planActive = computed(() => props.activeRoute === Route.Plan);
 
 const { t } = useI18n();
 const { theme, toggle: toggleTheme } = useTheme();
@@ -57,10 +65,10 @@ function closeMobile() {
     document.body.style.overflow = "";
 }
 
-const homeActive      = props.activeRoute === "home";
-const dashboardActive = props.activeRoute === "app_dashboard";
-const profileActive   = props.activeRoute?.startsWith("app_profile");
-const devActive       = props.activeRoute?.startsWith("dev_");
+const homeActive      = props.activeRoute === Route.Home;
+const dashboardActive = props.activeRoute === Route.Dashboard;
+const profileActive   = props.activeRoute?.startsWith(Route.Profile);
+const devActive       = props.activeRoute?.startsWith(Route.Dev);
 </script>
 
 <template>
@@ -108,18 +116,31 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                 </span>
             </a>
 
-            <a
-                v-if="!isGuest"
-                :href="dashboardPath"
-                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
-                :class="dashboardActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
-            >
-                <History class="w-5 h-5 shrink-0" :class="dashboardActive ? 'text-indigo-400' : 'text-muted'" />
-                <span class="si-label truncate">{{ t("nav.my_transfers") }}</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    {{ t("nav.my_transfers") }}
+            <template v-if="!isGuest">
+                <a
+                    v-if="isPro"
+                    :href="dashboardPath"
+                    class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                    :class="dashboardActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                >
+                    <History class="w-5 h-5 shrink-0" :class="dashboardActive ? 'text-indigo-400' : 'text-muted'" />
+                    <span class="si-label truncate">{{ t("nav.my_transfers") }}</span>
+                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                        {{ t("nav.my_transfers") }}
+                    </span>
+                </a>
+                <span
+                    v-else
+                    class="si flex items-center rounded-lg text-sm font-medium text-muted opacity-50 cursor-not-allowed relative"
+                >
+                    <History class="w-5 h-5 shrink-0 text-muted" />
+                    <span class="si-label truncate flex-1">{{ t("nav.my_transfers") }}</span>
+                    <span class="si-label text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
+                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                        {{ t("nav.my_transfers") }} — Pro
+                    </span>
                 </span>
-            </a>
+            </template>
 
             <a
                 v-if="isDev"
@@ -158,6 +179,20 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                     {{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}
                 </span>
             </button>
+
+            <a
+                v-if="!isGuest"
+                :href="planPath"
+                class="si flex items-center rounded-lg text-sm font-medium transition-colors group relative"
+                :class="planActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+            >
+                <Sparkles class="w-5 h-5 shrink-0" :class="planActive ? 'text-indigo-400' : 'text-muted'" />
+                <span class="si-label truncate flex-1">{{ t("nav.plan") }}</span>
+                <span v-if="!isPro" class="si-label text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    {{ t("nav.plan") }}
+                </span>
+            </a>
 
             <template v-if="isGuest">
                 <a
@@ -267,15 +302,25 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                     {{ t("nav.send") }}
                 </a>
 
-                <a
-                    v-if="!isGuest"
-                    :href="dashboardPath"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    :class="dashboardActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
-                >
-                    <History class="w-5 h-5 shrink-0" :class="dashboardActive ? 'text-indigo-400' : 'text-muted'" />
-                    {{ t("nav.my_transfers") }}
-                </a>
+                <template v-if="!isGuest">
+                    <a
+                        v-if="isPro"
+                        :href="dashboardPath"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                        :class="dashboardActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                    >
+                        <History class="w-5 h-5 shrink-0" :class="dashboardActive ? 'text-indigo-400' : 'text-muted'" />
+                        {{ t("nav.my_transfers") }}
+                    </a>
+                    <span
+                        v-else
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted opacity-50 cursor-not-allowed"
+                    >
+                        <History class="w-5 h-5 shrink-0 text-muted" />
+                        <span class="flex-1">{{ t("nav.my_transfers") }}</span>
+                        <span class="text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">Pro</span>
+                    </span>
+                </template>
 
                 <a
                     v-if="isDev"
@@ -297,6 +342,17 @@ const devActive       = props.activeRoute?.startsWith("dev_");
                     <Sun v-else class="w-5 h-5 text-muted shrink-0" />
                     <span>{{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}</span>
                 </button>
+
+                <a
+                    v-if="!isGuest"
+                    :href="planPath"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    :class="planActive ? 'bg-indigo-600/15 text-indigo-400' : 'text-secondary hover:text-primary hover:bg-surface-2'"
+                >
+                    <Sparkles class="w-5 h-5 shrink-0" :class="planActive ? 'text-indigo-400' : 'text-muted'" />
+                    <span class="flex-1">{{ t("nav.plan") }}</span>
+                    <span v-if="!isPro" class="text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full">Pro</span>
+                </a>
 
                 <template v-if="isGuest">
                     <a

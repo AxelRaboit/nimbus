@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -29,5 +30,52 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->flush();
+    }
+
+    public function countNewThisMonth(): int
+    {
+        return (int) $this->getEntityManager()->getConnection()->fetchOne(
+            "SELECT COUNT(*) FROM \"user\" WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', NOW())"
+        );
+    }
+
+    /**
+     * @return array<array{month: string, count: int}>
+     */
+    public function countByMonth(int $months = 6): array
+    {
+        $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
+            sprintf(
+                "SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month, COUNT(*) AS count
+                 FROM \"user\"
+                 WHERE created_at >= DATE_TRUNC('month', NOW() - INTERVAL '%d months')
+                 GROUP BY month
+                 ORDER BY month",
+                $months - 1
+            )
+        );
+
+        return $this->fillMonths($rows, $months);
+    }
+
+    /**
+     * @param array<array{month: string, count: string}> $rows
+     *
+     * @return array<array{month: string, count: int}>
+     */
+    private function fillMonths(array $rows, int $months): array
+    {
+        $indexed = [];
+        foreach ($rows as $row) {
+            $indexed[$row['month']] = (int) $row['count'];
+        }
+
+        $result = [];
+        for ($i = $months - 1; $i >= 0; --$i) {
+            $month = new DateTimeImmutable(sprintf('first day of -%d months', $i))->format('Y-m');
+            $result[] = ['month' => $month, 'count' => $indexed[$month] ?? 0];
+        }
+
+        return $result;
     }
 }

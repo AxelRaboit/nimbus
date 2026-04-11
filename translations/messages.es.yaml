@@ -95,6 +95,8 @@ auth:
     error_email_taken: 'Este correo electrónico ya está en uso.'
     error_password_length: 'La contraseña debe tener al menos 8 caracteres.'
     error_password_mismatch: 'Las contraseñas no coinciden.'
+    closed_title: 'Registros cerrados'
+    closed_desc: 'Los registros están temporalmente desactivados. Por favor, inténtelo más tarde.'
 
 profile:
   title: Perfil
@@ -233,3 +235,9 @@ mail:
 
 dashboard:
   title: 'Mis transferencias'
+
+plan:
+  title: 'Planes & Precios'
+  flash:
+    upgraded: '¡Ahora estás en el plan Pro!'
+    downgraded: 'Has vuelto al plan Free.'

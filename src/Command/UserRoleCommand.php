@@ -16,14 +16,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:user:role',
+    name: 'nimbus:user:role',
     description: 'Assign a role to a user',
 )]
 class UserRoleCommand extends Command
 {
     public function __construct(
         private readonly UserRepository $userRepository,
-        private readonly EntityManagerInterface $em,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -54,7 +54,7 @@ class UserRoleCommand extends Command
         if (!in_array($role, $roles, true)) {
             $roles[] = $role;
             $user->setRoles(array_values(array_filter($roles, fn ($r): bool => UserRoleEnum::User->value !== $r)));
-            $this->em->flush();
+            $this->entityManager->flush();
         }
 
         $io->success(sprintf('Role %s assigned to %s', $role, $email));

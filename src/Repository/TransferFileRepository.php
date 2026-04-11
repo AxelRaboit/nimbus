@@ -17,4 +17,14 @@ class TransferFileRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TransferFile::class);
     }
+
+    public function countAll(): int
+    {
+        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM transfer_file');
+    }
+
+    public function sumSize(): int
+    {
+        return (int) ($this->getEntityManager()->getConnection()->fetchOne('SELECT COALESCE(SUM(file_size), 0) FROM transfer_file') ?? 0);
+    }
 }

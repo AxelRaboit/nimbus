@@ -13,6 +13,7 @@ import {
     ChevronLeft, ChevronRight, ExternalLink,
     ShieldCheck, Clock, Trash2, AlertCircle, Pencil, Check, X, Lock,
 } from "lucide-vue-next";
+import AppNoData from "@/components/AppNoData.vue";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend, Filler);
 
@@ -110,6 +111,10 @@ const statusDonutData = computed(() => {
         }],
     };
 });
+
+const hasStatusData = computed(() =>
+    Object.values(parsedStats.value.transfers?.byStatus ?? {}).some(v => v > 0)
+);
 
 const editingKey   = ref(null);
 const editingValue = ref("");
@@ -266,7 +271,8 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
                 <div class="bg-surface border border-base rounded-xl p-5">
                     <p class="text-sm font-semibold text-primary mb-4">Statut des transferts</p>
                     <div class="h-48 flex items-center justify-center">
-                        <Doughnut :data="statusDonutData" :options="donutOpts" />
+                        <Doughnut v-if="hasStatusData" :data="statusDonutData" :options="donutOpts" />
+                        <AppNoData v-else message="Aucun transfert pour l'instant." />
                     </div>
                 </div>
             </div>
@@ -408,7 +414,9 @@ const statusIcon = { ready: ShieldCheck, pending: Clock, expired: AlertCircle, d
                             </td>
                         </tr>
                         <tr v-if="!parsedTransfers.items?.length">
-                            <td colspan="8" class="px-4 py-10 text-center text-sm text-muted">Aucun transfert.</td>
+                            <td colspan="8">
+                                <AppNoData message="Aucun transfert." />
+                            </td>
                         </tr>
                     </tbody>
                 </table>

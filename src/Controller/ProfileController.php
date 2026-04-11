@@ -20,13 +20,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted(UserRoleEnum::User->value)]
 final class ProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'app_profile')]
+    #[Route('/profile', name: 'profile')]
     public function edit(): Response
     {
         return $this->render('profile/edit.html.twig');
     }
 
-    #[Route('/profile/update', name: 'app_profile_update', methods: [HttpMethodEnum::Post->value])]
+    #[Route('/profile/update', name: 'profile_update', methods: [HttpMethodEnum::Post->value])]
     public function update(
         Request $request,
         UserManager $userManager,
@@ -61,7 +61,7 @@ final class ProfileController extends AbstractController
         return new JsonResponse(['errors' => $errors]);
     }
 
-    #[Route('/profile/password', name: 'app_profile_password', methods: [HttpMethodEnum::Post->value])]
+    #[Route('/profile/password', name: 'profile_password', methods: [HttpMethodEnum::Post->value])]
     public function changePassword(
         Request $request,
         UserManager $userManager,
@@ -93,7 +93,7 @@ final class ProfileController extends AbstractController
         return new JsonResponse(['errors' => $errors]);
     }
 
-    #[Route('/profile/delete', name: 'app_profile_delete', methods: [HttpMethodEnum::Post->value])]
+    #[Route('/profile/delete', name: 'profile_delete', methods: [HttpMethodEnum::Post->value])]
     public function delete(
         Request $request,
         UserManager $userManager,

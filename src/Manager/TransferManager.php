@@ -9,8 +9,9 @@ use App\Entity\Transfer;
 use App\Entity\TransferFile;
 use App\Entity\User;
 use App\Enum\TransferStatusEnum;
-use App\Repository\ApplicationParameterRepository;
 use App\Repository\RecipientRepository;
+use App\Repository\TransferStatsRepository;
+use App\Service\PlanService;
 use App\Service\TransferFileValidator;
 use App\Service\TransferNotifierInterface;
 use App\Service\TusUploadServiceInterface;
@@ -28,7 +29,8 @@ final readonly class TransferManager
         private TransferFileValidator $fileValidator,
         private RecipientRepository $recipientRepository,
         private string $transferStoragePath,
-        private ApplicationParameterRepository $parameterRepository,
+        private TransferStatsRepository $transferStatsRepository,
+        private PlanService $planService,
         private LoggerInterface $logger,
     ) {}
 
@@ -91,8 +93,8 @@ final readonly class TransferManager
      */
     public function finalize(Transfer $transfer, array $uploadKeys, ?string $plainPassword = null): void
     {
-        $maxFiles = (int) $this->parameterRepository->get('max_files_per_transfer');
-        $maxSizeMb = (int) $this->parameterRepository->get('max_transfer_size_mb');
+        $maxFiles = $this->planService->getProMaxFiles();
+        $maxSizeMb = $this->planService->getProMaxSizeMb();
 
         $this->fileValidator->validate($uploadKeys, $maxFiles, $maxSizeMb);
 
@@ -158,16 +160,12 @@ final readonly class TransferManager
             'filesCount' => $filesCount,
         ]);
 
-        if ($filesCount > 0) {
-            $this->parameterRepository->increment('stats.deleted_files_count', $filesCount);
-            $this->parameterRepository->increment('stats.deleted_files_size', $filesSize);
-        }
-
-        if ($recipientsCount > 0) {
-            $this->parameterRepository->increment('stats.deleted_recipients_count', $recipientsCount);
-        }
-
-        $this->parameterRepository->increment('stats.deleted_transfers_count');
+        $this->transferStatsRepository->increment(
+            transfers: 1,
+            files: $filesCount,
+            filesSize: $filesSize,
+            recipients: $recipientsCount,
+        );
     }
 
     public function findFileByFilename(Transfer $transfer, string $filename): ?TransferFile

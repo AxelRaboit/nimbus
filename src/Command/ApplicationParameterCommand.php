@@ -16,15 +16,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:application-parameter',
+    name: 'nimbus:application-parameter',
     description: 'Synchronise les paramètres applicatifs (crée les manquants, supprime les obsolètes).',
-    aliases: ['app:ap'],
+    aliases: ['nimbus:ap'],
 )]
 class ApplicationParameterCommand extends Command
 {
     public function __construct(
         private readonly ApplicationParameterRepository $repository,
-        private readonly EntityManagerInterface $em,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -45,27 +45,35 @@ class ApplicationParameterCommand extends Command
 
         $enumCases = NimbusApplicationParameterEnum::cases();
         $enumKeys = array_map(fn ($c): string => $c->getKey(), $enumCases);
-
         $existing = [];
+
         foreach ($this->repository->findAll() as $param) {
             $existing[$param->getKey()] = $param;
         }
 
-        $created = 0;
-        $deleted = 0;
+        $created = $this->createMissing($enumCases, $existing, $io, $dryRun);
+        $deleted = $this->deleteObsolete($enumKeys, $existing, $io, $dryRun);
 
-        // ── Créer les paramètres manquants ────────────────────────────────────
+        if (!$dryRun) {
+            $this->entityManager->flush();
+        }
+
+        $io->success(sprintf('%d créé(s), %d supprimé(s).', $created, $deleted));
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * @param NimbusApplicationParameterEnum[]    $enumCases
+     * @param array<string, ApplicationParameter> $existing
+     */
+    private function createMissing(array $enumCases, array $existing, SymfonyStyle $io, bool $dryRun): int
+    {
+        $created = 0;
+
         foreach ($enumCases as $case) {
             if (isset($existing[$case->getKey()])) {
-                // Met à jour description si elle a changé
-                $param = $existing[$case->getKey()];
-                if ($param->getDescription() !== $case->getDescription()) {
-                    $io->writeln(sprintf('  <comment>~</comment> %s (description mise à jour)', $case->getKey()));
-                    if (!$dryRun) {
-                        $param->setDescription($case->getDescription());
-                    }
-                }
-
+                $this->syncDescription($case, $existing[$case->getKey()], $io, $dryRun);
                 continue;
             }
 
@@ -73,32 +81,47 @@ class ApplicationParameterCommand extends Command
             ++$created;
 
             if (!$dryRun) {
-                $param = new ApplicationParameter($case->getKey(), $case->getDefaultValue(), $case->getDescription());
-                $this->em->persist($param);
+                $this->entityManager->persist(new ApplicationParameter($case->getKey(), $case->getDefaultValue(), $case->getDescription()));
             }
         }
 
-        // ── Supprimer les paramètres obsolètes (hors compteurs stats.*) ───────
-        foreach ($existing as $key => $param) {
-            if (str_starts_with($key, 'stats.')) {
-                continue; // compteurs runtime, ne pas toucher
-            }
+        return $created;
+    }
 
-            if (!in_array($key, $enumKeys, true)) {
-                $io->writeln(sprintf('  <fg=red>-</fg=red> %s (obsolète)', $key));
-                ++$deleted;
-                if (!$dryRun) {
-                    $this->em->remove($param);
-                }
-            }
+    private function syncDescription(NimbusApplicationParameterEnum $case, ApplicationParameter $param, SymfonyStyle $io, bool $dryRun): void
+    {
+        if ($param->getDescription() === $case->getDescription()) {
+            return;
         }
+
+        $io->writeln(sprintf('  <comment>~</comment> %s (description mise à jour)', $case->getKey()));
 
         if (!$dryRun) {
-            $this->em->flush();
+            $param->setDescription($case->getDescription());
+        }
+    }
+
+    /**
+     * @param string[]                            $enumKeys
+     * @param array<string, ApplicationParameter> $existing
+     */
+    private function deleteObsolete(array $enumKeys, array $existing, SymfonyStyle $io, bool $dryRun): int
+    {
+        $deleted = 0;
+
+        foreach ($existing as $key => $param) {
+            if (in_array($key, $enumKeys, true)) {
+                continue;
+            }
+
+            $io->writeln(sprintf('  <fg=red>-</fg=red> %s (obsolète)', $key));
+            ++$deleted;
+
+            if (!$dryRun) {
+                $this->entityManager->remove($param);
+            }
         }
 
-        $io->success(sprintf('%d créé(s), %d supprimé(s).', $created, $deleted));
-
-        return Command::SUCCESS;
+        return $deleted;
     }
 }

@@ -26,6 +26,7 @@ export default defineConfig({
                 'transfer-unavailable': './assets/pages/transfer-unavailable/index.js',
                 dev: './assets/pages/dev/index.js',
                 dashboard: './assets/pages/dashboard/index.js',
+                plan: './assets/pages/plan/index.js',
             },
         },
     },

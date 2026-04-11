@@ -95,6 +95,8 @@ auth:
     error_email_taken: 'This email address is already in use.'
     error_password_length: 'Password must be at least 8 characters.'
     error_password_mismatch: 'Passwords do not match.'
+    closed_title: 'Registrations closed'
+    closed_desc: 'Registrations are temporarily disabled. Please try again later.'
 
 profile:
   title: Profile
@@ -233,3 +235,9 @@ mail:
 
 dashboard:
   title: 'My transfers'
+
+plan:
+  title: 'Plans & Pricing'
+  flash:
+    upgraded: 'You are now on the Pro plan!'
+    downgraded: 'You have been downgraded to the Free plan.'

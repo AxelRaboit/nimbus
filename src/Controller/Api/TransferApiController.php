@@ -13,8 +13,8 @@ use App\Exception\FileLimitExceededException;
 use App\Exception\SizeLimitExceededException;
 use App\Manager\TransferManager;
 use App\Model\Pagination;
-use App\Repository\ApplicationParameterRepository;
 use App\Repository\TransferRepository;
+use App\Service\PlanService;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,13 +54,13 @@ class TransferApiController extends AbstractController
     public function create(
         Request $request,
         ValidatorInterface $validator,
-        ApplicationParameterRepository $params,
         TransferManager $transferManager,
+        PlanService $planService,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        $maxRecipients = (int) $params->get('max_recipients_per_transfer');
-        $maxExpiryDays = (int) $params->get('max_expiry_days');
+        $maxRecipients = $planService->getProMaxRecipients();
+        $maxExpiryDays = $planService->getProMaxExpiryDays();
         $isPublic = isset($data['isPublic']) && true === $data['isPublic'];
 
         $fields = [

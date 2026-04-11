@@ -16,6 +16,7 @@ export default {
         login: "Se connecter",
         dashboard: "Tableau de bord",
         my_transfers: "Mes transferts",
+        plan: "Formule",
     },
     home: {
         access_password: {
@@ -219,6 +220,42 @@ export default {
         public_link: "Lien public",
         downloads: "téléchargement(s)",
         load_more: "Charger plus",
+    },
+    plan: {
+        title: "Formules & Tarifs",
+        subtitle:
+            "Tarification simple et transparente. Changez de formule à tout moment.",
+        currentPlan: "Formule actuelle",
+        perMonth: "mois",
+        free: {
+            name: "Free",
+            price: "0 €",
+            tagline: "Pour envoyer des fichiers occasionnellement.",
+        },
+        pro: {
+            name: "Pro",
+            price: "9,99 €",
+            tagline: "Pour les utilisateurs intensifs.",
+        },
+        features: {
+            maxSize: "Jusqu'à {size} par transfert",
+            maxFiles:
+                "{n} fichier max par transfert | {n} fichiers max par transfert",
+            maxExpiry:
+                "Expiration jusqu'à {n} heure | Expiration jusqu'à {n} heures",
+            maxExpiryDays:
+                "Expiration jusqu'à {n} jour | Expiration jusqu'à {n} jours",
+            password: "Protection par mot de passe",
+            message: "Message personnalisé",
+            myTransfers: "Accès à Mes transferts",
+        },
+        upgradeCta: "Passer à Pro",
+        downgradeFree: "Revenir au plan Free",
+        alreadyPro: "Vous êtes sur le plan Pro",
+        stripeSoon:
+            "Paiement Stripe bientôt disponible — l'upgrade est gratuit pour l'instant",
+        disclaimer:
+            "Les prix seront confirmés lors de l'intégration Stripe. Changement possible à tout moment.",
     },
     locales: { fr: "Français", en: "English", es: "Español", de: "Deutsch" },
 };
