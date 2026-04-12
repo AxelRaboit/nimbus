@@ -15,6 +15,7 @@ final readonly class SecurityHeadersSubscriber implements EventSubscriberInterfa
 {
     public function __construct(
         private string $env,
+        private string $r2Endpoint,
     ) {}
 
     public static function getSubscribedEvents(): array
@@ -38,6 +39,17 @@ final readonly class SecurityHeadersSubscriber implements EventSubscriberInterfa
 
     private const string VITE_DEV_SERVER = 'http://127.0.0.1:5173';
 
+    private function r2Host(): string
+    {
+        if ('' === $this->r2Endpoint || '0' === $this->r2Endpoint) {
+            return '';
+        }
+
+        $host = sprintf('%s://%s', parse_url($this->r2Endpoint, PHP_URL_SCHEME), parse_url($this->r2Endpoint, PHP_URL_HOST));
+
+        return sprintf(' %s', $host);
+    }
+
     /** @return string[] */
     private function buildCsp(): array
     {
@@ -58,9 +70,9 @@ final readonly class SecurityHeadersSubscriber implements EventSubscriberInterfa
             $isDev
                 ? sprintf("connect-src 'self' %s ws://127.0.0.1:5173", $vite)
                 : "connect-src 'self'",
-            "img-src 'self' data: blob:",
+            "img-src 'self' data: blob:".$this->r2Host(),
             "object-src 'none'",
-            "frame-src 'self'",
+            "frame-src 'self'".$this->r2Host(),
             "worker-src 'self' blob:",
         ];
     }

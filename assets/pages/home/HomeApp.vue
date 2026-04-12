@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { RotateCcw, X, HelpCircle, Lock, Sparkles } from "lucide-vue-next";
+import { RotateCcw, X, HelpCircle, Lock, Sparkles, Eye, EyeOff } from "lucide-vue-next";
 import AppLogo from "@/components/AppLogo.vue";
 import TransferForm from "./components/TransferForm.vue";
 import UploadProgress from "./components/UploadProgress.vue";
@@ -48,24 +48,17 @@ function dismissGuestModal() {
 }
 
 const showHelp = ref(false);
-const showAccessModal = ref(false);
 const accessGrantedLocal = ref(props.accessGranted);
 const accessModalPassword = ref("");
 const accessModalError = ref("");
 const accessModalLoading = ref(false);
-const pendingSubmit = ref(null);
+const accessPasswordVisible = ref(false);
 
 if (typeof window !== "undefined") {
     window.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
             dismissGuestModal();
             showHelp.value = false;
-            if (showAccessModal.value) {
-                showAccessModal.value = false;
-                pendingSubmit.value = null;
-                accessModalPassword.value = "";
-                accessModalError.value = "";
-            }
         }
     });
 }
@@ -129,11 +122,7 @@ async function verifyAccess() {
         });
         if (res.ok) {
             accessGrantedLocal.value = true;
-            showAccessModal.value = false;
-            const formData = pendingSubmit.value;
-            pendingSubmit.value = null;
             accessModalPassword.value = "";
-            await onFormSubmit(formData);
         } else {
             accessModalError.value = t("home.access_password.error");
         }
@@ -145,12 +134,6 @@ async function verifyAccess() {
 }
 
 async function onFormSubmit(formData) {
-    if (props.accessPasswordEnabled && !accessGrantedLocal.value) {
-        pendingSubmit.value = formData;
-        showAccessModal.value = true;
-        return;
-    }
-
     apiError.value = null;
 
     const existing = resumeDraft.value ?? (getDraft()?.token ? getDraft() : null);
@@ -257,7 +240,48 @@ function reset() {
 </script>
 
 <template>
-    <div class="w-full max-w-xl mx-auto">
+    <div v-if="accessPasswordEnabled && !accessGrantedLocal" class="w-full max-w-sm mx-auto">
+        <div class="rounded-xl border border-base bg-surface shadow-lg shadow-indigo-500/10 p-6 sm:p-8">
+            <div class="text-center mb-6">
+                <div class="flex justify-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                        <Lock class="w-6 h-6 text-indigo-500" :stroke-width="2" />
+                    </div>
+                </div>
+                <h2 class="text-lg font-bold text-primary">{{ t('home.access_password.title') }}</h2>
+                <p class="text-sm text-secondary mt-1.5">{{ t('home.access_password.subtitle') }}</p>
+            </div>
+            <div v-if="accessModalError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
+                {{ accessModalError }}
+            </div>
+            <form class="flex flex-col gap-3" v-on:submit.prevent="verifyAccess">
+                <div class="relative">
+                    <input
+                        v-model="accessModalPassword"
+                        :type="accessPasswordVisible ? 'text' : 'password'"
+                        autofocus
+                        required
+                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 pr-10 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        placeholder="••••••••"
+                    >
+                    <button
+                        type="button"
+                        class="absolute inset-y-0 right-0 flex items-center px-3 text-muted hover:text-primary transition-colors"
+                        tabindex="-1"
+                        v-on:click="accessPasswordVisible = !accessPasswordVisible"
+                    >
+                        <EyeOff v-if="accessPasswordVisible" class="w-4 h-4" :stroke-width="2" />
+                        <Eye v-else class="w-4 h-4" :stroke-width="2" />
+                    </button>
+                </div>
+                <AppButton type="submit" :loading="accessModalLoading" class="w-full">
+                    {{ t('home.access_password.submit') }}
+                </AppButton>
+            </form>
+        </div>
+    </div>
+
+    <div v-else class="w-full max-w-xl mx-auto">
         <div v-if="resumeDraft" class="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 flex items-start gap-3">
             <RotateCcw class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" :stroke-width="2" />
             <div class="flex-1 min-w-0">
@@ -354,46 +378,6 @@ function reset() {
                         >
                             Continuer sans compte
                         </button>
-                    </div>
-                </div>
-            </div>
-        </Transition>
-
-        <Transition name="modal">
-            <div
-                v-if="showAccessModal"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                v-on:click.self="showAccessModal = false; pendingSubmit = null; accessModalPassword = ''; accessModalError = '';"
-            >
-                <div class="absolute inset-0 bg-black/50" v-on:click="showAccessModal = false; pendingSubmit = null; accessModalPassword = ''; accessModalError = '';" />
-                <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-sm">
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-base">
-                        <h2 class="text-base font-semibold text-primary flex items-center gap-2">
-                            <Lock class="w-4 h-4 text-indigo-500" :stroke-width="2" />
-                            {{ t('home.access_password.title') }}
-                        </h2>
-                        <button class="text-muted hover:text-primary transition-colors" v-on:click="showAccessModal = false; pendingSubmit = null; accessModalPassword = ''; accessModalError = '';">
-                            <X class="w-4 h-4" :stroke-width="2" />
-                        </button>
-                    </div>
-                    <div class="px-6 py-5 flex flex-col gap-4">
-                        <p class="text-sm text-secondary">{{ t('home.access_password.subtitle') }}</p>
-                        <div v-if="accessModalError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                            {{ accessModalError }}
-                        </div>
-                        <form class="flex flex-col gap-4" v-on:submit.prevent="verifyAccess">
-                            <input
-                                v-model="accessModalPassword"
-                                type="password"
-                                autofocus
-                                required
-                                class="block w-full rounded-md border border-base bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                                placeholder="••••••••"
-                            >
-                            <AppButton type="submit" :loading="accessModalLoading" class="w-full">
-                                {{ t('home.access_password.submit') }}
-                            </AppButton>
-                        </form>
                     </div>
                 </div>
             </div>

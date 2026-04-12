@@ -8,6 +8,8 @@ use App\Enum\HttpMethodEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 use function is_array;
@@ -20,8 +22,12 @@ class HomeApiController extends AbstractController
     ) {}
 
     #[Route('/verify-access', name: 'api_home_verify_access', methods: [HttpMethodEnum::Post->value])]
-    public function verifyAccess(Request $request): JsonResponse
+    public function verifyAccess(Request $request, RateLimiterFactoryInterface $homeVerifyAccessLimiter): JsonResponse
     {
+        if (!$homeVerifyAccessLimiter->create($request->getClientIp())->consume()->isAccepted()) {
+            return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         if ('' === $this->accessPassword) {
             return $this->json(['ok' => true]);
         }
@@ -33,7 +39,7 @@ class HomeApiController extends AbstractController
             return $this->json(['error' => 'wrong_password'], JsonResponse::HTTP_FORBIDDEN);
         }
 
-        $request->getSession()->set('access_granted', true);
+        $request->getSession()->set('access_granted_hash', md5($this->accessPassword));
 
         return $this->json(['ok' => true]);
     }

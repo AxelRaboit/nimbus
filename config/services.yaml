@@ -34,6 +34,26 @@ services:
         arguments:
             $transferStoragePath: '%transfer_storage_path%'
 
+    App\Storage\LocalStorageAdapter:
+        arguments:
+            $transferStoragePath: '%transfer_storage_path%'
+
+    App\Storage\R2StorageAdapter:
+        arguments:
+            $endpoint: '%env(R2_ENDPOINT)%'
+            $accessKeyId: '%env(R2_ACCESS_KEY_ID)%'
+            $secretAccessKey: '%env(R2_SECRET_ACCESS_KEY)%'
+            $bucket: '%env(R2_BUCKET)%'
+
+    App\Storage\StorageManager:
+        arguments:
+            $local: '@App\Storage\LocalStorageAdapter'
+            $r2: '@App\Storage\R2StorageAdapter'
+
+    App\EventSubscriber\SecurityHeadersSubscriber:
+        arguments:
+            $r2Endpoint: '%env(R2_ENDPOINT)%'
+
     App\MessageHandler\EmailQueueMessageHandler:
         arguments:
             $mailerSender: '%mailer.sender%'

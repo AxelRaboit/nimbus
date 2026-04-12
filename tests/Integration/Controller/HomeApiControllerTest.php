@@ -4,10 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Controller;
 
+use App\Enum\ContentTypeEnum;
+use App\Enum\HttpMethodEnum;
 use App\Tests\Integration\IntegrationTestCase;
 
 final class HomeApiControllerTest extends IntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        static::createClient();
+        static::getContainer()->get('cache.rate_limiter')->clear();
+        static::ensureKernelShutdown();
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -20,7 +30,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
     public function testVerifyAccessWhenNoPasswordSetAlwaysSucceeds(): void
     {
         $client = static::createClient();
-        $client->request('POST', '/api/home/verify-access', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['password' => '']));
+        $client->request(HttpMethodEnum::Post->value, '/api/home/verify-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['password' => '']));
 
         self::assertResponseIsSuccessful();
         self::assertSame(['ok' => true], json_decode($client->getResponse()->getContent(), true));
@@ -31,7 +41,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $this->setAccessPassword('testpass');
 
         $client = static::createClient();
-        $client->request('POST', '/api/home/verify-access', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['password' => 'testpass']));
+        $client->request(HttpMethodEnum::Post->value, '/api/home/verify-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['password' => 'testpass']));
 
         self::assertResponseIsSuccessful();
         self::assertSame(['ok' => true], json_decode($client->getResponse()->getContent(), true));
@@ -42,7 +52,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $this->setAccessPassword('testpass');
 
         $client = static::createClient();
-        $client->request('POST', '/api/home/verify-access', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['password' => 'wrongpass']));
+        $client->request(HttpMethodEnum::Post->value, '/api/home/verify-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['password' => 'wrongpass']));
 
         self::assertResponseStatusCodeSame(403);
     }
@@ -52,7 +62,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $this->setAccessPassword('testpass');
 
         $client = static::createClient();
-        $client->request('GET', '/');
+        $client->request(HttpMethodEnum::Get->value, '/');
 
         self::assertResponseIsSuccessful();
         self::assertStringContainsString('data-access-password-enabled="true"', $client->getResponse()->getContent());
@@ -63,7 +73,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $this->setAccessPassword('testpass');
 
         $client = static::createClient();
-        $client->request('GET', '/');
+        $client->request(HttpMethodEnum::Get->value, '/');
 
         self::assertResponseIsSuccessful();
         self::assertStringContainsString('data-access-granted="false"', $client->getResponse()->getContent());
@@ -75,20 +85,45 @@ final class HomeApiControllerTest extends IntegrationTestCase
 
         $client = static::createClient();
 
-        $client->request('POST', '/api/home/verify-access', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['password' => 'testpass']));
+        $client->request(HttpMethodEnum::Post->value, '/api/home/verify-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['password' => 'testpass']));
         self::assertResponseIsSuccessful();
 
-        $client->request('GET', '/');
+        $client->request(HttpMethodEnum::Get->value, '/');
         self::assertStringContainsString('data-access-granted="true"', $client->getResponse()->getContent());
     }
 
     public function testHomePageShowsNoAccessPasswordWhenNotSet(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/');
+        $client->request(HttpMethodEnum::Get->value, '/');
 
         self::assertResponseIsSuccessful();
         self::assertStringContainsString('data-access-password-enabled="false"', $client->getResponse()->getContent());
+        self::assertStringContainsString('data-access-granted="true"', $client->getResponse()->getContent());
+    }
+
+    public function testStaleSessionHashDoesNotGrantAccessAfterPasswordChange(): void
+    {
+        $this->setAccessPassword('newpass');
+        $client = static::createClient();
+
+        $client->request(HttpMethodEnum::Get->value, '/');
+        $client->getRequest()->getSession()->set('access_granted_hash', md5('oldpass'));
+        $client->getRequest()->getSession()->save();
+
+        $client->request(HttpMethodEnum::Get->value, '/');
+        self::assertStringContainsString('data-access-granted="false"', $client->getResponse()->getContent());
+    }
+
+    public function testCorrectPasswordStoresHashInSession(): void
+    {
+        $this->setAccessPassword('secret');
+        $client = static::createClient();
+
+        $client->request(HttpMethodEnum::Post->value, '/api/home/verify-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['password' => 'secret']));
+        self::assertResponseIsSuccessful();
+
+        $client->request(HttpMethodEnum::Get->value, '/');
         self::assertStringContainsString('data-access-granted="true"', $client->getResponse()->getContent());
     }
 

@@ -4,3 +4,7 @@ framework:
             policy: fixed_window
             limit: 5
             interval: '5 minutes'
+        home_verify_access:
+            policy: fixed_window
+            limit: 5
+            interval: '15 minutes'

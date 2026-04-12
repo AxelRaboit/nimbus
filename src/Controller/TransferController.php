@@ -7,11 +7,13 @@ namespace App\Controller;
 use App\Entity\Recipient;
 use App\Entity\Transfer;
 use App\Entity\TransferFile;
+use App\Enum\ContentTypeEnum;
 use App\Enum\HttpMethodEnum;
 use App\Manager\TransferManager;
 use App\Repository\RecipientRepository;
 use App\Repository\TransferRepository;
 use App\Service\TransferNotifierInterface;
+use App\Storage\StorageManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -93,6 +95,7 @@ class TransferController extends AbstractController
         Request $request,
         TransferRepository $transferRepository,
         TransferManager $transferManager,
+        StorageManager $storageManager,
     ): Response {
         $transfer = $transferRepository->findByToken($token);
 
@@ -114,16 +117,7 @@ class TransferController extends AbstractController
         $files = $transfer->getFiles()->toArray();
 
         if (1 === count($files)) {
-            $file = $files[0];
-
-            return new BinaryFileResponse(
-                $transferManager->resolveFilePath($transfer, $file),
-                Response::HTTP_OK,
-                [
-                    'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $file->getOriginalName()),
-                    'Content-Type' => $file->getMimeType() ?: 'application/octet-stream',
-                ],
-            );
+            return $storageManager->createFileResponse($transfer, $files[0], inline: false);
         }
 
         $zipPath = $transferManager->buildDownloadZip($transfer);
@@ -134,7 +128,7 @@ class TransferController extends AbstractController
             Response::HTTP_OK,
             [
                 'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $zipName),
-                'Content-Type' => 'application/zip',
+                'Content-Type' => ContentTypeEnum::Zip->value,
             ],
         );
 
@@ -150,6 +144,7 @@ class TransferController extends AbstractController
         Request $request,
         TransferRepository $transferRepository,
         TransferManager $transferManager,
+        StorageManager $storageManager,
     ): Response {
         $transfer = $transferRepository->findByToken($token);
 
@@ -167,9 +162,7 @@ class TransferController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $path = $transferManager->resolveFilePath($transfer, $file);
-
-        if (!file_exists($path)) {
+        if (!$storageManager->fileExists($transfer, $file)) {
             throw $this->createNotFoundException();
         }
 
@@ -180,14 +173,7 @@ class TransferController extends AbstractController
             $transferManager->trackPublicDownload($transfer);
         }
 
-        return new BinaryFileResponse(
-            $path,
-            Response::HTTP_OK,
-            [
-                'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $file->getOriginalName()),
-                'Content-Type' => $file->getMimeType() ?: 'application/octet-stream',
-            ],
-        );
+        return $storageManager->createFileResponse($transfer, $file, inline: false);
     }
 
     #[Route('/t/{token}/preview/{filename}', name: 'transfer_preview_file')]
@@ -197,6 +183,7 @@ class TransferController extends AbstractController
         Request $request,
         TransferRepository $transferRepository,
         TransferManager $transferManager,
+        StorageManager $storageManager,
     ): Response {
         $transfer = $transferRepository->findByToken($token);
 
@@ -214,20 +201,11 @@ class TransferController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $path = $transferManager->resolveFilePath($transfer, $file);
-
-        if (!file_exists($path)) {
+        if (!$storageManager->fileExists($transfer, $file)) {
             throw $this->createNotFoundException();
         }
 
-        return new BinaryFileResponse(
-            $path,
-            Response::HTTP_OK,
-            [
-                'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, $file->getOriginalName()),
-                'Content-Type' => $file->getMimeType() ?: 'application/octet-stream',
-            ],
-        );
+        return $storageManager->createFileResponse($transfer, $file, inline: true);
     }
 
     #[Route('/manage/{ownerToken}', name: 'transfer_manage')]
