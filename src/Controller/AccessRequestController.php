@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Entity\AccessRequest;
 use App\Manager\AccessRequestManager;
 use App\Repository\AccessRequestRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\AccessChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class AccessRequestController extends AbstractController
 {
     public function __construct(
-        private readonly string $accessPassword,
+        private readonly AccessChecker $accessChecker,
     ) {}
 
     #[Route('/access-request/{token}/approve', name: 'access_request_approve', methods: ['GET'])]
@@ -54,7 +54,7 @@ class AccessRequestController extends AbstractController
     public function grant(
         string $accessToken,
         AccessRequestRepository $repository,
-        EntityManagerInterface $entityManager,
+        AccessRequestManager $manager,
         Request $request,
     ): Response {
         $accessRequest = $repository->findByAccessToken($accessToken);
@@ -73,16 +73,18 @@ class AccessRequestController extends AbstractController
             ]);
         }
 
-        // Grant access and invalidate the token (one-time use).
-        $request->getSession()->set('access_granted_hash', md5($this->accessPassword));
+        $this->grantAccessRequest($request, $accessRequest);
+        $manager->consume($accessRequest);
+
+        return $this->redirectToRoute('home');
+    }
+
+    private function grantAccessRequest(Request $request, AccessRequest $accessRequest): void
+    {
+        $this->accessChecker->grant($request);
+
         if (null !== $accessRequest->getGrantedFileSizeMb()) {
             $request->getSession()->set('custom_file_size_mb', $accessRequest->getGrantedFileSizeMb());
         }
-
-        $accessRequest->setAccessToken(null);
-
-        $entityManager->flush();
-
-        return $this->redirectToRoute('home');
     }
 }

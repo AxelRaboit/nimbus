@@ -71,6 +71,12 @@ final readonly class AccessRequestManager
         $this->sendRequesterApproval($request);
     }
 
+    public function consume(AccessRequest $request): void
+    {
+        $request->setAccessToken(null);
+        $this->entityManager->flush();
+    }
+
     public function reject(AccessRequest $request): void
     {
         $request->setStatus(AccessRequestStatusEnum::Rejected);

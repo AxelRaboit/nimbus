@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Enum\AllowedExtensionEnum;
 use App\Enum\ExpiryOptionEnum;
 use App\Repository\ApplicationParameterRepository;
+use App\Service\AccessChecker;
 use App\Service\PlanService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,20 +18,18 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends AbstractController
 {
     public function __construct(
-        private readonly string $accessPassword,
+        private readonly AccessChecker $accessChecker,
         private readonly PlanService $planService,
     ) {}
 
     #[Route('/', name: 'home')]
     public function index(Request $request, ApplicationParameterRepository $params): Response
     {
-        $accessPasswordEnabled = '' !== $this->accessPassword;
-        $accessGranted = $accessPasswordEnabled
-            ? $request->getSession()->get('access_granted_hash') === md5($this->accessPassword)
-            : true;
-
         /** @var User|null $user */
         $user = $this->getUser();
+
+        $accessPasswordEnabled = $this->accessChecker->isEnabled();
+        $accessGranted = $this->accessChecker->isGranted($request, $user);
 
         $sessionCustomSize = (int) $request->getSession()->get('custom_file_size_mb', 0);
         $proMaxSizeMb = $this->planService->getProMaxSizeMb();
