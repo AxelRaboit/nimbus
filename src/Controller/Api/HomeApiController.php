@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Enum\HttpMethodEnum;
 use App\Manager\AccessRequestManager;
+use App\Service\AccessChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,7 @@ use function is_array;
 class HomeApiController extends AbstractController
 {
     public function __construct(
-        private readonly string $accessPassword,
+        private readonly AccessChecker $accessChecker,
     ) {}
 
     #[Route('/verify-access', name: 'api_home_verify_access', methods: [HttpMethodEnum::Post->value])]
@@ -29,18 +30,18 @@ class HomeApiController extends AbstractController
             return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
-        if ('' === $this->accessPassword) {
+        if (!$this->accessChecker->isEnabled()) {
             return $this->json(['ok' => true]);
         }
 
         $data = json_decode($request->getContent(), true);
         $submitted = is_array($data) ? ($data['password'] ?? '') : '';
 
-        if (!hash_equals($this->accessPassword, $submitted)) {
+        if (!$this->accessChecker->verify($submitted)) {
             return $this->json(['error' => 'wrong_password'], JsonResponse::HTTP_FORBIDDEN);
         }
 
-        $request->getSession()->set('access_granted_hash', md5($this->accessPassword));
+        $this->accessChecker->grant($request);
 
         return $this->json(['ok' => true]);
     }
@@ -52,7 +53,7 @@ class HomeApiController extends AbstractController
             return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
-        if ('' === $this->accessPassword) {
+        if (!$this->accessChecker->isEnabled()) {
             return $this->json(['error' => 'access_password_not_enabled'], Response::HTTP_BAD_REQUEST);
         }
 
