@@ -65,10 +65,10 @@ final class PlanServiceTest extends TestCase
         $params = $this->createStub(ApplicationParameterRepository::class);
         $params->method('get')->willReturn('30');
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('flush');
 
-        $this->buildService(params: $params, em: $em)->upgrade($user);
+        $this->buildService(params: $params, entityManager: $entityManager)->upgrade($user);
 
         self::assertSame(PlanEnum::Pro, $user->getPlan());
         self::assertNotNull($user->getTrialEndsAt());
@@ -81,10 +81,10 @@ final class PlanServiceTest extends TestCase
         $user->setPlan(PlanEnum::Pro);
         $user->setTrialEndsAt(new DateTimeImmutable('+10 days'));
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('flush');
 
-        $this->buildService(em: $em)->downgrade($user);
+        $this->buildService(entityManager: $entityManager)->downgrade($user);
 
         self::assertSame(PlanEnum::Free, $user->getPlan());
         self::assertNull($user->getTrialEndsAt());
@@ -102,13 +102,54 @@ final class PlanServiceTest extends TestCase
         self::assertTrue($service->canAccessMyTransfers($proUser));
     }
 
+    public function testGetMaxSizeMbReturnsCustomSizeWhenSet(): void
+    {
+        $user = new User();
+        $user->setCustomFileSizeMb(500);
+
+        self::assertSame(500, $this->buildService()->getMaxSizeMb($user));
+    }
+
+    public function testGetMaxSizeMbCustomSizeOverridesProPlan(): void
+    {
+        $user = new User();
+        $user->setPlan(PlanEnum::Pro);
+        $user->setCustomFileSizeMb(50);
+
+        $params = $this->createStub(ApplicationParameterRepository::class);
+        $params->method('get')->willReturn('10000');
+
+        self::assertSame(50, $this->buildService(params: $params)->getMaxSizeMb($user));
+    }
+
+    public function testGetMaxSizeMbReturnsProLimitForProUserWithoutCustomSize(): void
+    {
+        $user = new User();
+        $user->setPlan(PlanEnum::Pro);
+
+        $params = $this->createStub(ApplicationParameterRepository::class);
+        $params->method('get')->willReturn('9999');
+
+        self::assertSame(9999, $this->buildService(params: $params)->getMaxSizeMb($user));
+    }
+
+    public function testGetMaxSizeMbReturnsFreeLimitForFreeUserWithoutCustomSize(): void
+    {
+        $user = new User();
+
+        $params = $this->createStub(ApplicationParameterRepository::class);
+        $params->method('get')->willReturn('100');
+
+        self::assertSame(100, $this->buildService(params: $params)->getMaxSizeMb($user));
+    }
+
     private function buildService(
         ?ApplicationParameterRepository $params = null,
-        ?EntityManagerInterface $em = null,
+        ?EntityManagerInterface $entityManager = null,
     ): PlanService {
         return new PlanService(
             $params ?? $this->createStub(ApplicationParameterRepository::class),
-            $em ?? $this->createStub(EntityManagerInterface::class),
+            $entityManager ?? $this->createStub(EntityManagerInterface::class),
         );
     }
 }

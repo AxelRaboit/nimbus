@@ -21,8 +21,6 @@ class Transfer
 {
     use TimestampableTrait;
 
-    public const DEFAULT_EXPIRY_DAYS = 7;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
@@ -93,7 +91,8 @@ class Transfer
         $this->token = bin2hex(random_bytes(32));
         $this->ownerToken = bin2hex(random_bytes(32));
         $this->reference = mb_strtoupper(bin2hex(random_bytes(2))).'-'.mb_strtoupper(bin2hex(random_bytes(2)));
-        $this->expiresAt = new DateTimeImmutable(sprintf('+%d days', self::DEFAULT_EXPIRY_DAYS));
+        // Defensive fallback — always overridden by TransferManager::create() via expiresInHours.
+        $this->expiresAt = new DateTimeImmutable('+1 day');
     }
 
     public function getId(): ?int

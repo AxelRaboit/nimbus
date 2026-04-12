@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { RotateCcw, X, HelpCircle, Lock, Sparkles, Eye, EyeOff } from "lucide-vue-next";
+import { RotateCcw, X, HelpCircle, Lock, Sparkles, Eye, EyeOff, KeyRound, CheckCircle } from "lucide-vue-next";
 import AppLogo from "@/components/AppLogo.vue";
 import TransferForm from "./components/TransferForm.vue";
 import UploadProgress from "./components/UploadProgress.vue";
@@ -20,7 +20,8 @@ const props = defineProps({
     maxSizeMb:              { type: Number, default: 500 },
     maxFiles:               { type: Number, default: 20 },
     maxRecipients:          { type: Number, default: 20 },
-    maxExpiryDays:          { type: Number, default: 7 },
+    maxExpiryDays:              { type: Number, default: 7 },
+    tusCleanupMaxAgeHours:      { type: Number, default: 12 },
     expiryOptions:          { type: String, default: "[24]" },
     extensionGroups:        { type: String, default: "{}" },
     accessPasswordEnabled:  { type: Boolean, default: false },
@@ -53,6 +54,57 @@ const accessModalPassword = ref("");
 const accessModalError = ref("");
 const accessModalLoading = ref(false);
 const accessPasswordVisible = ref(false);
+
+// ── Request access ────────────────────────────────────────────────────────────
+const showRequestForm = ref(false);
+const requestEmail = ref("");
+const requestName = ref("");
+const requestMessage = ref("");
+const requestedFileSizeMb = ref(null);
+const requestLoading = ref(false);
+const requestError = ref("");
+const requestSent = ref(false);
+
+const fileSizeOptions = [
+    { label: "Pas de préférence", value: null },
+    { label: "100 Mo", value: 100 },
+    { label: "500 Mo", value: 500 },
+    { label: "1 Go", value: 1000 },
+    { label: "5 Go", value: 5000 },
+    { label: "10 Go", value: 10000 },
+    { label: "20 Go", value: 20000 },
+    { label: "50 Go", value: 50000 },
+];
+
+async function submitAccessRequest() {
+    requestError.value = "";
+    if (!requestEmail.value.trim()) {
+        requestError.value = "L'adresse e-mail est requise.";
+        return;
+    }
+    requestLoading.value = true;
+    try {
+        const res = await fetch("/api/home/request-access", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: requestEmail.value.trim(),
+                name: requestName.value.trim() || null,
+                message: requestMessage.value.trim() || null,
+                requestedFileSizeMb: requestedFileSizeMb.value,
+            }),
+        });
+        if (!res.ok) {
+            requestError.value = "Une erreur est survenue. Veuillez réessayer.";
+            return;
+        }
+        requestSent.value = true;
+    } catch {
+        requestError.value = "Une erreur est survenue. Veuillez réessayer.";
+    } finally {
+        requestLoading.value = false;
+    }
+}
 
 if (typeof window !== "undefined") {
     window.addEventListener("keydown", (e) => {
@@ -242,42 +294,117 @@ function reset() {
 <template>
     <div v-if="accessPasswordEnabled && !accessGrantedLocal" class="w-full max-w-sm mx-auto">
         <div class="rounded-xl border border-base bg-surface shadow-lg shadow-indigo-500/10 p-6 sm:p-8">
-            <div class="text-center mb-6">
+            <!-- Success state after request sent -->
+            <div v-if="requestSent" class="text-center">
                 <div class="flex justify-center mb-4">
-                    <div class="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center">
-                        <Lock class="w-6 h-6 text-indigo-500" :stroke-width="2" />
+                    <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                        <CheckCircle class="w-6 h-6 text-emerald-500" :stroke-width="2" />
                     </div>
                 </div>
-                <h2 class="text-lg font-bold text-primary">{{ t('home.access_password.title') }}</h2>
-                <p class="text-sm text-secondary mt-1.5">{{ t('home.access_password.subtitle') }}</p>
+                <h2 class="text-lg font-bold text-primary">Demande envoyée</h2>
+                <p class="text-sm text-secondary mt-1.5">Vous recevrez un e-mail dès que l'administrateur aura approuvé votre demande.</p>
+                <button type="button" class="mt-4 text-xs text-link hover:text-link-hover transition-colors" v-on:click="requestSent = false; showRequestForm = false">
+                    Retour
+                </button>
             </div>
-            <div v-if="accessModalError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
-                {{ accessModalError }}
-            </div>
-            <form class="flex flex-col gap-3" v-on:submit.prevent="verifyAccess">
-                <div class="relative">
+
+            <!-- Request access form -->
+            <template v-else-if="showRequestForm">
+                <div class="text-center mb-6">
+                    <div class="flex justify-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                            <KeyRound class="w-6 h-6 text-indigo-500" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <h2 class="text-lg font-bold text-primary">Demander l'accès</h2>
+                    <p class="text-sm text-secondary mt-1.5">L'administrateur recevra votre demande et vous contactera par e-mail.</p>
+                </div>
+                <div v-if="requestError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
+                    {{ requestError }}
+                </div>
+                <form class="flex flex-col gap-3" v-on:submit.prevent="submitAccessRequest">
                     <input
-                        v-model="accessModalPassword"
-                        :type="accessPasswordVisible ? 'text' : 'password'"
-                        autofocus
+                        v-model="requestEmail"
+                        type="email"
                         required
-                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 pr-10 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                        placeholder="••••••••"
+                        placeholder="votre@email.com"
+                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                     >
-                    <button
-                        type="button"
-                        class="absolute inset-y-0 right-0 flex items-center px-3 text-muted hover:text-primary transition-colors"
-                        tabindex="-1"
-                        v-on:click="accessPasswordVisible = !accessPasswordVisible"
+                    <input
+                        v-model="requestName"
+                        type="text"
+                        placeholder="Votre nom (optionnel)"
+                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                     >
-                        <EyeOff v-if="accessPasswordVisible" class="w-4 h-4" :stroke-width="2" />
-                        <Eye v-else class="w-4 h-4" :stroke-width="2" />
+                    <textarea
+                        v-model="requestMessage"
+                        placeholder="Message (optionnel)"
+                        rows="3"
+                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+                    />
+                    <div>
+                        <label class="block text-xs text-muted mb-1">Taille de fichier souhaitée (optionnel)</label>
+                        <select
+                            v-model="requestedFileSizeMb"
+                            class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        >
+                            <option v-for="opt in fileSizeOptions" :key="String(opt.value)" :value="opt.value">{{ opt.label }}</option>
+                        </select>
+                    </div>
+                    <AppButton type="submit" :loading="requestLoading" class="w-full">
+                        Envoyer la demande
+                    </AppButton>
+                    <button type="button" class="text-xs text-muted hover:text-secondary transition-colors text-center" v-on:click="showRequestForm = false">
+                        Retour
+                    </button>
+                </form>
+            </template>
+
+            <!-- Password form -->
+            <template v-else>
+                <div class="text-center mb-6">
+                    <div class="flex justify-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                            <Lock class="w-6 h-6 text-indigo-500" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <h2 class="text-lg font-bold text-primary">{{ t('home.access_password.title') }}</h2>
+                    <p class="text-sm text-secondary mt-1.5">{{ t('home.access_password.subtitle') }}</p>
+                </div>
+                <div v-if="accessModalError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
+                    {{ accessModalError }}
+                </div>
+                <form class="flex flex-col gap-3" v-on:submit.prevent="verifyAccess">
+                    <div class="relative">
+                        <input
+                            v-model="accessModalPassword"
+                            :type="accessPasswordVisible ? 'text' : 'password'"
+                            autofocus
+                            required
+                            class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 pr-10 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                            placeholder="••••••••"
+                        >
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 flex items-center px-3 text-muted hover:text-primary transition-colors"
+                            tabindex="-1"
+                            v-on:click="accessPasswordVisible = !accessPasswordVisible"
+                        >
+                            <EyeOff v-if="accessPasswordVisible" class="w-4 h-4" :stroke-width="2" />
+                            <Eye v-else class="w-4 h-4" :stroke-width="2" />
+                        </button>
+                    </div>
+                    <AppButton type="submit" :loading="accessModalLoading" class="w-full">
+                        {{ t('home.access_password.submit') }}
+                    </AppButton>
+                </form>
+                <div class="mt-4 pt-4 border-t border-base text-center">
+                    <button type="button" class="text-xs text-link hover:text-link-hover transition-colors flex items-center gap-1 mx-auto" v-on:click="showRequestForm = true">
+                        <KeyRound class="w-3 h-3" :stroke-width="2" />
+                        Demander l'accès
                     </button>
                 </div>
-                <AppButton type="submit" :loading="accessModalLoading" class="w-full">
-                    {{ t('home.access_password.submit') }}
-                </AppButton>
-            </form>
+            </template>
         </div>
     </div>
 
@@ -427,6 +554,27 @@ function reset() {
                                 </div>
                             </li>
                         </ol>
+
+                        <div class="rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3 space-y-1">
+                            <p class="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                                <svg
+                                    class="w-3.5 h-3.5 shrink-0"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reprise automatique des envois interrompus
+                            </p>
+                            <p class="text-xs text-secondary">
+                                Si votre connexion est coupée pendant un envoi, Nimbus détecte automatiquement le transfert en cours lors de votre prochaine visite et vous propose de reprendre là où vous vous étiez arrêté.
+                            </p>
+                            <p class="text-xs text-secondary">
+                                Les fichiers temporaires sont conservés pendant <span class="font-semibold text-primary">{{ tusCleanupMaxAgeHours }}h</span>. Passé ce délai, le transfert est considéré comme abandonné et les données sont supprimées.
+                            </p>
+                        </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
                             <div class="flex items-center justify-between border-b border-base pb-3">

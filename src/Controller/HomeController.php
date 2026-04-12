@@ -32,7 +32,10 @@ class HomeController extends AbstractController
         /** @var User|null $user */
         $user = $this->getUser();
 
-        $maxSizeMb = $user ? $this->planService->getMaxSizeMb($user) : $this->planService->getFreeMaxSizeMb();
+        $sessionCustomSize = (int) $request->getSession()->get('custom_file_size_mb', 0);
+        $maxSizeMb = $user
+            ? $this->planService->getMaxSizeMb($user)
+            : ($sessionCustomSize > 0 ? $sessionCustomSize : $this->planService->getFreeMaxSizeMb());
         $maxFiles = $user ? $this->planService->getMaxFiles($user) : $this->planService->getFreeMaxFiles();
         $maxRecipients = $user ? $this->planService->getMaxRecipients($user) : $this->planService->getFreeMaxRecipients();
         $maxExpiryHours = $user ? $this->planService->getMaxExpiryHours($user) : $this->planService->getFreeMaxExpiryHours();
@@ -43,6 +46,7 @@ class HomeController extends AbstractController
             'maxFiles' => $maxFiles,
             'maxRecipients' => $maxRecipients,
             'maxExpiryDays' => $maxExpiryDays,
+            'tusCleanupMaxAgeHours' => $this->planService->getTusCleanupMaxAgeHours(),
             'expiryOptions' => ExpiryOptionEnum::validOptions($maxExpiryDays),
             'extensionGroups' => AllowedExtensionEnum::groupedValues(),
             'accessPasswordEnabled' => $accessPasswordEnabled,

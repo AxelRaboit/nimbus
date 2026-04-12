@@ -1,0 +1,53 @@
+{% extends 'email/layout/base.html.twig' %}
+
+{% block content %}
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:16px;color:#1e293b;margin:0 0 16px;">
+    Nouvelle demande d'accès
+</p>
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:15px;color:#475569;margin:0 0 16px;">
+    Un utilisateur souhaite accéder à Nimbus.
+</p>
+
+<div style="margin:0 0 16px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+    <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:13px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 12px;">
+        Informations du demandeur
+    </p>
+    <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:14px;color:#475569;margin:0 0 8px;">
+        <strong style="color:#1e293b;">E-mail :</strong> {{ request.requesterEmail }}
+    </p>
+    {% if request.requesterName %}
+    <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:14px;color:#475569;margin:0 0 8px;">
+        <strong style="color:#1e293b;">Nom :</strong> {{ request.requesterName }}
+    </p>
+    {% endif %}
+    {% if request.message %}
+    <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:14px;color:#475569;margin:0 0 8px;">
+        <strong style="color:#1e293b;">Message :</strong>
+        <span style="display:block;margin-top:6px;padding:10px 12px;background:#fff;border-left:3px solid #6366f1;border-radius:4px;">{{ request.message }}</span>
+    </p>
+    {% endif %}
+    {% if request.requestedFileSizeMb %}
+    <p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:14px;color:#475569;margin:0;">
+        <strong style="color:#1e293b;">Taille souhaitée :</strong>
+        {{ request.requestedFileSizeMb >= 1000 ? (request.requestedFileSizeMb / 1000)|round(1) ~ ' Go' : request.requestedFileSizeMb ~ ' Mo' }}
+    </p>
+    {% endif %}
+</div>
+
+{% if request.requestedFileSizeMb %}
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:13px;color:#94a3b8;margin:0 0 16px;">
+    Vous pouvez ajuster la limite accordée depuis l'administration avant d'approuver, ou modifier celle de l'utilisateur à tout moment depuis son profil admin.
+</p>
+{% endif %}
+
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:13px;color:#94a3b8;margin:0 0 20px;">
+    Ce lien d'autorisation expire dans 24h.
+</p>
+
+{{ include('email/partials/action_button.html.twig', {
+    url: approveUrl,
+    label: 'Autoriser l\'accès',
+}) }}
+
+<p class="warning">Si vous n'attendiez pas cette demande, ignorez cet e-mail.</p>
+{% endblock %}

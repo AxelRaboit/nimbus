@@ -156,7 +156,7 @@ class TransferApiController extends AbstractController
     }
 
     #[Route('/transfer/{token}/resume-check', name: 'transfer_api_resume_check', methods: [HttpMethodEnum::Get->value])]
-    public function resumeCheck(string $token, TransferRepository $transferRepository): JsonResponse
+    public function resumeCheck(string $token, TransferRepository $transferRepository, PlanService $planService): JsonResponse
     {
         $transfer = $transferRepository->findByToken($token);
 
@@ -164,7 +164,8 @@ class TransferApiController extends AbstractController
             return $this->json(['resumable' => false], Response::HTTP_GONE);
         }
 
-        $threshold = new DateTimeImmutable('-48 hours');
+        $maxAgeHours = $planService->getTusCleanupMaxAgeHours();
+        $threshold = new DateTimeImmutable(sprintf('-%d hours', $maxAgeHours));
         if ($transfer->getCreatedAt() < $threshold) {
             return $this->json(['resumable' => false], Response::HTTP_GONE);
         }

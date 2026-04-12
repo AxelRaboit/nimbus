@@ -127,6 +127,59 @@ final class HomeApiControllerTest extends IntegrationTestCase
         self::assertStringContainsString('data-access-granted="true"', $client->getResponse()->getContent());
     }
 
+    // ── POST /api/home/request-access ────────────────────────────────────────
+
+    public function testRequestAccessReturns400WhenNoPasswordEnabled(): void
+    {
+        $client = static::createClient();
+        $client->request(HttpMethodEnum::Post->value, '/api/home/request-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['email' => 'user@example.com']));
+
+        self::assertResponseStatusCodeSame(400);
+        self::assertSame(['error' => 'access_password_not_enabled'], json_decode($client->getResponse()->getContent(), true));
+    }
+
+    public function testRequestAccessReturns422WithInvalidEmail(): void
+    {
+        $this->setAccessPassword('testpass');
+
+        $client = static::createClient();
+        $client->request(HttpMethodEnum::Post->value, '/api/home/request-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['email' => 'not-an-email']));
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertSame(['error' => 'invalid_email'], json_decode($client->getResponse()->getContent(), true));
+    }
+
+    public function testRequestAccessReturns422WithEmptyEmail(): void
+    {
+        $this->setAccessPassword('testpass');
+
+        $client = static::createClient();
+        $client->request(HttpMethodEnum::Post->value, '/api/home/request-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['email' => '']));
+
+        self::assertResponseStatusCodeSame(422);
+    }
+
+    public function testRequestAccessReturns400WithInvalidPayload(): void
+    {
+        $this->setAccessPassword('testpass');
+
+        $client = static::createClient();
+        $client->request(HttpMethodEnum::Post->value, '/api/home/request-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], 'not-json');
+
+        self::assertResponseStatusCodeSame(400);
+    }
+
+    public function testRequestAccessReturns201OnSuccess(): void
+    {
+        $this->setAccessPassword('testpass');
+
+        $client = static::createClient();
+        $client->request(HttpMethodEnum::Post->value, '/api/home/request-access', [], [], ['CONTENT_TYPE' => ContentTypeEnum::Json->value], json_encode(['email' => 'newuser@example.com', 'name' => 'New User', 'message' => 'Please let me in']));
+
+        self::assertResponseStatusCodeSame(201);
+        self::assertSame(['ok' => true], json_decode($client->getResponse()->getContent(), true));
+    }
+
     private function setAccessPassword(string $password): void
     {
         static::ensureKernelShutdown();

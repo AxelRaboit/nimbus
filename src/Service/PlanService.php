@@ -41,6 +41,10 @@ readonly class PlanService
 
     public function getMaxSizeMb(User $user): int
     {
+        if (null !== $user->getCustomFileSizeMb()) {
+            return $user->getCustomFileSizeMb();
+        }
+
         return $this->isPro($user) ? $this->getProMaxSizeMb() : $this->getFreeMaxSizeMb();
     }
 
@@ -61,32 +65,44 @@ readonly class PlanService
 
     public function getProMaxSizeMb(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_transfer_size_mb_pro', '10000');
     }
 
     public function getProMaxFiles(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_files_per_transfer_pro', '20');
     }
 
     public function getProMaxExpiryDays(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_expiry_days_pro', '7');
     }
 
     public function getFreeMaxSizeMb(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_transfer_size_mb_free', '100');
     }
 
     public function getFreeMaxFiles(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_files_per_transfer_free', '3');
     }
 
     public function getFreeMaxExpiryHours(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_expiry_hours_free', '24');
+    }
+
+    public function getTusCleanupMaxAgeHours(): int
+    {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
+        return (int) $this->params->get(NimbusApplicationParameterEnum::TusCleanupMaxAgeHours->value, '12');
     }
 
     public function getMaxRecipients(User $user): int
@@ -96,16 +112,19 @@ readonly class PlanService
 
     public function getProMaxRecipients(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_recipients_per_transfer_pro', '20');
     }
 
     public function getFreeMaxRecipients(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get('max_recipients_per_transfer_free', '1');
     }
 
     public function getTrialDays(): int
     {
+        // Defensive fallback — value should always exist after nimbus:application-parameter is run.
         return (int) $this->params->get(NimbusApplicationParameterEnum::ProTrialDays->value, '30');
     }
 

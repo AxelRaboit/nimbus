@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\AccessRequest;
 use App\Entity\Transfer;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
+use App\Manager\AccessRequestManager;
 use App\Manager\UserManager;
+use App\Repository\AccessRequestRepository;
 use App\Repository\ApplicationParameterRepository;
 use App\Repository\TransferRepository;
 use App\Repository\UserRepository;
@@ -29,7 +32,9 @@ class DevController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly TransferRepository $transferRepository,
         private readonly ApplicationParameterRepository $parameterRepository,
+        private readonly AccessRequestRepository $accessRequestRepository,
         private readonly UserManager $userManager,
+        private readonly AccessRequestManager $accessRequestManager,
         private readonly AdminStatsService $adminStatsService,
         private readonly InvitationService $invitationService,
     ) {}
@@ -73,6 +78,16 @@ class DevController extends AbstractController
         }
 
         $this->userManager->delete($user);
+
+        return $this->redirectToRoute('dev_users');
+    }
+
+    #[Route('/dashboard/users/{id}/custom-file-size', name: 'dev_user_custom_file_size', methods: [HttpMethodEnum::Post->value])]
+    public function updateCustomFileSize(User $user, Request $request): Response
+    {
+        $raw = $request->request->get('custom_file_size_mb', '');
+        $user->setCustomFileSizeMb('' !== $raw ? (abs((int) $raw) ?: null) : null);
+        $this->userManager->save($user);
 
         return $this->redirectToRoute('dev_users');
     }
@@ -171,6 +186,67 @@ class DevController extends AbstractController
         ]);
     }
 
+    #[Route('/dashboard/access-requests', name: 'dev_access_requests')]
+    public function accessRequests(Request $request): Response
+    {
+        $page = max(1, (int) $request->query->get('page', '1'));
+        $result = $this->accessRequestRepository->findPaginatedAdmin($page);
+
+        return $this->render('dev/index.html.twig', [
+            'tab' => 'access_requests',
+            'accessRequests' => [
+                ...$result,
+                'items' => array_map($this->serializeAccessRequest(...), $result['items']),
+            ],
+        ]);
+    }
+
+    #[Route('/dashboard/access-requests/{id}/approve', name: 'dev_access_request_approve', methods: [HttpMethodEnum::Post->value])]
+    public function approveAccessRequest(AccessRequest $accessRequest, Request $request): Response
+    {
+        if ($accessRequest->isPending()) {
+            $raw = $request->request->get('granted_file_size_mb', '');
+            $grantedFileSizeMb = '' !== $raw ? abs((int) $raw) : null;
+
+            $this->accessRequestManager->approve($accessRequest, $grantedFileSizeMb ?: null);
+        }
+
+        return $this->redirectToRoute('dev_access_requests');
+    }
+
+    #[Route('/dashboard/access-requests/purge-approved', name: 'dev_access_request_purge_approved', methods: [HttpMethodEnum::Post->value])]
+    public function purgeApprovedAccessRequests(): Response
+    {
+        $this->accessRequestRepository->deleteProcessed();
+
+        return $this->redirectToRoute('dev_access_requests');
+    }
+
+    #[Route('/dashboard/access-requests/{id}/reject', name: 'dev_access_request_reject', methods: [HttpMethodEnum::Post->value])]
+    public function rejectAccessRequest(AccessRequest $accessRequest): Response
+    {
+        if ($accessRequest->isPending()) {
+            $this->accessRequestManager->reject($accessRequest);
+        }
+
+        return $this->redirectToRoute('dev_access_requests');
+    }
+
+    private function serializeAccessRequest(AccessRequest $r): array
+    {
+        return [
+            'id' => $r->getId(),
+            'requesterEmail' => $r->getRequesterEmail(),
+            'requesterName' => $r->getRequesterName(),
+            'message' => $r->getMessage(),
+            'status' => $r->getStatus()->value,
+            'expiresAt' => $r->getExpiresAt()->format('c'),
+            'createdAt' => $r->getCreatedAt()->format('c'),
+            'requestedFileSizeMb' => $r->getRequestedFileSizeMb(),
+            'grantedFileSizeMb' => $r->getGrantedFileSizeMb(),
+        ];
+    }
+
     private function serializeUser(User $user): array
     {
         return [
@@ -181,6 +257,7 @@ class DevController extends AbstractController
             'isDevRole' => in_array(UserRoleEnum::Dev->value, $user->getRoles(), true),
             'createdAt' => $user->getCreatedAt()->format('c'),
             'trialEndsAt' => $user->getTrialEndsAt()?->format('c'),
+            'customFileSizeMb' => $user->getCustomFileSizeMb(),
         ];
     }
 

@@ -20,8 +20,8 @@ final class ProfileControllerTest extends IntegrationTestCase
     public function testProfilePageIsAccessibleWhenAuthenticated(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
 
         $client->loginUser($user);
         $client->request('GET', '/profile');
@@ -32,8 +32,8 @@ final class ProfileControllerTest extends IntegrationTestCase
     public function testUpdateProfileWithValidData(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
 
         $client->loginUser($user);
         $client->request('POST', '/profile/update', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
@@ -49,8 +49,8 @@ final class ProfileControllerTest extends IntegrationTestCase
     public function testUpdateProfileWithTakenEmailReturnsError(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
 
         $client->loginUser($user);
         $client->request('POST', '/profile/update', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
@@ -67,8 +67,8 @@ final class ProfileControllerTest extends IntegrationTestCase
     public function testChangePasswordWithWrongCurrentPasswordReturnsError(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
 
         $client->loginUser($user);
         $client->request('POST', '/profile/password', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([

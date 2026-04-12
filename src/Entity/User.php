@@ -49,6 +49,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 5, enumType: LocaleEnum::class)]
     private LocaleEnum $locale = LocaleEnum::French;
 
+    /** Custom file size limit (MB) set by admin. Overrides plan default when set. */
+    #[ORM\Column(nullable: true)]
+    private ?int $customFileSizeMb = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,6 +136,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTrialEndsAt(?DateTimeImmutable $trialEndsAt): static
     {
         $this->trialEndsAt = $trialEndsAt;
+
+        return $this;
+    }
+
+    public function getCustomFileSizeMb(): ?int
+    {
+        return $this->customFileSizeMb;
+    }
+
+    public function setCustomFileSizeMb(?int $customFileSizeMb): static
+    {
+        $this->customFileSizeMb = $customFileSizeMb;
 
         return $this;
     }

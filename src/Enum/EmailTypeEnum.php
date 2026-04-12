@@ -11,4 +11,7 @@ enum EmailTypeEnum: string
     case TransferDownloaded = 'transfer_downloaded';
     case TransferExpired = 'transfer_expired';
     case Invitation = 'invitation';
+    case AccessRequestAdmin = 'access_request_admin';
+    case AccessRequestApproved = 'access_request_approved';
+    case AccessRequestRejected = 'access_request_rejected';
 }

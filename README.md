@@ -31,6 +31,7 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 - **Aperçu des fichiers** — prévisualisation inline avant téléchargement
 - **Suivi des téléchargements** — statut par destinataire en temps réel
 - **Mes transferts** — les utilisateurs Pro consultent, gèrent et suppriment leurs transferts passés
+- **Demandes d'accès** — les visiteurs peuvent demander l'accès depuis la page protégée ; l'admin reçoit un e-mail, peut définir une limite de taille personnalisée, puis approuve ou refuse (notification e-mail dans les deux cas)
 - **Tableau de bord admin** — statistiques globales, liste des transferts, paramètres applicatifs
 - **Formules Free/Pro** — limites configurables en base de données, période d'essai incluse
 - **Internationalisation** — français, anglais, espagnol, allemand
@@ -189,6 +190,114 @@ Le transfert génère un lien unique partageable librement. N'importe qui avec l
 ![Mes transferts](docs/readme/screenshots/public/mes-transferts.jpg)
 
 > Les deux modes coexistent dans la liste : le badge "Lien public" distingue les transferts publics des transferts par e-mail.
+
+---
+
+## Demandes d'accès
+
+Lorsque l'accès à Nimbus est protégé par un mot de passe, les visiteurs peuvent soumettre une demande d'accès directement depuis la page de connexion. L'administrateur reçoit un e-mail, examine la demande, peut ajuster la limite de taille accordée, puis approuve ou refuse.
+
+### Page d'accès protégé
+
+![Accès protégé](docs/readme/screenshots/access_request/01-acces-protege.jpg)
+
+> Le visiteur voit le formulaire de mot de passe avec un lien "Demander l'accès" pour soumettre une demande sans connaître le mot de passe.
+
+---
+
+### Formulaire de demande
+
+![Formulaire de demande](docs/readme/screenshots/access_request/02-formulaire.jpg)
+
+> Le visiteur renseigne son e-mail, son nom, un message optionnel et la taille de transfert souhaitée. À la soumission, l'administrateur reçoit immédiatement une notification par e-mail.
+
+---
+
+### Confirmation d'envoi
+
+![Demande envoyée](docs/readme/screenshots/access_request/02-demande-envoyee.jpg)
+
+> Confirmation affichée après soumission — le visiteur est informé qu'il recevra un e-mail dès que l'administrateur aura statué.
+
+---
+
+### E-mail reçu par l'administrateur
+
+![E-mail admin](docs/readme/screenshots/access_request/07-email-admin.png)
+
+> L'e-mail récapitule les informations du demandeur (e-mail, nom, message, taille souhaitée) avec un rappel que la limite peut être ajustée avant approbation. Un bouton "Autoriser l'accès" redirige directement vers la modale d'approbation.
+
+---
+
+### Gestion des demandes (admin)
+
+![Liste des demandes](docs/readme/screenshots/access_request/03-admin-liste.jpg)
+
+> Onglet dédié dans le tableau de bord : liste de toutes les demandes avec statut, message, taille demandée/accordée, date et expiration. Un bouton "Purger" supprime les demandes traitées (approuvées et rejetées).
+
+---
+
+### Approbation avec limite personnalisée
+
+![Modale approbation](docs/readme/screenshots/access_request/04-admin-modale-approbation.jpg)
+
+> À l'approbation, l'administrateur peut définir une limite de taille spécifique pour ce visiteur (pré-remplie avec la taille demandée). Laisser vide applique la limite par défaut du plan.
+
+![Limite accordée](docs/readme/screenshots/access_request/05-admin-modale-taille.jpg)
+
+> Ici l'administrateur accorde 500 Mo au lieu du 1 Go demandé.
+
+![Demande approuvée](docs/readme/screenshots/access_request/06-admin-approuve.jpg)
+
+> La demande passe au statut "Approuvé" avec la taille accordée visible dans la liste.
+
+---
+
+### E-mail d'approbation reçu par le demandeur
+
+![E-mail approbation](docs/readme/screenshots/access_request/08-email-approuve.png)
+
+> Le demandeur reçoit un lien d'accès à usage unique (valable 24h) avec la limite de transfert qui lui a été accordée.
+
+---
+
+### E-mail de refus reçu par le demandeur
+
+![E-mail refus](docs/readme/screenshots/access_request/09-email-refuse.png)
+
+> En cas de refus, le demandeur est informé par e-mail avec une invitation à répondre s'il pense à une erreur.
+
+---
+
+## Limite de taille par utilisateur
+
+L'administrateur peut définir une limite de taille de fichier personnalisée pour chaque utilisateur, indépendamment de son plan. Cette limite prend le dessus sur la limite par défaut du plan.
+
+### Liste des utilisateurs
+
+![Liste utilisateurs](docs/readme/screenshots/user_limits/01-liste-utilisateurs.jpg)
+
+> La colonne "Taille custom" indique la limite personnalisée de chaque utilisateur. L'icône disque ouvre la modale de modification.
+
+---
+
+### Définir une limite personnalisée
+
+![Modale limite](docs/readme/screenshots/user_limits/02-modale-limite.jpg)
+
+> Laisser le champ vide revient à appliquer la limite par défaut du plan de l'utilisateur.
+
+![Modale limite saisie](docs/readme/screenshots/user_limits/03-modale-limite-saisie.jpg)
+
+> Ici, l'administrateur fixe une limite de 50 Mo pour cet utilisateur, quelle que soit sa formule.
+
+---
+
+### Résultat
+
+![Liste après modification](docs/readme/screenshots/user_limits/04-liste-apres.jpg)
+
+> La limite personnalisée est immédiatement visible dans la liste. Elle s'applique dès le prochain transfert de l'utilisateur.
 
 ---
 

@@ -8,6 +8,8 @@ use App\Enum\TransferStatusEnum;
 use App\Manager\TransferManager;
 use App\Message\CleanupExpiredTransfersMessage;
 use App\Repository\TransferRepository;
+use App\Service\PlanService;
+use App\Service\TusUploadServiceInterface;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -18,6 +20,8 @@ final readonly class CleanupExpiredTransfersHandler
     public function __construct(
         private TransferRepository $transferRepository,
         private TransferManager $transferManager,
+        private TusUploadServiceInterface $tusUploadService,
+        private PlanService $planService,
         private LoggerInterface $logger,
     ) {}
 
@@ -40,6 +44,12 @@ final readonly class CleanupExpiredTransfersHandler
 
         if ($count > 0) {
             $this->logger->info('Cleaned up {count} expired transfer(s).', ['count' => $count]);
+        }
+
+        $maxAgeSeconds = $this->planService->getTusCleanupMaxAgeHours() * 3600;
+        $orphaned = $this->tusUploadService->cleanupOrphanedUploads($maxAgeSeconds);
+        if ($orphaned > 0) {
+            $this->logger->info('Cleaned up {count} orphaned TUS upload(s).', ['count' => $orphaned]);
         }
     }
 }

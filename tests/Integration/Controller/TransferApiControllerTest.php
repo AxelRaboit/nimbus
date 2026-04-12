@@ -20,8 +20,8 @@ final class TransferApiControllerTest extends IntegrationTestCase
     public function testListTransfersForAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $em = static::getContainer()->get('doctrine')->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user@nimbus.app']);
 
         $client->loginUser($user);
         $client->request('GET', '/api/transfers');
