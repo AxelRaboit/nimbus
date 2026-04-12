@@ -15,6 +15,7 @@
          data-max-files="{{ maxFiles }}"
          data-max-recipients="{{ maxRecipients }}"
          data-max-expiry-days="{{ maxExpiryDays }}"
+         data-tus-cleanup-max-age-hours="{{ tusCleanupMaxAgeHours }}"
          data-expiry-options="{{ expiryOptions|json_encode }}"
          data-extension-groups="{{ extensionGroups|json_encode }}"
          data-access-password-enabled="{{ accessPasswordEnabled ? 'true' : 'false' }}"

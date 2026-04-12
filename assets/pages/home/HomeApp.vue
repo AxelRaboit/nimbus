@@ -20,7 +20,8 @@ const props = defineProps({
     maxSizeMb:              { type: Number, default: 500 },
     maxFiles:               { type: Number, default: 20 },
     maxRecipients:          { type: Number, default: 20 },
-    maxExpiryDays:          { type: Number, default: 7 },
+    maxExpiryDays:              { type: Number, default: 7 },
+    tusCleanupMaxAgeHours:      { type: Number, default: 12 },
     expiryOptions:          { type: String, default: "[24]" },
     extensionGroups:        { type: String, default: "{}" },
     accessPasswordEnabled:  { type: Boolean, default: false },
@@ -427,6 +428,27 @@ function reset() {
                                 </div>
                             </li>
                         </ol>
+
+                        <div class="rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3 space-y-1">
+                            <p class="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                                <svg
+                                    class="w-3.5 h-3.5 shrink-0"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reprise automatique des envois interrompus
+                            </p>
+                            <p class="text-xs text-secondary">
+                                Si votre connexion est coupée pendant un envoi, Nimbus détecte automatiquement le transfert en cours lors de votre prochaine visite et vous propose de reprendre là où vous vous étiez arrêté.
+                            </p>
+                            <p class="text-xs text-secondary">
+                                Les fichiers temporaires sont conservés pendant <span class="font-semibold text-primary">{{ tusCleanupMaxAgeHours }}h</span>. Passé ce délai, le transfert est considéré comme abandonné et les données sont supprimées.
+                            </p>
+                        </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
                             <div class="flex items-center justify-between border-b border-base pb-3">

@@ -33,9 +33,9 @@ final class TransferTest extends TestCase
 
     public function testConstructorSetsDefaultExpiry(): void
     {
-        $before = new DateTimeImmutable('+6 days 23 hours');
+        $before = new DateTimeImmutable('+23 hours');
         $transfer = new Transfer();
-        $after = new DateTimeImmutable('+7 days 1 minute');
+        $after = new DateTimeImmutable('+1 day 1 minute');
 
         self::assertGreaterThan($before, $transfer->getExpiresAt());
         self::assertLessThan($after, $transfer->getExpiresAt());

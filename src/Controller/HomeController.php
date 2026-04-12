@@ -43,6 +43,7 @@ class HomeController extends AbstractController
             'maxFiles' => $maxFiles,
             'maxRecipients' => $maxRecipients,
             'maxExpiryDays' => $maxExpiryDays,
+            'tusCleanupMaxAgeHours' => $this->planService->getTusCleanupMaxAgeHours(),
             'expiryOptions' => ExpiryOptionEnum::validOptions($maxExpiryDays),
             'extensionGroups' => AllowedExtensionEnum::groupedValues(),
             'accessPasswordEnabled' => $accessPasswordEnabled,
