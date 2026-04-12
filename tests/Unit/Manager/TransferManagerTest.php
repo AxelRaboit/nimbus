@@ -94,10 +94,10 @@ final class TransferManagerTest extends TestCase
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReady');
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('flush');
 
-        $this->buildManager(em: $em, tusService: $tusService, notifier: $notifier, planService: $planService)
+        $this->buildManager(entityManager: $entityManager, tusService: $tusService, notifier: $notifier, planService: $planService)
             ->finalize($transfer, ['unknown_key']);
 
         self::assertSame(TransferStatusEnum::Ready, $transfer->getStatus());
@@ -128,10 +128,10 @@ final class TransferManagerTest extends TestCase
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReady')->with($transfer);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('flush');
 
-        $this->buildManager(em: $em, tusService: $tusService, notifier: $notifier, planService: $planService)
+        $this->buildManager(entityManager: $entityManager, tusService: $tusService, notifier: $notifier, planService: $planService)
             ->finalize($transfer, ['upload_key_1']);
 
         self::assertSame(TransferStatusEnum::Ready, $transfer->getStatus());
@@ -159,17 +159,17 @@ final class TransferManagerTest extends TestCase
         $tusService = $this->createMock(TusUploadServiceInterface::class);
         $tusService->expects(self::once())->method('deleteUploadsByTransferToken');
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('remove')->with($transfer);
-        $em->expects(self::once())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('remove')->with($transfer);
+        $entityManager->expects(self::once())->method('flush');
 
-        $this->buildManager(em: $em, tusService: $tusService)->delete($transfer);
+        $this->buildManager(entityManager: $entityManager, tusService: $tusService)->delete($transfer);
 
         self::assertDirectoryDoesNotExist($storageDir);
     }
 
     private function buildManager(
-        ?EntityManagerInterface $em = null,
+        ?EntityManagerInterface $entityManager = null,
         ?TusUploadServiceInterface $tusService = null,
         ?TransferNotifierInterface $notifier = null,
         ?PlanService $planService = null,
@@ -186,7 +186,7 @@ final class TransferManagerTest extends TestCase
         );
 
         return new TransferManager(
-            $em ?? $this->createStub(EntityManagerInterface::class),
+            $entityManager ?? $this->createStub(EntityManagerInterface::class),
             $tusService,
             $notifier ?? $this->createStub(TransferNotifierInterface::class),
             new TransferFileValidator($tusService),

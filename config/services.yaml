@@ -65,3 +65,8 @@ services:
         arguments:
             $projectDir: '%kernel.project_dir%'
         tags: ['twig.extension']
+
+    App\Twig\AppEnvironmentExtension:
+        arguments:
+            $appEnv: '%kernel.environment%'
+        tags: ['twig.extension']

@@ -30,10 +30,10 @@ final class SendRemindersHandlerTest extends TestCase
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::never())->method('notifyReminder');
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::never())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::never())->method('flush');
 
-        ($this->buildHandler(repo: $repo, notifier: $notifier, em: $em))(new SendRemindersMessage());
+        ($this->buildHandler(repo: $repo, notifier: $notifier, entityManager: $entityManager))(new SendRemindersMessage());
     }
 
     public function testSendsReminderAfterMidpoint(): void
@@ -48,10 +48,10 @@ final class SendRemindersHandlerTest extends TestCase
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReminder')->with($transfer, $recipient);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('flush');
 
-        ($this->buildHandler(repo: $repo, notifier: $notifier, em: $em))(new SendRemindersMessage());
+        ($this->buildHandler(repo: $repo, notifier: $notifier, entityManager: $entityManager))(new SendRemindersMessage());
 
         self::assertNotNull($recipient->getLastReminderSentAt());
     }
@@ -72,10 +72,10 @@ final class SendRemindersHandlerTest extends TestCase
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReminder')->with($lateTransfer, $lateRecipient);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::once())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('flush');
 
-        ($this->buildHandler(repo: $repo, notifier: $notifier, em: $em))(new SendRemindersMessage());
+        ($this->buildHandler(repo: $repo, notifier: $notifier, entityManager: $entityManager))(new SendRemindersMessage());
     }
 
     public function testDoesNotFlushWhenNoRemindersSent(): void
@@ -83,21 +83,21 @@ final class SendRemindersHandlerTest extends TestCase
         $repo = $this->createStub(RecipientRepository::class);
         $repo->method('findPendingUnreminded')->willReturn([]);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects(self::never())->method('flush');
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::never())->method('flush');
 
-        ($this->buildHandler(repo: $repo, em: $em))(new SendRemindersMessage());
+        ($this->buildHandler(repo: $repo, entityManager: $entityManager))(new SendRemindersMessage());
     }
 
     private function buildHandler(
         ?RecipientRepository $repo = null,
         ?TransferNotifierInterface $notifier = null,
-        ?EntityManagerInterface $em = null,
+        ?EntityManagerInterface $entityManager = null,
     ): SendRemindersHandler {
         return new SendRemindersHandler(
             $repo ?? $this->createStub(RecipientRepository::class),
             $notifier ?? $this->createStub(TransferNotifierInterface::class),
-            $em ?? $this->createStub(EntityManagerInterface::class),
+            $entityManager ?? $this->createStub(EntityManagerInterface::class),
             new NullLogger(),
         );
     }

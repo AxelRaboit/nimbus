@@ -22,10 +22,10 @@ abstract class IntegrationTestCase extends WebTestCase
         $kernel = static::bootKernel();
         $container = static::getContainer();
 
-        $em = $container->get(EntityManagerInterface::class);
+        $entityManager = $container->get(EntityManagerInterface::class);
         $fixtures = $container->get(AppFixtures::class);
 
-        $executor = new ORMExecutor($em, new ORMPurger($em));
+        $executor = new ORMExecutor($entityManager, new ORMPurger($entityManager));
         $executor->execute([$fixtures]);
 
         $application = new Application($kernel);

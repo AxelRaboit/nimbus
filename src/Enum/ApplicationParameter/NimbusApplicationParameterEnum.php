@@ -15,6 +15,8 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
     case MaxRecipientsPerTransferPro = 'max_recipients_per_transfer_pro';
     case MaxRecipientsPerTransferFree = 'max_recipients_per_transfer_free';
     case TusCleanupMaxAgeHours = 'tus_cleanup_max_age_hours';
+    case AdminEmail = 'admin_email';
+    case AccessRequestTtlHours = 'access_request_ttl_hours';
     case RegistrationEnabled = 'registration_enabled';
     case ProTrialDays = 'pro_trial_days';
     case StorageBackend = 'storage_backend';
@@ -36,6 +38,8 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferPro => 'Destinataires maximum par transfert (Pro)',
             self::MaxRecipientsPerTransferFree => 'Destinataires maximum par transfert (Free)',
             self::TusCleanupMaxAgeHours => 'Durée de rétention des uploads TUS (heures)',
+            self::AdminEmail => 'Email administrateur',
+            self::AccessRequestTtlHours => "Durée de validité des liens de demande d'accès (heures)",
             self::RegistrationEnabled => 'Inscription ouverte',
             self::ProTrialDays => 'Durée du trial Pro (jours)',
             self::StorageBackend => 'Backend de stockage',
@@ -54,6 +58,8 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferPro => 'Nombre maximum de destinataires par transfert (Pro)',
             self::MaxRecipientsPerTransferFree => 'Nombre maximum de destinataires par transfert (Free)',
             self::TusCleanupMaxAgeHours => 'Durée en heures avant suppression des fichiers TUS temporaires abandonnés',
+            self::AdminEmail => "Adresse e-mail de l'administrateur recevant les demandes d'accès",
+            self::AccessRequestTtlHours => "Durée de validité en heures des liens admin et d'accès pour les demandes d'accès",
             self::RegistrationEnabled => 'Inscription ouverte (0 = fermée, 1 = ouverte)',
             self::ProTrialDays => 'Nombre de jours de trial Pro accordés lors du passage en Pro (demo)',
             self::StorageBackend => 'Backend de stockage des fichiers (local ou r2)',
@@ -72,6 +78,8 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferPro => '20',
             self::MaxRecipientsPerTransferFree => '1',
             self::TusCleanupMaxAgeHours => '12',
+            self::AdminEmail => 'axel.raboit@gmail.com',
+            self::AccessRequestTtlHours => '24',
             self::RegistrationEnabled => '1',
             self::ProTrialDays => '30',
             self::StorageBackend => 'local',

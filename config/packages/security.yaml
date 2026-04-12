@@ -39,6 +39,7 @@ security:
         - { path: ^/tus,              roles: PUBLIC_ACCESS }
         - { path: ^/locale,           roles: PUBLIC_ACCESS }
         - { path: ^/api/,             roles: PUBLIC_ACCESS }
+        - { path: ^/access-request/,  roles: PUBLIC_ACCESS }
         - { path: ^/manage/,          roles: PUBLIC_ACCESS }
         - { path: ^/$,                roles: PUBLIC_ACCESS }
         - { path: ^/,                 roles: ROLE_USER }

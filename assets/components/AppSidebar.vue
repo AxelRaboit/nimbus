@@ -18,6 +18,7 @@ import {
     Shield,
     History,
     Sparkles,
+    Mail,
 } from "lucide-vue-next";
 
 const props = defineProps({
@@ -36,6 +37,7 @@ const props = defineProps({
     dashboardPath: { type: String, default: "/transferts" },
     userPlan: { type: String, default: "free" },
     planPath: { type: String, default: "/plan" },
+    mailpitUrl: { type: String, default: "" },
 });
 
 const isPro = computed(() => props.userPlan === Plan.Pro);
@@ -159,6 +161,20 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     {{ t("nav.dashboard") }}
                 </span>
             </a>
+
+            <a
+                v-if="mailpitUrl"
+                :href="mailpitUrl"
+                target="_blank"
+                class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors group relative"
+            >
+                <Mail class="w-5 h-5 shrink-0 text-muted" />
+                <span class="si-label truncate flex-1">Mailpit</span>
+                <span class="si-label text-xs font-bold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full shrink-0">dev</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    Mailpit
+                </span>
+            </a>
         </nav>
 
         <div class="sidebar-bottom shrink-0 border-t border-base py-3 space-y-0.5">
@@ -237,7 +253,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                         type="submit"
                         class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors w-full group relative"
                     >
-                        <LogOut class="w-5 h-5 shrink-0 text-muted" />
+                        <LogOut class="w-5 h-5 shrink-0 text-muted group-hover:text-rose-400 transition-colors" />
                         <span class="si-label">{{ t("nav.logout") }}</span>
                         <span
                             class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
@@ -341,6 +357,17 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     <Shield class="w-5 h-5 shrink-0" :class="devActive ? 'text-rose-400' : 'text-muted'" />
                     {{ t("nav.dashboard") }}
                 </a>
+
+                <a
+                    v-if="mailpitUrl"
+                    :href="mailpitUrl"
+                    target="_blank"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+                >
+                    <Mail class="w-5 h-5 shrink-0 text-muted" />
+                    <span class="flex-1">Mailpit</span>
+                    <span class="text-xs font-bold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full">dev</span>
+                </a>
             </nav>
 
             <div class="shrink-0 border-t border-base px-3 py-3 space-y-1">
@@ -389,7 +416,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                             type="submit"
                             class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                         >
-                            <LogOut class="w-5 h-5 shrink-0 text-muted" />
+                            <LogOut class="w-5 h-5 shrink-0 text-muted group-hover:text-rose-400 transition-colors" />
                             {{ t("nav.logout") }}
                         </button>
                     </form>

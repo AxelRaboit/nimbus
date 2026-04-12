@@ -41,6 +41,10 @@ readonly class PlanService
 
     public function getMaxSizeMb(User $user): int
     {
+        if (null !== $user->getCustomFileSizeMb()) {
+            return $user->getCustomFileSizeMb();
+        }
+
         return $this->isPro($user) ? $this->getProMaxSizeMb() : $this->getFreeMaxSizeMb();
     }
 

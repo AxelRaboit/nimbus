@@ -67,6 +67,11 @@ final readonly class UserManager
         $this->entityManager->flush();
     }
 
+    public function save(User $user): void
+    {
+        $this->entityManager->flush();
+    }
+
     public function isPasswordValid(User $user, string $plainPassword): bool
     {
         return $this->passwordHasher->isPasswordValid($user, $plainPassword);

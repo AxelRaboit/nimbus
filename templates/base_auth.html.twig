@@ -39,6 +39,7 @@
                  data-dashboard-path="{{ app.user ? path('transfers') : '' }}"
                  data-user-plan="{{ app.user ? app.user.plan.value : 'free' }}"
                  data-plan-path="{{ path('plan') }}"
+                 data-mailpit-url="{{ not isProd ? 'http://localhost:8025' : '' }}"
                  data-locale="{{ app.request.locale }}"
             ></div>
 

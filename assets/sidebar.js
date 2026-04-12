@@ -18,4 +18,5 @@ mountApp("app-sidebar", AppSidebar, (data) => ({
     dashboardPath: data.dashboardPath || "/transferts",
     userPlan: data.userPlan || "free",
     planPath: data.planPath || "/plan",
+    mailpitUrl: data.mailpitUrl || "",
 }));

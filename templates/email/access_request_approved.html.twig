@@ -1,0 +1,25 @@
+{% extends 'email/layout/base.html.twig' %}
+
+{% block content %}
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:16px;color:#1e293b;margin:0 0 16px;">
+    Votre demande d'accès a été approuvée !
+</p>
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:15px;color:#475569;margin:0 0 16px;">
+    L'administrateur a validé votre demande. Cliquez sur le bouton ci-dessous pour accéder à Nimbus.
+</p>
+{% if request.grantedFileSizeMb %}
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:15px;color:#475569;margin:0 0 16px;">
+    Votre limite de transfert est de <strong>{{ request.grantedFileSizeMb >= 1000 ? (request.grantedFileSizeMb / 1000)|round(1) ~ ' Go' : request.grantedFileSizeMb ~ ' Mo' }}</strong>.
+</p>
+{% endif %}
+<p style="font-family:'Figtree','Segoe UI',sans-serif;font-size:13px;color:#94a3b8;margin:0 0 20px;">
+    Ce lien est à usage unique et expire dans 24h.
+</p>
+
+{{ include('email/partials/action_button.html.twig', {
+    url: grantUrl,
+    label: 'Accéder à Nimbus',
+}) }}
+
+<p class="warning">Si vous n'avez pas effectué cette demande, ignorez cet e-mail.</p>
+{% endblock %}

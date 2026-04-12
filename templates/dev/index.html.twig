@@ -9,6 +9,7 @@
         invitations: 'Invitations',
         parameters: 'Paramètres',
         transfers: 'Transferts',
+        access_requests: 'Demandes d\'accès',
     } %}
     {{ include('components/page_header.html.twig', {
         crumbs: [
@@ -25,6 +26,7 @@
      data-transfers="{{ tab == 'transfers' ? transfers|json_encode : '{}' }}"
      data-users="{{ tab == 'users' ? users|json_encode : '{}' }}"
      data-parameters="{{ tab == 'parameters' ? parameters|json_encode : '{}' }}"
+     data-access-requests="{{ tab == 'access_requests' ? accessRequests|json_encode : '{}' }}"
      data-search="{{ search ?? '' }}"
      data-status="{{ status ?? '' }}"
      data-locale="{{ app.request.locale }}"
@@ -37,6 +39,11 @@
      data-parameter-update-path="{{ path('dev_parameter_update', {key: '__key__'}) }}"
      data-user-delete-path="{{ path('dev_user_delete', {id: '__id__'}) }}"
      data-user-toggle-role-path="{{ path('dev_user_toggle_role', {id: '__id__'}) }}"
+     data-user-custom-file-size-path="{{ path('dev_user_custom_file_size', {id: '__id__'}) }}"
+     data-access-requests-path="{{ path('dev_access_requests') }}"
+     data-access-request-approve-path="{{ path('dev_access_request_approve', {id: '__id__'}) }}"
+     data-access-request-reject-path="{{ path('dev_access_request_reject', {id: '__id__'}) }}"
+     data-access-request-purge-approved-path="{{ path('dev_access_request_purge_approved') }}"
      data-csrf-token="{{ csrf_token('dev') }}"
 ></div>
 {% endblock %}
