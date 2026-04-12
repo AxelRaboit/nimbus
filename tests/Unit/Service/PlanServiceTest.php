@@ -102,12 +102,15 @@ final class PlanServiceTest extends TestCase
         self::assertTrue($service->canAccessMyTransfers($proUser));
     }
 
-    public function testGetMaxSizeMbReturnsCustomSizeWhenSet(): void
+    public function testGetMaxSizeMbReturnsCustomSizeWhenBelowProMax(): void
     {
         $user = new User();
         $user->setCustomFileSizeMb(500);
 
-        self::assertSame(500, $this->buildService()->getMaxSizeMb($user));
+        $params = $this->createStub(ApplicationParameterRepository::class);
+        $params->method('get')->willReturn('10000');
+
+        self::assertSame(500, $this->buildService(params: $params)->getMaxSizeMb($user));
     }
 
     public function testGetMaxSizeMbCustomSizeOverridesProPlan(): void
@@ -120,6 +123,28 @@ final class PlanServiceTest extends TestCase
         $params->method('get')->willReturn('10000');
 
         self::assertSame(50, $this->buildService(params: $params)->getMaxSizeMb($user));
+    }
+
+    public function testGetMaxSizeMbCapsCustomSizeToProMax(): void
+    {
+        $user = new User();
+        $user->setCustomFileSizeMb(50000);
+
+        $params = $this->createStub(ApplicationParameterRepository::class);
+        $params->method('get')->willReturn('10000');
+
+        self::assertSame(10000, $this->buildService(params: $params)->getMaxSizeMb($user));
+    }
+
+    public function testGetMaxSizeMbReturnsProMaxWhenCustomEqualsProMax(): void
+    {
+        $user = new User();
+        $user->setCustomFileSizeMb(10000);
+
+        $params = $this->createStub(ApplicationParameterRepository::class);
+        $params->method('get')->willReturn('10000');
+
+        self::assertSame(10000, $this->buildService(params: $params)->getMaxSizeMb($user));
     }
 
     public function testGetMaxSizeMbReturnsProLimitForProUserWithoutCustomSize(): void

@@ -31,6 +31,7 @@ const props = defineProps({
     loginPath:              { type: String, default: "/login" },
     registerPath:           { type: String, default: "/register" },
     registrationEnabled:    { type: Boolean, default: true },
+    proMaxSizeMb:           { type: Number, default: 10000 },
 });
 
 const fileTypeGroups = computed(() => {
@@ -65,16 +66,19 @@ const requestLoading = ref(false);
 const requestError = ref("");
 const requestSent = ref(false);
 
-const fileSizeOptions = [
-    { label: "Pas de préférence", value: null },
-    { label: "100 Mo", value: 100 },
-    { label: "500 Mo", value: 500 },
-    { label: "1 Go", value: 1000 },
-    { label: "5 Go", value: 5000 },
-    { label: "10 Go", value: 10000 },
-    { label: "20 Go", value: 20000 },
-    { label: "50 Go", value: 50000 },
-];
+const fileSizeOptions = computed(() => {
+    const all = [
+        { label: "Pas de préférence", value: null },
+        { label: "100 Mo", value: 100 },
+        { label: "500 Mo", value: 500 },
+        { label: "1 Go", value: 1000 },
+        { label: "5 Go", value: 5000 },
+        { label: "10 Go", value: 10000 },
+        { label: "20 Go", value: 20000 },
+        { label: "50 Go", value: 50000 },
+    ];
+    return all.filter(opt => opt.value === null || opt.value <= props.proMaxSizeMb);
+});
 
 async function submitAccessRequest() {
     requestError.value = "";
