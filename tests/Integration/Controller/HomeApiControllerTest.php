@@ -10,6 +10,14 @@ use App\Tests\Integration\IntegrationTestCase;
 
 final class HomeApiControllerTest extends IntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        static::createClient();
+        static::getContainer()->get('cache.rate_limiter')->clear();
+        static::ensureKernelShutdown();
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
