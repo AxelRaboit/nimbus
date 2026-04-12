@@ -16,6 +16,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
     case MaxRecipientsPerTransferFree = 'max_recipients_per_transfer_free';
     case RegistrationEnabled = 'registration_enabled';
     case ProTrialDays = 'pro_trial_days';
+    case StorageBackend = 'storage_backend';
 
     public function getKey(): string
     {
@@ -35,6 +36,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferFree => 'Destinataires maximum par transfert (Free)',
             self::RegistrationEnabled => 'Inscription ouverte',
             self::ProTrialDays => 'Durée du trial Pro (jours)',
+            self::StorageBackend => 'Backend de stockage',
         };
     }
 
@@ -51,6 +53,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferFree => 'Nombre maximum de destinataires par transfert (Free)',
             self::RegistrationEnabled => 'Inscription ouverte (0 = fermée, 1 = ouverte)',
             self::ProTrialDays => 'Nombre de jours de trial Pro accordés lors du passage en Pro (demo)',
+            self::StorageBackend => 'Backend de stockage des fichiers (local ou r2)',
         };
     }
 
@@ -67,6 +70,7 @@ enum NimbusApplicationParameterEnum: string implements ApplicationParameterEnumI
             self::MaxRecipientsPerTransferFree => '1',
             self::RegistrationEnabled => '1',
             self::ProTrialDays => '30',
+            self::StorageBackend => 'local',
         };
     }
 

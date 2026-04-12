@@ -8,6 +8,7 @@ use App\Entity\Recipient;
 use App\Entity\Transfer;
 use App\Entity\TransferFile;
 use App\Entity\User;
+use App\Enum\StorageBackendEnum;
 use App\Enum\TransferStatusEnum;
 use App\Repository\RecipientRepository;
 use App\Repository\TransferStatsRepository;
@@ -15,6 +16,7 @@ use App\Service\PlanService;
 use App\Service\TransferFileValidator;
 use App\Service\TransferNotifierInterface;
 use App\Service\TusUploadServiceInterface;
+use App\Storage\StorageManager;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -32,6 +34,7 @@ final readonly class TransferManager
         private TransferStatsRepository $transferStatsRepository,
         private PlanService $planService,
         private LoggerInterface $logger,
+        private StorageManager $storageManager,
     ) {}
 
     /**
@@ -98,11 +101,8 @@ final readonly class TransferManager
 
         $this->fileValidator->validate($uploadKeys, $maxFiles, $maxSizeMb);
 
-        $storageDir = sprintf('%s/%s', $this->transferStoragePath, $transfer->getToken());
-
-        if (!is_dir($storageDir)) {
-            mkdir($storageDir, 0o750, true);
-        }
+        $activeBackend = $this->storageManager->getActiveBackend();
+        $activeAdapter = $this->storageManager->getActiveAdapter();
 
         foreach ($uploadKeys as $uploadKey) {
             $upload = $this->tusUploadService->getUpload($uploadKey);
@@ -112,15 +112,16 @@ final readonly class TransferManager
             }
 
             $filename = sprintf('%s_%s', bin2hex(random_bytes(8)), basename((string) $upload['file_path']));
-            $destination = sprintf('%s/%s', $storageDir, $filename);
+            $storageKey = $this->storageManager->buildStorageKey($transfer, $filename);
 
-            rename($upload['file_path'], $destination);
+            $activeAdapter->store($upload['file_path'], $storageKey);
 
             $file = new TransferFile();
             $file->setOriginalName($upload['original_name']);
             $file->setFilename($filename);
             $file->setMimeType($upload['mime_type']);
             $file->setFileSize($upload['file_size']);
+            $file->setStorageBackend($activeBackend);
 
             $transfer->addFile($file);
             $this->tusUploadService->deleteUpload($uploadKey);
@@ -136,11 +137,17 @@ final readonly class TransferManager
 
     public function delete(Transfer $transfer): void
     {
-        $storageDir = sprintf('%s/%s', $this->transferStoragePath, $transfer->getToken());
+        // Delete each file via its own storage adapter
+        foreach ($transfer->getFiles() as $file) {
+            $storageKey = $this->storageManager->buildStorageKey($transfer, $file->getFilename());
+            $this->storageManager->getAdapterForFile($file)->delete($storageKey);
+        }
 
+        // Clean up local directory (also handles orphan files not tracked in DB)
+        $storageDir = sprintf('%s/%s', $this->transferStoragePath, $transfer->getToken());
         if (is_dir($storageDir)) {
-            foreach (glob(sprintf('%s/*', $storageDir)) ?: [] as $file) {
-                unlink($file);
+            foreach (glob(sprintf('%s/*', $storageDir)) ?: [] as $f) {
+                @unlink($f);
             }
 
             rmdir($storageDir);
@@ -195,14 +202,27 @@ final readonly class TransferManager
         $zip = new ZipArchive();
         $zip->open($tmpZip, ZipArchive::OVERWRITE);
 
+        $r2TmpFiles = [];
+
         foreach ($transfer->getFiles() as $file) {
-            $path = $this->resolveFilePath($transfer, $file);
-            if (file_exists($path)) {
-                $zip->addFile($path, $file->getOriginalName());
+            $storageKey = $this->storageManager->buildStorageKey($transfer, $file->getFilename());
+            $adapter = $this->storageManager->getAdapterForFile($file);
+            $localPath = $adapter->getLocalPath($storageKey);
+
+            if (file_exists($localPath)) {
+                $zip->addFile($localPath, $file->getOriginalName());
+            }
+
+            if (StorageBackendEnum::R2 === $file->getStorageBackend()) {
+                $r2TmpFiles[] = $localPath;
             }
         }
 
         $zip->close();
+
+        foreach ($r2TmpFiles as $tmpFile) {
+            @unlink($tmpFile);
+        }
 
         return $tmpZip;
     }

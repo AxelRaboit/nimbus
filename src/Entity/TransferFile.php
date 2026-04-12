@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\StorageBackendEnum;
 use App\Repository\TransferFileRepository;
 use App\Trait\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,6 +35,9 @@ class TransferFile
 
     #[ORM\Column(type: 'bigint')]
     private int $fileSize = 0;
+
+    #[ORM\Column(length: 20)]
+    private string $storageBackend = StorageBackendEnum::Local->value;
 
     public function getId(): ?int
     {
@@ -96,6 +100,18 @@ class TransferFile
     public function setFileSize(int $fileSize): static
     {
         $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
+    public function getStorageBackend(): StorageBackendEnum
+    {
+        return StorageBackendEnum::from($this->storageBackend);
+    }
+
+    public function setStorageBackend(StorageBackendEnum $backend): static
+    {
+        $this->storageBackend = $backend->value;
 
         return $this;
     }

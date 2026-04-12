@@ -8,12 +8,16 @@ use App\Entity\Transfer;
 use App\Entity\TransferFile;
 use App\Enum\TransferStatusEnum;
 use App\Manager\TransferManager;
+use App\Repository\ApplicationParameterRepository;
 use App\Repository\RecipientRepository;
 use App\Repository\TransferStatsRepository;
 use App\Service\PlanService;
 use App\Service\TransferFileValidator;
 use App\Service\TransferNotifierInterface;
 use App\Service\TusUploadServiceInterface;
+use App\Storage\LocalStorageAdapter;
+use App\Storage\R2StorageAdapter;
+use App\Storage\StorageManager;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -71,7 +75,7 @@ final class TransferManagerTest extends TestCase
         $file->setFilename('abc_doc.pdf');
 
         self::assertSame(
-            $this->storagePath.'/'.$transfer->getToken().'/abc_doc.pdf',
+            sprintf('%s/%s/abc_doc.pdf', $this->storagePath, $transfer->getToken()),
             $this->buildManager()->resolveFilePath($transfer, $file),
         );
     }
@@ -172,6 +176,15 @@ final class TransferManagerTest extends TestCase
     ): TransferManager {
         $tusService ??= $this->createStub(TusUploadServiceInterface::class);
 
+        $paramsRepo = $this->createStub(ApplicationParameterRepository::class);
+        $paramsRepo->method('get')->willReturn('local');
+
+        $storageManager = new StorageManager(
+            new LocalStorageAdapter($this->storagePath),
+            new R2StorageAdapter(null, null, null, 'test'), // credentials not needed for local backend
+            $paramsRepo,
+        );
+
         return new TransferManager(
             $em ?? $this->createStub(EntityManagerInterface::class),
             $tusService,
@@ -182,6 +195,7 @@ final class TransferManagerTest extends TestCase
             $this->createStub(TransferStatsRepository::class),
             $planService ?? $this->createStub(PlanService::class),
             new NullLogger(),
+            $storageManager,
         );
     }
 }

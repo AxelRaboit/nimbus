@@ -18,7 +18,9 @@ export function mountApp(elementId, component, transformProps) {
         } else {
             // Convert string values to appropriate types
             props = {};
-            for (const [key, value] of Object.entries(el.dataset)) {
+            for (const [key, value] of Object.entries(el.dataset).filter(
+                ([k]) => k !== "locale",
+            )) {
                 if (value === "true" || value === "false") {
                     props[key] = value === "true";
                 } else if (!isNaN(value) && value !== "") {

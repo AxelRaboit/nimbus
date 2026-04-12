@@ -26,7 +26,7 @@ class HomeController extends AbstractController
     {
         $accessPasswordEnabled = '' !== $this->accessPassword;
         $accessGranted = $accessPasswordEnabled
-            ? (bool) $request->getSession()->get('access_granted', false)
+            ? $request->getSession()->get('access_granted_hash') === md5($this->accessPassword)
             : true;
 
         /** @var User|null $user */
