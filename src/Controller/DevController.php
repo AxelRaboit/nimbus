@@ -17,6 +17,7 @@ use App\Repository\TransferRepository;
 use App\Repository\UserRepository;
 use App\Service\AdminStatsService;
 use App\Service\InvitationService;
+use App\Service\PlanService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,6 +38,7 @@ class DevController extends AbstractController
         private readonly AccessRequestManager $accessRequestManager,
         private readonly AdminStatsService $adminStatsService,
         private readonly InvitationService $invitationService,
+        private readonly PlanService $planService,
     ) {}
 
     #[Route('/dashboard', name: 'dev_dashboard')]
@@ -249,6 +251,9 @@ class DevController extends AbstractController
 
     private function serializeUser(User $user): array
     {
+        $customFileSizeMb = $user->getCustomFileSizeMb();
+        $proMaxSizeMb = $this->planService->getProMaxSizeMb();
+
         return [
             'id' => $user->getId(),
             'name' => $user->getName(),
@@ -257,7 +262,9 @@ class DevController extends AbstractController
             'isDevRole' => in_array(UserRoleEnum::Dev->value, $user->getRoles(), true),
             'createdAt' => $user->getCreatedAt()->format('c'),
             'trialEndsAt' => $user->getTrialEndsAt()?->format('c'),
-            'customFileSizeMb' => $user->getCustomFileSizeMb(),
+            'customFileSizeMb' => $customFileSizeMb,
+            'effectiveFileSizeMb' => null !== $customFileSizeMb ? min($customFileSizeMb, $proMaxSizeMb) : null,
+            'isCapped' => null !== $customFileSizeMb && $customFileSizeMb > $proMaxSizeMb,
         ];
     }
 

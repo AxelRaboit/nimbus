@@ -433,7 +433,9 @@ function submitInvitation() {
                         </span>
                     </div>
                     <div v-if="user.customFileSizeMb" class="text-xs text-muted">
-                        Limite custom : <span class="text-emerald-400 font-medium">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
+                        Limite custom :
+                        <span class="font-medium" :class="user.isCapped ? 'text-amber-400 line-through' : 'text-emerald-400'">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
+                        <span v-if="user.isCapped" class="text-amber-400 font-medium ml-1">→ {{ user.effectiveFileSizeMb >= 1000 ? (user.effectiveFileSizeMb / 1000).toFixed(1) + ' Go' : user.effectiveFileSizeMb + ' Mo' }} (cappé)</span>
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-base">
                         <p class="text-xs text-muted">{{ fmtDate(user.createdAt) }}</p>
@@ -484,7 +486,10 @@ function submitInvitation() {
                                 </span>
                             </td>
                             <td class="px-6 py-3 hidden lg:table-cell">
-                                <span v-if="user.customFileSizeMb" class="text-xs text-emerald-400 font-medium">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
+                                <template v-if="user.customFileSizeMb">
+                                    <span class="text-xs font-medium" :class="user.isCapped ? 'text-amber-400 line-through' : 'text-emerald-400'">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
+                                    <span v-if="user.isCapped" class="text-xs text-amber-400 font-medium ml-1">→ {{ user.effectiveFileSizeMb >= 1000 ? (user.effectiveFileSizeMb / 1000).toFixed(1) + ' Go' : user.effectiveFileSizeMb + ' Mo' }}</span>
+                                </template>
                                 <span v-else class="text-xs text-muted">—</span>
                             </td>
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ fmtDate(user.createdAt) }}</td>

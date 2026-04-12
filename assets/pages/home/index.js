@@ -17,4 +17,5 @@ mountApp("app-home", HomeApp, (data) => ({
     loginPath: data.loginPath || "/login",
     registerPath: data.registerPath || "/register",
     registrationEnabled: data.registrationEnabled !== "false",
+    proMaxSizeMb: Number(data.proMaxSizeMb) || 10000,
 }));
