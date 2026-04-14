@@ -161,7 +161,6 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     {{ t("nav.dashboard") }}
                 </span>
             </a>
-
         </nav>
 
         <div class="sidebar-bottom shrink-0 border-t border-line py-3 space-y-0.5">
@@ -358,7 +357,6 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     <Shield class="w-5 h-5 shrink-0" :class="devActive ? 'text-rose-400' : 'text-muted'" />
                     {{ t("nav.dashboard") }}
                 </a>
-
             </nav>
 
             <div class="shrink-0 border-t border-line px-3 py-3 space-y-1">
