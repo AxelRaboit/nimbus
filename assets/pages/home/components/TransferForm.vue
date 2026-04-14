@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { X, Plus, Send, Link } from "lucide-vue-next";
+import { X, Plus, Send, Link, HelpCircle } from "lucide-vue-next";
 import { isValidEmail, formatFileSize } from "@/utils/validation.js";
 import { required, email, compose } from "@/utils/validators.js";
 import { useForm } from "@/composables/useForm.js";
@@ -105,8 +105,19 @@ function submit() {
             <div class="flex items-center justify-between">
                 <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('transfer.create.files_label') }}</label>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs text-muted">{{ t('transfer.create.max_size', { max: formatFileSize(Number(props.maxSizeMb), locale) }) }}</span>
-                    <button type="button" class="text-xs text-link hover:text-link-hover transition-colors" v-on:click="emit('open-help')">{{ t('transfer.create.how_it_works') }}</button>
+                    <span class="text-xs text-muted">
+                        <span class="sm:hidden">{{ formatFileSize(Number(props.maxSizeMb), locale) }}</span>
+                        <span class="hidden sm:inline">{{ t('transfer.create.max_size', { max: formatFileSize(Number(props.maxSizeMb), locale) }) }}</span>
+                    </span>
+                    <button
+                        type="button"
+                        class="text-xs text-link hover:text-link-hover transition-colors flex items-center"
+                        :aria-label="t('transfer.create.how_it_works')"
+                        v-on:click="emit('open-help')"
+                    >
+                        <HelpCircle class="w-4 h-4 sm:hidden" :stroke-width="2" />
+                        <span class="hidden sm:inline">{{ t('transfer.create.how_it_works') }}</span>
+                    </button>
                 </div>
             </div>
             <DropZone v-model:files="files" />
@@ -115,7 +126,7 @@ function submit() {
 
         <div class="flex flex-col gap-1.5" :class="{ 'opacity-40 pointer-events-none select-none': locked }">
             <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('transfer.create.mode_label') }}</label>
-            <div class="flex rounded-lg border border-base overflow-hidden text-sm">
+            <div class="flex rounded-lg border border-line overflow-hidden text-sm">
                 <button
                     type="button"
                     class="flex-1 px-3 py-2 font-medium transition-colors"
@@ -147,7 +158,7 @@ function submit() {
                         v-model="recipients[index]"
                         type="email"
                         :placeholder="`destinataire${index + 1}@exemple.com`"
-                        class="block w-full rounded-md border border-base bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                         :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-500': errors.recipients && index === 0 }"
                     >
                     <button

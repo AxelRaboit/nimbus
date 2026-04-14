@@ -76,10 +76,10 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
 <template>
     <aside
         id="sidebar"
-        class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-base z-30 overflow-hidden"
+        class="hidden lg:flex flex-col fixed inset-y-0 left-0 bg-surface border-r border-line z-30 overflow-hidden"
     >
         <div
-            class="sh-wrap flex items-center h-16 border-b border-base shrink-0 transition-all duration-200"
+            class="sh-wrap flex items-center h-16 border-b border-line shrink-0 transition-all duration-200"
         >
             <a :href="homePath" class="sh-logo-expanded flex items-center gap-2.5 min-w-0">
                 <AppLogo :size="32" class="shrink-0" />
@@ -105,7 +105,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
             </button>
         </div>
 
-        <div v-if="!isGuest" class="sh-logo-expanded flex-col border-b border-base px-4 py-3 shrink-0">
+        <div v-if="!isGuest" class="sh-logo-expanded flex-col border-b border-line px-4 py-3 shrink-0">
             <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
             <p class="text-xs text-muted truncate">{{ userEmail }}</p>
         </div>
@@ -118,7 +118,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
             >
                 <UploadCloud class="w-5 h-5 shrink-0" :class="homeActive ? 'text-indigo-400' : 'text-muted'" />
                 <span class="si-label truncate">{{ t("nav.send") }}</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                     {{ t("nav.send") }}
                 </span>
             </a>
@@ -132,7 +132,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 >
                     <History class="w-5 h-5 shrink-0" :class="dashboardActive ? 'text-indigo-400' : 'text-muted'" />
                     <span class="si-label truncate">{{ t("nav.my_transfers") }}</span>
-                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                         {{ t("nav.my_transfers") }}
                     </span>
                 </a>
@@ -143,7 +143,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     <History class="w-5 h-5 shrink-0 text-muted" />
                     <span class="si-label truncate flex-1">{{ t("nav.my_transfers") }}</span>
                     <span class="si-label text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
-                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                         {{ t("nav.my_transfers") }} — Pro
                     </span>
                 </span>
@@ -157,33 +157,33 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
             >
                 <Shield class="w-5 h-5 shrink-0" :class="devActive ? 'text-rose-400' : 'text-muted'" />
                 <span class="si-label truncate">{{ t("nav.dashboard") }}</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                     {{ t("nav.dashboard") }}
-                </span>
-            </a>
-
-            <a
-                v-if="mailpitUrl"
-                :href="mailpitUrl"
-                target="_blank"
-                class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors group relative"
-            >
-                <Mail class="w-5 h-5 shrink-0 text-muted" />
-                <span class="si-label truncate flex-1">Mailpit</span>
-                <span class="si-label text-xs font-bold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full shrink-0">dev</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
-                    Mailpit
                 </span>
             </a>
         </nav>
 
-        <div class="sidebar-bottom shrink-0 border-t border-base py-3 space-y-0.5">
+        <div class="sidebar-bottom shrink-0 border-t border-line py-3 space-y-0.5">
             <button
                 class="sh-expand-btn w-full items-center justify-center py-2.5 rounded-lg text-muted hover:text-primary hover:bg-surface-2 transition-colors"
                 v-on:click="expand"
             >
                 <ChevronsRight class="w-4 h-4" />
             </button>
+
+            <a
+                v-if="mailpitUrl"
+                :href="mailpitUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-amber-400 hover:bg-amber-500/10 transition-colors group relative"
+            >
+                <Mail class="w-5 h-5 shrink-0 text-muted group-hover:text-amber-400 transition-colors" />
+                <span class="si-label truncate">Mailpit</span>
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    Mailpit
+                </span>
+            </a>
 
             <button
                 class="si flex items-center rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors w-full group relative"
@@ -195,7 +195,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     theme === "dark" ? t("nav.lightMode") : t("nav.darkMode")
                 }}</span>
                 <span
-                    class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
+                    class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
                 >
                     {{ theme === "dark" ? t("nav.lightMode") : t("nav.darkMode") }}
                 </span>
@@ -210,7 +210,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 <Sparkles class="w-5 h-5 shrink-0" :class="planActive ? 'text-indigo-400' : 'text-muted'" />
                 <span class="si-label truncate flex-1">{{ t("nav.plan") }}</span>
                 <span v-if="!isPro" class="si-label text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
-                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                     {{ t("nav.plan") }}
                 </span>
             </a>
@@ -222,7 +222,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 >
                     <User class="w-5 h-5 shrink-0 text-muted" />
                     <span class="si-label truncate">{{ t("nav.login") }}</span>
-                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
+                    <span class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg">
                         {{ t("nav.login") }}
                     </span>
                 </a>
@@ -241,7 +241,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     <User class="w-5 h-5 shrink-0 text-muted" />
                     <span class="si-label truncate">{{ t("nav.profile") }}</span>
                     <span
-                        class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
+                        class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
                     >
                         {{ t("nav.profile") }}
                     </span>
@@ -256,7 +256,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                         <LogOut class="w-5 h-5 shrink-0 text-muted group-hover:text-rose-400 transition-colors" />
                         <span class="si-label">{{ t("nav.logout") }}</span>
                         <span
-                            class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-base text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
+                            class="si-tooltip absolute left-full ml-3 px-2.5 py-1.5 rounded-md bg-surface-3 border border-line text-xs font-medium text-primary whitespace-nowrap pointer-events-none z-50 shadow-lg"
                         >
                             {{ t("nav.logout") }}
                         </span>
@@ -267,7 +267,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
     </aside>
 
     <div
-        class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-base z-30 flex items-center justify-between px-4"
+        class="lg:hidden fixed top-0 inset-x-0 h-14 bg-surface border-b border-line z-30 flex items-center justify-between px-4"
     >
         <a :href="homePath" class="flex items-center gap-2">
             <AppLogo :size="28" />
@@ -294,7 +294,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
             :class="mobileOpen ? 'translate-x-0' : '-translate-x-full'"
         >
             <div
-                class="flex items-center justify-between px-4 h-16 border-b border-base shrink-0"
+                class="flex items-center justify-between px-4 h-16 border-b border-line shrink-0"
             >
                 <div class="flex items-center gap-2.5 min-w-0">
                     <AppLogo :size="32" class="shrink-0" />
@@ -313,7 +313,7 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 </button>
             </div>
 
-            <div v-if="!isGuest" class="px-4 py-3 border-b border-base shrink-0">
+            <div v-if="!isGuest" class="px-4 py-3 border-b border-line shrink-0">
                 <p class="text-sm font-medium text-primary">{{ userName }}</p>
                 <p class="text-xs text-muted truncate">{{ userEmail }}</p>
             </div>
@@ -357,20 +357,20 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                     <Shield class="w-5 h-5 shrink-0" :class="devActive ? 'text-rose-400' : 'text-muted'" />
                     {{ t("nav.dashboard") }}
                 </a>
+            </nav>
 
+            <div class="shrink-0 border-t border-line px-3 py-3 space-y-1">
                 <a
                     v-if="mailpitUrl"
                     :href="mailpitUrl"
                     target="_blank"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+                    rel="noopener noreferrer"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
                 >
                     <Mail class="w-5 h-5 shrink-0 text-muted" />
-                    <span class="flex-1">Mailpit</span>
-                    <span class="text-xs font-bold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full">dev</span>
+                    Mailpit
                 </a>
-            </nav>
 
-            <div class="shrink-0 border-t border-base px-3 py-3 space-y-1">
                 <button
                     class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
                     v-on:click="toggleTheme"

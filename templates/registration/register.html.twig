@@ -10,7 +10,7 @@
     <h1 class="text-xl font-bold text-primary mb-6">{{ 'auth.register.heading'|trans }}</h1>
 
     {% if not registrationEnabled %}
-        <div class="rounded-lg border border-base bg-surface p-6 text-center space-y-2">
+        <div class="rounded-lg border border-line bg-surface p-6 text-center space-y-2">
             <p class="text-primary font-semibold">{{ 'auth.register.closed_title'|trans }}</p>
             <p class="text-secondary text-sm">{{ 'auth.register.closed_desc'|trans }}</p>
         </div>
@@ -77,9 +77,9 @@
         </form>
 
         <div class="mt-6 flex items-center gap-4">
-            <div class="flex-1 border-t border-base"></div>
+            <div class="flex-1 border-t border-line"></div>
             <span class="text-sm text-muted">{{ 'common.or'|trans }}</span>
-            <div class="flex-1 border-t border-base"></div>
+            <div class="flex-1 border-t border-line"></div>
         </div>
 
         <p class="mt-4 text-center text-sm text-secondary">

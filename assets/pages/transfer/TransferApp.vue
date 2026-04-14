@@ -64,17 +64,17 @@ if (typeof window !== "undefined") {
                 </p>
             </div>
 
-            <div class="rounded-lg border border-base bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden">
-                <div class="px-5 py-3 bg-surface-2 border-b border-base flex items-center justify-between">
+            <div class="rounded-lg border border-line bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden">
+                <div class="px-5 py-3 bg-surface-2 border-b border-line flex items-center justify-between">
                     <span class="text-xs text-secondary uppercase tracking-wide">{{ t('transfer.show.reference') }}</span>
                     <span class="text-sm font-bold text-primary tracking-widest">{{ reference }}</span>
                 </div>
 
-                <ul class="divide-y divide-base">
+                <ul class="divide-y divide-line">
                     <li v-for="(file, index) in parsedFiles" :key="index">
                         <div
                             v-if="isImage(file.mimeType)"
-                            class="cursor-pointer overflow-hidden bg-surface-2 border-b border-base"
+                            class="cursor-pointer overflow-hidden bg-surface-2 border-b border-line"
                             v-on:click="openPreview(file)"
                         >
                             <img
@@ -115,7 +115,7 @@ if (typeof window !== "undefined") {
                     </li>
                 </ul>
 
-                <div class="px-5 py-4 border-t border-base flex items-center justify-between gap-4 bg-surface-2">
+                <div class="px-5 py-4 border-t border-line flex items-center justify-between gap-4 bg-surface-2">
                     <div>
                         <p class="text-xs text-secondary uppercase tracking-wide">
                             {{ t('transfer.show.files_count', { n: parsedFiles.length }, parsedFiles.length) }}
@@ -142,7 +142,7 @@ if (typeof window !== "undefined") {
                 <div class="absolute inset-0 bg-black/80" v-on:click="closePreview" />
 
                 <div class="relative w-full max-w-3xl max-h-[90vh] flex flex-col">
-                    <div class="flex items-center justify-between px-4 py-3 bg-surface border border-base rounded-t-xl">
+                    <div class="flex items-center justify-between px-4 py-3 bg-surface border border-line rounded-t-xl">
                         <p class="text-sm font-medium text-primary truncate">{{ previewFile.name }}</p>
                         <button class="ml-3 shrink-0 text-muted hover:text-primary transition-colors" v-on:click="closePreview">
                             <X class="w-4 h-4" :stroke-width="2" />

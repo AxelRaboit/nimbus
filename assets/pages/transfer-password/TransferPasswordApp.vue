@@ -50,7 +50,7 @@ async function submit() {
                 <p class="text-sm text-muted mt-1">{{ t('transfer_password.subtitle') }}</p>
             </div>
 
-            <div class="rounded-lg border border-base bg-surface shadow-lg shadow-indigo-500/10 p-6">
+            <div class="rounded-lg border border-line bg-surface shadow-lg shadow-indigo-500/10 p-6">
                 <div v-if="error" class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                     {{ error }}
                 </div>
@@ -63,7 +63,7 @@ async function submit() {
                             type="password"
                             autofocus
                             required
-                            class="block w-full rounded-md border border-base bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                             placeholder="••••••••"
                         >
                     </div>

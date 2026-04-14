@@ -19,7 +19,7 @@ async function switchLocale(code) {
 </script>
 
 <template>
-    <header class="border-b border-base bg-surface">
+    <header class="border-b border-line bg-surface">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <a href="/" class="flex items-center gap-3">
                 <AppLogo :size="32" />
@@ -40,7 +40,7 @@ async function switchLocale(code) {
 
                     <div
                         v-if="langOpen"
-                        class="absolute right-0 top-full mt-1 w-36 rounded-md border border-base bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden z-50"
+                        class="absolute right-0 top-full mt-1 w-36 rounded-md border border-line bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden z-50"
                     >
                         <button
                             v-for="loc in SUPPORTED_LOCALES"

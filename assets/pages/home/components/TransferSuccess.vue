@@ -59,7 +59,7 @@ async function copyLink(text, flag) {
                 <input
                     :value="downloadUrl"
                     readonly
-                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
+                    class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                     v-on:click="$event.target.select()"
                 >
                 <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(downloadUrl, copied)">
@@ -78,7 +78,7 @@ async function copyLink(text, flag) {
                 <input
                     :value="manageUrl"
                     readonly
-                    class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
+                    class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                     v-on:click="$event.target.select()"
                 >
                 <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(manageUrl, copiedManage)">

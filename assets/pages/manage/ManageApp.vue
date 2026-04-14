@@ -91,8 +91,8 @@ function submitDeleteForm(e) {
             <p class="text-sm text-muted mt-1">{{ t('transfer.manage.subtitle') }}</p>
         </div>
 
-        <div class="rounded-lg border border-base bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden">
-            <div class="px-5 py-4 flex items-center justify-between border-b border-base">
+        <div class="rounded-lg border border-line bg-surface shadow-lg shadow-indigo-500/10 overflow-hidden">
+            <div class="px-5 py-4 flex items-center justify-between border-b border-line">
                 <div>
                     <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.reference') }}</p>
                     <p class="text-xl font-bold text-primary tracking-widest">{{ reference }}</p>
@@ -105,7 +105,7 @@ function submitDeleteForm(e) {
                 </span>
             </div>
 
-            <div class="px-5 py-3 border-b border-base flex flex-wrap items-center gap-x-6 gap-y-2 text-sm bg-surface-2">
+            <div class="px-5 py-3 border-b border-line flex flex-wrap items-center gap-x-6 gap-y-2 text-sm bg-surface-2">
                 <div>
                     <p class="text-xs text-secondary uppercase tracking-wide mb-0.5">{{ t('transfer.manage.expires') }}</p>
                     <p class="font-medium text-primary">{{ expiresDate }}</p>
@@ -120,7 +120,7 @@ function submitDeleteForm(e) {
                 </div>
             </div>
 
-            <div class="px-5 py-3 border-b border-base">
+            <div class="px-5 py-3 border-b border-line">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.files') }}</p>
                 <ul class="flex flex-col gap-1.5">
                     <li v-for="(file, index) in parsedFiles" :key="index" class="flex items-center gap-2 text-sm">
@@ -131,17 +131,17 @@ function submitDeleteForm(e) {
                 </ul>
             </div>
 
-            <div class="px-5 py-4 border-b border-base flex justify-center">
+            <div class="px-5 py-4 border-b border-line flex justify-center">
                 <AppQrCode :url="downloadUrl" :size="140" />
             </div>
 
-            <div v-if="publicMode" class="px-5 py-3 border-b border-base">
+            <div v-if="publicMode" class="px-5 py-3 border-b border-line">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.public_link') }}</p>
                 <div class="flex items-center gap-2">
                     <input
                         :value="downloadUrl"
                         readonly
-                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
+                        class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
                     <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(downloadUrl, copiedLink)">
@@ -155,13 +155,13 @@ function submitDeleteForm(e) {
                 </p>
             </div>
 
-            <div v-if="!publicMode" class="px-5 py-3 border-b border-base">
+            <div v-if="!publicMode" class="px-5 py-3 border-b border-line">
                 <p class="text-xs font-bold text-secondary uppercase tracking-wide mb-2">{{ t('transfer.manage.download_link') }}</p>
                 <div class="flex items-center gap-2">
                     <input
                         :value="downloadUrl"
                         readonly
-                        class="block w-full rounded border border-base bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
+                        class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
                     <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copiedDownload ? null : copyLink(downloadUrl, copiedDownload)">

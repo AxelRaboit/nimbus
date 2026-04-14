@@ -35,7 +35,7 @@ function download() {
 
 <template>
     <div class="flex flex-col items-center gap-2">
-        <div class="rounded-lg border border-base bg-white p-2 shadow-sm">
+        <div class="rounded-lg border border-line bg-white p-2 shadow-sm">
             <img
                 v-if="dataUrl"
                 :src="dataUrl"
