@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import symfonyPlugin from 'vite-plugin-symfony';
 import path from 'path';
 
 export default defineConfig({
     plugins: [
+        tailwindcss(),
         vue(),
         symfonyPlugin(),
     ],

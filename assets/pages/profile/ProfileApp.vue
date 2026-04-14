@@ -118,7 +118,7 @@ async function deleteAccount() {
 
 <template>
     <div class="max-w-2xl mx-auto space-y-6">
-        <div class="bg-surface border border-base/60 rounded-2xl p-6 shadow-sm">
+        <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.locale.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('profile.locale.subtitle') }}</p>
@@ -127,7 +127,7 @@ async function deleteAccount() {
                 <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.locale.field') }}</label>
                 <select
                     v-model="selectedLocale"
-                    class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-base focus:border-indigo-500 focus:outline-none transition"
+                    class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-line focus:border-indigo-500 focus:outline-none transition"
                     v-on:change="changeLocale"
                 >
                     <option value="fr">{{ t('locales.fr') }}</option>
@@ -138,7 +138,7 @@ async function deleteAccount() {
             </div>
         </div>
 
-        <div class="bg-surface border border-base/60 rounded-2xl p-6 shadow-sm">
+        <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.info.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('profile.info.subtitle') }}</p>
@@ -154,7 +154,7 @@ async function deleteAccount() {
                         type="text"
                         required
                         autocomplete="name"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', infoErrors.name ? 'border-red-500' : 'border-base']"
+                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', infoErrors.name ? 'border-red-500' : 'border-line']"
                     >
                     <p v-if="infoErrors.name" class="mt-1 text-xs text-rose-400">{{ infoErrors.name }}</p>
                 </div>
@@ -166,7 +166,7 @@ async function deleteAccount() {
                         type="email"
                         required
                         autocomplete="email"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', infoErrors.email ? 'border-red-500' : 'border-base']"
+                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', infoErrors.email ? 'border-red-500' : 'border-line']"
                     >
                     <p v-if="infoErrors.email" class="mt-1 text-xs text-rose-400">{{ infoErrors.email }}</p>
                 </div>
@@ -179,7 +179,7 @@ async function deleteAccount() {
             </form>
         </div>
 
-        <div class="bg-surface border border-base/60 rounded-2xl p-6 shadow-sm">
+        <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.password.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('profile.password.subtitle') }}</p>
@@ -196,7 +196,7 @@ async function deleteAccount() {
                         required
                         autocomplete="current-password"
                         placeholder="••••••••"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.current_password ? 'border-red-500' : 'border-base']"
+                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.current_password ? 'border-red-500' : 'border-line']"
                     >
                     <p v-if="passwordErrors.current_password" class="mt-1 text-xs text-rose-400">{{ passwordErrors.current_password }}</p>
                 </div>
@@ -209,7 +209,7 @@ async function deleteAccount() {
                         required
                         autocomplete="new-password"
                         placeholder="••••••••"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.password ? 'border-red-500' : 'border-base']"
+                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.password ? 'border-red-500' : 'border-line']"
                     >
                     <p v-if="passwordErrors.password" class="mt-1 text-xs text-rose-400">{{ passwordErrors.password }}</p>
                 </div>
@@ -222,7 +222,7 @@ async function deleteAccount() {
                         required
                         autocomplete="new-password"
                         placeholder="••••••••"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.password_confirmation ? 'border-red-500' : 'border-base']"
+                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.password_confirmation ? 'border-red-500' : 'border-line']"
                     >
                     <p v-if="passwordErrors.password_confirmation" class="mt-1 text-xs text-rose-400">{{ passwordErrors.password_confirmation }}</p>
                 </div>

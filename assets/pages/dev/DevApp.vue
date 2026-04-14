@@ -309,7 +309,7 @@ function submitInvitation() {
 <template>
     <div>
         <!-- Tab navigation -->
-        <div class="border-b border-base mb-6 overflow-x-auto">
+        <div class="border-b border-line mb-6 overflow-x-auto">
             <nav ref="tabNav" class="flex gap-6 sm:gap-8 whitespace-nowrap min-w-max">
                 <a :href="statsPath" :aria-current="tab === 'stats' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium" :class="tab === 'stats' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
                     {{ t("admin.stats.title") }}
@@ -336,7 +336,7 @@ function submitInvitation() {
         <!-- Stats tab -->
         <div v-if="tab === 'stats'" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-surface border border-base rounded-xl p-4">
+                <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.stats.kpi_users") }}</span>
                         <div class="w-8 h-8 rounded-lg bg-indigo-600/10 flex items-center justify-center">
@@ -349,7 +349,7 @@ function submitInvitation() {
                         <span class="text-indigo-400 font-medium">+{{ parsedStats.users?.newThisMonth ?? 0 }}</span> {{ t("admin.stats.this_month") }}
                     </p>
                 </div>
-                <div class="bg-surface border border-base rounded-xl p-4">
+                <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.stats.kpi_transfers") }}</span>
                         <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
@@ -362,7 +362,7 @@ function submitInvitation() {
                         <span class="text-emerald-400 font-medium">{{ parsedStats.transfers?.active ?? 0 }} {{ t("admin.stats.active_label") }}</span> {{ t("admin.stats.right_now") }}
                     </p>
                 </div>
-                <div class="bg-surface border border-base rounded-xl p-4">
+                <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.stats.kpi_files") }}</span>
                         <div class="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
@@ -373,7 +373,7 @@ function submitInvitation() {
                     <p class="text-xs text-muted mt-0.5">{{ t("admin.stats.since_start") }}</p>
                     <p class="text-xs text-secondary mt-1.5"><span class="text-violet-400 font-medium">{{ formatSize(parsedStats.files?.totalSize ?? 0) }}</span> {{ t("admin.stats.total_label") }}</p>
                 </div>
-                <div class="bg-surface border border-base rounded-xl p-4">
+                <div class="bg-surface border border-line rounded-xl p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-medium text-secondary uppercase tracking-wide">{{ t("admin.stats.kpi_downloads") }}</span>
                         <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
@@ -386,16 +386,16 @@ function submitInvitation() {
                 </div>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-surface border border-base rounded-xl p-5">
+                <div class="bg-surface border border-line rounded-xl p-5">
                     <p class="text-sm font-semibold text-primary mb-4">{{ t("admin.stats.chart_users") }}</p>
                     <div class="h-48 sm:h-64"><Line :data="usersLineData" :options="axisOpts" /></div>
                 </div>
-                <div class="bg-surface border border-base rounded-xl p-5">
+                <div class="bg-surface border border-line rounded-xl p-5">
                     <p class="text-sm font-semibold text-primary mb-4">{{ t("admin.stats.chart_transfers") }}</p>
                     <div class="h-48 sm:h-64"><Bar :data="transfersBarData" :options="axisOpts" /></div>
                 </div>
             </div>
-            <div class="bg-surface border border-base rounded-xl p-5">
+            <div class="bg-surface border border-line rounded-xl p-5">
                 <p class="text-sm font-semibold text-primary mb-4">{{ t("admin.stats.chart_status") }}</p>
                 <div class="h-48 sm:h-64 flex items-center justify-center">
                     <Doughnut v-if="hasStatusData" :data="statusDonutData" :options="donutOpts" />
@@ -411,7 +411,7 @@ function submitInvitation() {
                     v-model="searchInput"
                     type="text"
                     :placeholder="t('admin.users.searchPlaceholder')"
-                    class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-base text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     v-on:keyup.enter="performSearch"
                 >
                 <button class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm font-medium" v-on:click="performSearch">
@@ -422,7 +422,7 @@ function submitInvitation() {
             <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
                 <AppNoData v-if="!parsedUsers.items?.length" :message="t('admin.users.noResults')" />
-                <div v-for="user in parsedUsers.items" :key="user.id" class="bg-surface border border-base rounded-lg p-4 space-y-3">
+                <div v-for="user in parsedUsers.items" :key="user.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-medium text-primary truncate">{{ user.name }}</p>
@@ -437,7 +437,7 @@ function submitInvitation() {
                         <span class="font-medium" :class="user.isCapped ? 'text-amber-400 line-through' : 'text-emerald-400'">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
                         <span v-if="user.isCapped" class="text-amber-400 font-medium ml-1">→ {{ user.effectiveFileSizeMb >= 1000 ? (user.effectiveFileSizeMb / 1000).toFixed(1) + ' Go' : user.effectiveFileSizeMb + ' Mo' }} (cappé)</span>
                     </div>
-                    <div class="flex items-center justify-between pt-1 border-t border-base">
+                    <div class="flex items-center justify-between pt-1 border-t border-line">
                         <p class="text-xs text-muted">{{ fmtDate(user.createdAt) }}</p>
                         <div class="flex items-center gap-1">
                             <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" title="Limite de taille" v-on:click="openCustomSizeModal(user)">
@@ -462,9 +462,9 @@ function submitInvitation() {
             </div>
 
             <!-- Desktop table -->
-            <div class="hidden sm:block bg-surface border border-base rounded-lg overflow-x-auto">
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-surface-2 border-b border-base">
+                    <thead class="bg-surface-2 border-b border-line">
                         <tr>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t("admin.users.name") }}</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t("admin.users.email") }}</th>
@@ -474,7 +474,7 @@ function submitInvitation() {
                             <th class="px-6 py-3 text-right text-sm font-semibold text-primary">{{ t("admin.users.actions") }}</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-base">
+                    <tbody class="divide-y divide-line">
                         <tr v-for="user in parsedUsers.items" :key="user.id" class="hover:bg-surface-2/50 transition-colors">
                             <td class="px-6 py-3">
                                 <p class="font-medium text-primary">{{ user.name }}</p>
@@ -525,7 +525,7 @@ function submitInvitation() {
 
             <!-- Confirm delete modal -->
             <div v-if="pendingDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-base rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
+                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">{{ t("admin.users.deleteConfirm", { name: pendingDelete.name }) }}</p>
                     <div class="flex justify-end gap-2">
                         <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingDelete = null">Annuler</button>
@@ -536,7 +536,7 @@ function submitInvitation() {
 
             <!-- Confirm toggle role modal -->
             <div v-if="pendingToggleRole" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-base rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
+                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">{{ t("admin.users.toggleRoleConfirm", { name: pendingToggleRole.name }) }}</p>
                     <div class="flex justify-end gap-2">
                         <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingToggleRole = null">Annuler</button>
@@ -547,7 +547,7 @@ function submitInvitation() {
 
             <!-- Custom file size modal -->
             <div v-if="pendingCustomSize" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-base rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
+                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <div>
                         <p class="text-sm font-medium text-primary mb-0.5">Limite de taille — {{ pendingCustomSize.name }}</p>
                         <p class="text-xs text-muted">Laissez vide pour revenir à la limite du plan.</p>
@@ -558,7 +558,7 @@ function submitInvitation() {
                             type="number"
                             min="1"
                             placeholder="Défaut plan"
-                            class="flex-1 rounded-lg border border-base bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                            class="flex-1 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                         >
                         <span class="text-xs text-muted shrink-0">Mo</span>
                     </div>
@@ -580,24 +580,24 @@ function submitInvitation() {
                         v-model="invitationEmail"
                         type="email"
                         :placeholder="t('admin.invitations.emailPlaceholder')"
-                        class="w-full px-4 py-2 rounded-lg bg-surface-2 border border-base text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="w-full px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         required
                     >
                 </div>
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-primary">{{ t("admin.invitations.message") }}</label>
-                    <textarea v-model="invitationMessage" rows="5" :placeholder="t('admin.invitations.messagePlaceholder')" class="w-full px-4 py-2 rounded-lg bg-surface-2 border border-base text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
+                    <textarea v-model="invitationMessage" rows="5" :placeholder="t('admin.invitations.messagePlaceholder')" class="w-full px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
                 </div>
-                <div class="border border-base rounded-lg p-4 space-y-3 bg-surface-2/50">
+                <div class="border border-line rounded-lg p-4 space-y-3 bg-surface-2/50">
                     <p class="text-xs text-secondary">{{ t("admin.invitations.credentialsHint") }}</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div class="space-y-1">
                             <label class="block text-sm font-medium text-primary">{{ t("admin.invitations.credentialEmail") }}</label>
-                            <input v-model="invitationCredentialEmail" type="email" :placeholder="t('admin.invitations.emailPlaceholder')" class="w-full px-4 py-2 rounded-lg bg-surface border border-base text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input v-model="invitationCredentialEmail" type="email" :placeholder="t('admin.invitations.emailPlaceholder')" class="w-full px-4 py-2 rounded-lg bg-surface border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
                         <div class="space-y-1">
                             <label class="block text-sm font-medium text-primary">{{ t("admin.invitations.credentialPassword") }}</label>
-                            <input v-model="invitationCredentialPassword" type="text" class="w-full px-4 py-2 rounded-lg bg-surface border border-base text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input v-model="invitationCredentialPassword" type="text" class="w-full px-4 py-2 rounded-lg bg-surface border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
                     </div>
                 </div>
@@ -612,7 +612,7 @@ function submitInvitation() {
         <div v-else-if="tab === 'parameters'" class="space-y-4">
             <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
-                <div v-for="param in parsedParameters.items" :key="param.key" class="bg-surface border border-base rounded-lg p-4 space-y-2">
+                <div v-for="param in parsedParameters.items" :key="param.key" class="bg-surface border border-line rounded-lg p-4 space-y-2">
                     <div class="flex items-start justify-between gap-3">
                         <p class="font-mono text-sm text-indigo-400 font-medium break-all">{{ param.key }}</p>
                         <button v-if="editingKey !== param.key" class="p-1.5 text-muted hover:text-primary transition-colors shrink-0" v-on:click="startEdit(param)">
@@ -622,14 +622,14 @@ function submitInvitation() {
                     <template v-if="editingKey === param.key">
                         <input
                             v-model="editingValue"
-                            class="w-full bg-surface-2 border border-base rounded-lg px-2.5 py-1.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            class="w-full bg-surface-2 border border-line rounded-lg px-2.5 py-1.5 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             autofocus
                             v-on:keydown.enter="saveEdit(param)"
                             v-on:keydown.esc="cancelEdit"
                         >
                         <div class="flex gap-2">
                             <button :disabled="editSaving" class="flex-1 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg transition-colors" v-on:click="saveEdit(param)">Enregistrer</button>
-                            <button class="flex-1 py-1.5 text-sm text-secondary hover:text-primary border border-base rounded-lg transition-colors" v-on:click="cancelEdit">Annuler</button>
+                            <button class="flex-1 py-1.5 text-sm text-secondary hover:text-primary border border-line rounded-lg transition-colors" v-on:click="cancelEdit">Annuler</button>
                         </div>
                     </template>
                     <template v-else>
@@ -647,9 +647,9 @@ function submitInvitation() {
             </div>
 
             <!-- Desktop table -->
-            <div class="hidden sm:block bg-surface border border-base rounded-xl overflow-hidden">
+            <div class="hidden sm:block bg-surface border border-line rounded-xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead class="bg-surface-2 border-b border-base">
+                    <thead class="bg-surface-2 border-b border-line">
                         <tr>
                             <th class="px-5 py-3 text-left text-sm font-semibold text-primary w-1/3">{{ t("admin.parameters.key") }}</th>
                             <th class="px-5 py-3 text-left text-sm font-semibold text-primary w-1/4">{{ t("admin.parameters.value") }}</th>
@@ -657,14 +657,14 @@ function submitInvitation() {
                             <th class="px-4 py-3 w-16" />
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-base">
+                    <tbody class="divide-y divide-line">
                         <tr v-for="param in parsedParameters.items" :key="param.key" class="group hover:bg-surface-2/50 transition-colors">
                             <td class="px-5 py-3 font-mono text-sm text-indigo-500 font-medium w-1/3">{{ param.key }}</td>
                             <td class="px-5 py-3 w-1/4">
                                 <template v-if="editingKey === param.key">
                                     <input
                                         v-model="editingValue"
-                                        class="w-full bg-surface-2 border border-base rounded-lg px-2.5 py-1 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        class="w-full bg-surface-2 border border-line rounded-lg px-2.5 py-1 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         autofocus
                                         v-on:keydown.enter="saveEdit(param)"
                                         v-on:keydown.esc="cancelEdit"
@@ -716,7 +716,7 @@ function submitInvitation() {
             <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
                 <AppNoData v-if="!parsedTransfers.items?.length" :message="t('admin.transfers.empty')" />
-                <div v-for="tr in parsedTransfers.items" :key="tr.id" class="bg-surface border border-base rounded-lg p-4 space-y-3">
+                <div v-for="tr in parsedTransfers.items" :key="tr.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <div class="flex items-center gap-1.5 mb-0.5">
@@ -736,7 +736,7 @@ function submitInvitation() {
                             </a>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between pt-1 border-t border-base text-xs text-muted">
+                    <div class="flex items-center justify-between pt-1 border-t border-line text-xs text-muted">
                         <span>{{ tr.filesCount }} fichier{{ tr.filesCount > 1 ? 's' : '' }} · {{ formatSize(tr.totalSize) }} · {{ tr.downloadedCount }}/{{ tr.recipientsCount }}</span>
                         <span>expire {{ fmtDate(tr.expiresAt) }}</span>
                     </div>
@@ -751,10 +751,10 @@ function submitInvitation() {
             </div>
 
             <!-- Desktop table -->
-            <div class="hidden sm:block bg-surface border border-base rounded-xl overflow-hidden">
+            <div class="hidden sm:block bg-surface border border-line rounded-xl overflow-hidden">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-base bg-surface-2">
+                        <tr class="border-b border-line bg-surface-2">
                             <th class="px-4 py-3 text-left text-sm font-semibold text-primary">{{ t("admin.transfers.col_reference") }}</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-primary">{{ t("admin.transfers.col_sender") }}</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-primary">{{ t("admin.transfers.col_status") }}</th>
@@ -765,7 +765,7 @@ function submitInvitation() {
                             <th class="w-10" />
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-base">
+                    <tbody class="divide-y divide-line">
                         <tr v-for="tr in parsedTransfers.items" :key="tr.id" class="hover:bg-surface-2/40 transition-colors">
                             <td class="px-4 py-3">
                                 <span class="font-mono text-xs font-bold text-primary tracking-widest">{{ tr.reference }}</span>
@@ -811,7 +811,7 @@ function submitInvitation() {
         <!-- Access requests tab -->
         <div v-else-if="tab === 'access_requests'" class="space-y-4">
             <div class="flex justify-end">
-                <button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted hover:text-rose-400 hover:bg-rose-500/10 border border-base rounded-lg transition-colors" v-on:click="confirmPurge = true">
+                <button class="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted hover:text-rose-400 hover:bg-rose-500/10 border border-line rounded-lg transition-colors" v-on:click="confirmPurge = true">
                     <Trash2 class="w-3.5 h-3.5" :stroke-width="2" />
                     Purger
                 </button>
@@ -820,7 +820,7 @@ function submitInvitation() {
             <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
                 <AppNoData v-if="!parsedAccessRequests.items?.length" message="Aucune demande d'accès." />
-                <div v-for="r in parsedAccessRequests.items" :key="r.id" class="bg-surface border border-base rounded-lg p-4 space-y-3">
+                <div v-for="r in parsedAccessRequests.items" :key="r.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="font-medium text-primary truncate">{{ r.requesterName ?? '—' }}</p>
@@ -836,7 +836,7 @@ function submitInvitation() {
                         <span v-if="r.requestedFileSizeMb">Demandé : <strong class="text-secondary">{{ r.requestedFileSizeMb >= 1000 ? (r.requestedFileSizeMb / 1000).toFixed(1) + ' Go' : r.requestedFileSizeMb + ' Mo' }}</strong></span>
                         <span v-if="r.grantedFileSizeMb">Accordé : <strong class="text-emerald-400">{{ r.grantedFileSizeMb >= 1000 ? (r.grantedFileSizeMb / 1000).toFixed(1) + ' Go' : r.grantedFileSizeMb + ' Mo' }}</strong></span>
                     </div>
-                    <div class="flex items-center justify-between pt-1 border-t border-base">
+                    <div class="flex items-center justify-between pt-1 border-t border-line">
                         <p class="text-xs text-muted">{{ fmtDate(r.createdAt) }} · expire {{ fmtDate(r.expiresAt) }}</p>
                         <div v-if="r.status === 'pending'" class="flex items-center gap-1">
                             <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" title="Approuver" v-on:click="openApproveModal(r)">
@@ -858,9 +858,9 @@ function submitInvitation() {
             </div>
 
             <!-- Desktop table -->
-            <div class="hidden sm:block bg-surface border border-base rounded-lg overflow-x-auto">
+            <div class="hidden sm:block bg-surface border border-line rounded-lg overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="bg-surface-2 border-b border-base">
+                    <thead class="bg-surface-2 border-b border-line">
                         <tr>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary">Demandeur</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">Message</th>
@@ -871,7 +871,7 @@ function submitInvitation() {
                             <th class="px-6 py-3 text-right text-sm font-semibold text-primary">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-base">
+                    <tbody class="divide-y divide-line">
                         <tr v-for="r in parsedAccessRequests.items" :key="r.id" class="hover:bg-surface-2/50 transition-colors">
                             <td class="px-6 py-3">
                                 <p class="font-medium text-primary">{{ r.requesterName ?? '—' }}</p>
@@ -926,7 +926,7 @@ function submitInvitation() {
 
             <!-- Confirm approve modal -->
             <div v-if="pendingApprove" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-base rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
+                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">Approuver la demande de <strong>{{ pendingApprove.requesterName ?? pendingApprove.requesterEmail }}</strong> ? Un e-mail lui sera envoyé avec un lien d'accès.</p>
                     <div class="space-y-1.5">
                         <label class="text-xs text-muted">
@@ -939,7 +939,7 @@ function submitInvitation() {
                                 type="number"
                                 min="1"
                                 placeholder="Défaut plan"
-                                class="flex-1 rounded-lg border border-base bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                                class="flex-1 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                             >
                             <span class="text-xs text-muted shrink-0">Mo</span>
                         </div>
@@ -954,7 +954,7 @@ function submitInvitation() {
 
             <!-- Confirm reject modal -->
             <div v-if="pendingReject" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-base rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
+                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">Rejeter la demande de <strong>{{ pendingReject.requesterName ?? pendingReject.requesterEmail }}</strong> ?</p>
                     <div class="flex justify-end gap-2">
                         <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingReject = null">Annuler</button>
@@ -965,7 +965,7 @@ function submitInvitation() {
 
             <!-- Confirm purge modal -->
             <div v-if="confirmPurge" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-base rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
+                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
                     <p class="text-sm text-primary">Supprimer toutes les demandes <strong>approuvées et rejetées</strong> ? Cette action est irréversible.</p>
                     <div class="flex justify-end gap-2">
                         <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="confirmPurge = false">Annuler</button>

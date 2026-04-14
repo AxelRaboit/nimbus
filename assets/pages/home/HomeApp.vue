@@ -297,7 +297,7 @@ function reset() {
 
 <template>
     <div v-if="accessPasswordEnabled && !accessGrantedLocal" class="w-full max-w-sm mx-auto">
-        <div class="rounded-xl border border-base bg-surface shadow-lg shadow-indigo-500/10 p-6 sm:p-8">
+        <div class="rounded-xl border border-line bg-surface shadow-lg shadow-indigo-500/10 p-6 sm:p-8">
             <!-- Success state after request sent -->
             <div v-if="requestSent" class="text-center">
                 <div class="flex justify-center mb-4">
@@ -332,25 +332,25 @@ function reset() {
                         type="email"
                         required
                         placeholder="votre@email.com"
-                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        class="block w-full rounded-lg border border-line bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                     >
                     <input
                         v-model="requestName"
                         type="text"
                         placeholder="Votre nom (optionnel)"
-                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        class="block w-full rounded-lg border border-line bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                     >
                     <textarea
                         v-model="requestMessage"
                         placeholder="Message (optionnel)"
                         rows="3"
-                        class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+                        class="block w-full rounded-lg border border-line bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
                     />
                     <div>
                         <label class="block text-xs text-muted mb-1">Taille de fichier souhaitée (optionnel)</label>
                         <select
                             v-model="requestedFileSizeMb"
-                            class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 text-sm text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                            class="block w-full rounded-lg border border-line bg-surface-2 px-3 py-2.5 text-sm text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                         >
                             <option v-for="opt in fileSizeOptions" :key="String(opt.value)" :value="opt.value">{{ opt.label }}</option>
                         </select>
@@ -385,7 +385,7 @@ function reset() {
                             :type="accessPasswordVisible ? 'text' : 'password'"
                             autofocus
                             required
-                            class="block w-full rounded-lg border border-base bg-surface-2 px-3 py-2.5 pr-10 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                            class="block w-full rounded-lg border border-line bg-surface-2 px-3 py-2.5 pr-10 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                             placeholder="••••••••"
                         >
                         <button
@@ -402,7 +402,7 @@ function reset() {
                         {{ t('home.access_password.submit') }}
                     </AppButton>
                 </form>
-                <div class="mt-4 pt-4 border-t border-base text-center">
+                <div class="mt-4 pt-4 border-t border-line text-center">
                     <button type="button" class="text-xs text-link hover:text-link-hover transition-colors flex items-center gap-1 mx-auto" v-on:click="showRequestForm = true">
                         <KeyRound class="w-3 h-3" :stroke-width="2" />
                         Demander l'accès
@@ -431,7 +431,7 @@ function reset() {
             {{ apiError }}
         </div>
 
-        <div class="rounded-xl border border-base bg-surface shadow-lg shadow-indigo-500/10 p-4 sm:p-6">
+        <div class="rounded-xl border border-line bg-surface shadow-lg shadow-indigo-500/10 p-4 sm:p-6">
             <TransferForm
                 v-if="step === 'form'"
                 :key="formKey"
@@ -471,7 +471,7 @@ function reset() {
                 class="fixed inset-0 z-50 flex items-center justify-center p-4"
             >
                 <div class="absolute inset-0 bg-black/50" v-on:click="dismissGuestModal" />
-                <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-sm">
+                <div class="relative bg-surface border border-line rounded-2xl shadow-2xl w-full max-w-sm">
                     <button
                         class="absolute top-3 right-3 text-muted hover:text-primary transition-colors p-1"
                         v-on:click="dismissGuestModal"
@@ -523,8 +523,8 @@ function reset() {
                 v-on:click.self="showHelp = false"
             >
                 <div class="absolute inset-0 bg-black/50" v-on:click="showHelp = false" />
-                <div class="relative bg-surface border border-base rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-base">
+                <div class="relative bg-surface border border-line rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-line">
                         <h2 class="text-base font-semibold text-primary flex items-center gap-2">
                             <HelpCircle class="w-4 h-4 text-indigo-500" :stroke-width="2" />
                             {{ t('home.hero.heading') }} {{ t('home.hero.heading_accent') }}
@@ -581,19 +581,19 @@ function reset() {
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-                            <div class="flex items-center justify-between border-b border-base pb-3">
+                            <div class="flex items-center justify-between border-b border-line pb-3">
                                 <span class="text-xs text-muted">Taille max</span>
                                 <span class="text-sm font-semibold text-primary">{{ formatFileSize(maxSizeMb, locale) }}</span>
                             </div>
-                            <div class="flex items-center justify-between border-b border-base pb-3">
+                            <div class="flex items-center justify-between border-b border-line pb-3">
                                 <span class="text-xs text-muted">Fichiers</span>
                                 <span class="text-sm font-semibold text-primary">{{ maxFiles }} max</span>
                             </div>
-                            <div class="flex items-center justify-between border-b border-base pb-3">
+                            <div class="flex items-center justify-between border-b border-line pb-3">
                                 <span class="text-xs text-muted">Destinataires</span>
                                 <span class="text-sm font-semibold text-primary">{{ maxRecipients }} max</span>
                             </div>
-                            <div class="flex items-center justify-between border-b border-base pb-3">
+                            <div class="flex items-center justify-between border-b border-line pb-3">
                                 <span class="text-xs text-muted">Durée</span>
                                 <span class="text-sm font-semibold text-primary">jusqu'à {{ maxExpiryDays }}j</span>
                             </div>

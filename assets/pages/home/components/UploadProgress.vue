@@ -100,7 +100,7 @@ onMounted(async () => {
             <li
                 v-for="(state, index) in fileStates"
                 :key="index"
-                class="rounded-lg border border-base bg-surface px-3 py-2.5"
+                class="rounded-lg border border-line bg-surface px-3 py-2.5"
             >
                 <div class="flex items-center justify-between gap-3 mb-1.5">
                     <div class="flex items-center gap-2 min-w-0">

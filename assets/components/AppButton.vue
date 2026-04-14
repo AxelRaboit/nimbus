@@ -13,9 +13,9 @@ const base = 'inline-flex items-center justify-center gap-2 rounded transition d
 
 const variants = {
     primary: 'bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-indigo-500 font-bold',
-    secondary: 'bg-surface-3 hover:bg-surface-2 text-primary border border-base focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-base font-bold',
+    secondary: 'bg-surface-3 hover:bg-surface-2 text-primary border border-line focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-base font-bold',
     danger: 'bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-600/40 font-medium',
-    'danger-outline': 'bg-transparent hover:bg-rose-500/10 text-rose-400 border border-base focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500 font-bold',
+    'danger-outline': 'bg-transparent hover:bg-rose-500/10 text-rose-400 border border-line focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-rose-500 font-bold',
     ghost: 'bg-transparent hover:bg-surface-2 text-secondary hover:text-primary',
     link: 'bg-transparent text-muted hover:text-secondary underline p-0',
     icon: 'bg-transparent p-0',

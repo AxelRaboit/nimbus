@@ -115,7 +115,7 @@ function submit() {
 
         <div class="flex flex-col gap-1.5" :class="{ 'opacity-40 pointer-events-none select-none': locked }">
             <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('transfer.create.mode_label') }}</label>
-            <div class="flex rounded-lg border border-base overflow-hidden text-sm">
+            <div class="flex rounded-lg border border-line overflow-hidden text-sm">
                 <button
                     type="button"
                     class="flex-1 px-3 py-2 font-medium transition-colors"
@@ -147,7 +147,7 @@ function submit() {
                         v-model="recipients[index]"
                         type="email"
                         :placeholder="`destinataire${index + 1}@exemple.com`"
-                        class="block w-full rounded-md border border-base bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
                         :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-500': errors.recipients && index === 0 }"
                     >
                     <button

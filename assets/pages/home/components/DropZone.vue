@@ -156,7 +156,7 @@ function removeFile(index) {
 
         <div
             class="relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed transition-colors cursor-pointer p-5 sm:p-8"
-            :class="isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-base hover:border-indigo-400 bg-surface-2'"
+            :class="isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-line hover:border-indigo-400 bg-surface-2'"
             v-on:dragover.prevent="isDragging = true"
             v-on:dragleave.prevent="isDragging = false"
             v-on:drop.prevent="onDrop"
@@ -199,7 +199,7 @@ function removeFile(index) {
             <li
                 v-for="(file, index) in files"
                 :key="index"
-                class="flex items-center justify-between gap-3 rounded border border-base bg-surface px-3 py-2 text-sm"
+                class="flex items-center justify-between gap-3 rounded border border-line bg-surface px-3 py-2 text-sm"
             >
                 <div class="flex items-center gap-2 min-w-0">
                     <FileText class="w-4 h-4 text-muted shrink-0" :stroke-width="2" />
