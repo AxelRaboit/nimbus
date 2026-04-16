@@ -16,7 +16,7 @@
         </div>
         <p class="mt-6 text-center text-sm text-secondary">
             {{ 'auth.register.already_account'|trans }}
-            <a href="{{ path('app_login') }}" class="text-gray-600 hover:text-gray-900 underline font-medium transition-colors">{{ 'auth.register.login_link'|trans }}</a>
+            <a href="{{ path('app_login') }}" class="text-primary underline font-medium transition-colors">{{ 'auth.register.login_link'|trans }}</a>
         </p>
     {% else %}
         <form method="POST" action="{{ path('app_register') }}" class="flex flex-col gap-4">
@@ -84,7 +84,7 @@
 
         <p class="mt-4 text-center text-sm text-secondary">
             {{ 'auth.register.already_account'|trans }}
-            <a href="{{ path('app_login') }}" class="text-gray-600 hover:text-gray-900 underline font-medium transition-colors">{{ 'auth.register.login_link'|trans }}</a>
+            <a href="{{ path('app_login') }}" class="text-primary underline font-medium transition-colors">{{ 'auth.register.login_link'|trans }}</a>
         </p>
     {% endif %}
 {% endblock %}
