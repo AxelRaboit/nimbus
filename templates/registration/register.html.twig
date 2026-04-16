@@ -3,22 +3,23 @@
 {% block title %}{{ 'auth.register.title'|trans }} - Nimbus{% endblock %}
 
 {% block hero %}
-    {{ include('components/auth_hero.html.twig') }}
+    {% if registrationEnabled %}
+        {{ include('components/auth_hero.html.twig') }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-    <h1 class="text-xl font-bold text-primary mb-6">{{ 'auth.register.heading'|trans }}</h1>
-
     {% if not registrationEnabled %}
-        <div class="rounded-lg border border-line bg-surface p-6 text-center space-y-2">
+        <div class="space-y-2 text-center">
             <p class="text-primary font-semibold">{{ 'auth.register.closed_title'|trans }}</p>
             <p class="text-secondary text-sm">{{ 'auth.register.closed_desc'|trans }}</p>
+            <p class="mt-4 text-sm text-secondary">
+                {{ 'auth.register.already_account'|trans }}
+                <a href="{{ path('app_login') }}" class="text-primary underline">{{ 'auth.register.login_link'|trans }}</a>
+            </p>
         </div>
-        <p class="mt-6 text-center text-sm text-secondary">
-            {{ 'auth.register.already_account'|trans }}
-            <a href="{{ path('app_login') }}" class="text-primary underline font-medium transition-colors">{{ 'auth.register.login_link'|trans }}</a>
-        </p>
     {% else %}
+        <h1 class="text-xl font-bold text-primary mb-6">{{ 'auth.register.heading'|trans }}</h1>
         <form method="POST" action="{{ path('app_register') }}" class="flex flex-col gap-4">
             <div>
                 {{ include('components/form_input.html.twig', {
@@ -84,7 +85,7 @@
 
         <p class="mt-4 text-center text-sm text-secondary">
             {{ 'auth.register.already_account'|trans }}
-            <a href="{{ path('app_login') }}" class="text-primary underline font-medium transition-colors">{{ 'auth.register.login_link'|trans }}</a>
+            <a href="{{ path('app_login') }}" class="text-primary underline">{{ 'auth.register.login_link'|trans }}</a>
         </p>
     {% endif %}
 {% endblock %}

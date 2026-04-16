@@ -87,7 +87,7 @@ auth:
     password: 'Passwort'
     password_confirm: 'Passwort bestätigen'
     submit: 'Mein Konto erstellen'
-    already_account: 'Bereits ein Konto?'
+    already_account: 'Bereits registriert?'
     login_link: 'Anmelden'
     error_name_required: 'Name ist erforderlich.'
     error_email_required: 'E-Mail-Adresse ist erforderlich.'
@@ -95,8 +95,8 @@ auth:
     error_email_taken: 'Diese E-Mail-Adresse wird bereits verwendet.'
     error_password_length: 'Das Passwort muss mindestens 8 Zeichen lang sein.'
     error_password_mismatch: 'Die Passwörter stimmen nicht überein.'
-    closed_title: 'Registrierungen geschlossen'
-    closed_desc: 'Registrierungen sind vorübergehend deaktiviert. Bitte versuchen Sie es später erneut.'
+    closed_title: 'Registrierung geschlossen'
+    closed_desc: 'Die Registrierung ist derzeit nicht geöffnet. Versuchen Sie es später oder kontaktieren Sie den Administrator.'
 
 profile:
   title: 'Mein Profil'

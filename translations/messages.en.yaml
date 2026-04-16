@@ -87,7 +87,7 @@ auth:
     password: 'Password'
     password_confirm: 'Confirm password'
     submit: 'Create account'
-    already_account: 'Already have an account?'
+    already_account: 'Already registered?'
     login_link: 'Sign in'
     error_name_required: 'Name is required.'
     error_email_required: 'Email address is required.'
@@ -95,8 +95,8 @@ auth:
     error_email_taken: 'This email address is already in use.'
     error_password_length: 'Password must be at least 8 characters.'
     error_password_mismatch: 'Passwords do not match.'
-    closed_title: 'Registrations closed'
-    closed_desc: 'Registrations are temporarily disabled. Please try again later.'
+    closed_title: 'Registration is closed'
+    closed_desc: 'Registrations are not open at the moment. Come back later or contact the administrator.'
 
 profile:
   title: 'My profile'
