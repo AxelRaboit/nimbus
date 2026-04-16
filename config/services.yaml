@@ -3,6 +3,7 @@
 parameters:
     tus_upload_path: '%kernel.project_dir%/var/uploads/tus_tmp'
     app.access_password: '%env(string:ACCESS_PASSWORD)%'
+    app.dev_password: '%env(string:DEV_PASSWORD)%'
     tus_cache_path: '%kernel.project_dir%/var/cache/tus'
     transfer_storage_path: '%kernel.project_dir%/var/uploads/transfers'
     mailer.sender: '%env(MAILER_FROM_ADDRESS)%'
@@ -14,6 +15,7 @@ services:
         autoconfigure: true
         bind:
             string $accessPassword: '%app.access_password%'
+            string $devPassword: '%app.dev_password%'
             string $env: '%kernel.environment%'
 
     App\:
