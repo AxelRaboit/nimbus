@@ -308,22 +308,26 @@ function submitInvitation() {
 
 <template>
     <div>
-        <!-- Tab navigation -->
         <div class="border-b border-line mb-6 overflow-x-auto">
             <nav ref="tabNav" class="flex gap-6 sm:gap-8 whitespace-nowrap min-w-max">
-                <a :href="statsPath" :aria-current="tab === 'stats' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium" :class="tab === 'stats' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                <a :href="statsPath" :aria-current="tab === 'stats' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium flex items-center gap-1.5" :class="tab === 'stats' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                    <Activity class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.stats.title") }}
                 </a>
-                <a :href="usersPath" :aria-current="tab === 'users' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium" :class="tab === 'users' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                <a :href="usersPath" :aria-current="tab === 'users' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium flex items-center gap-1.5" :class="tab === 'users' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                    <Users class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.users.title") }}
                 </a>
-                <a :href="invitationsPath" :aria-current="tab === 'invitations' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium" :class="tab === 'invitations' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                <a :href="invitationsPath" :aria-current="tab === 'invitations' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium flex items-center gap-1.5" :class="tab === 'invitations' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                    <Mail class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.invitations.title") }}
                 </a>
-                <a :href="parametersPath" :aria-current="tab === 'parameters' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium" :class="tab === 'parameters' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                <a :href="parametersPath" :aria-current="tab === 'parameters' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium flex items-center gap-1.5" :class="tab === 'parameters' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                    <Shield class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.parameters.title") }}
                 </a>
-                <a :href="transfersPath" :aria-current="tab === 'transfers' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium" :class="tab === 'transfers' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                <a :href="transfersPath" :aria-current="tab === 'transfers' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium flex items-center gap-1.5" :class="tab === 'transfers' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">
+                    <ArrowUpRight class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t("admin.transfers.title") }}
                 </a>
                 <a :href="accessRequestsPath" :aria-current="tab === 'access_requests' ? 'page' : undefined" class="py-3 px-1 border-b-2 transition-colors text-sm sm:text-base font-medium flex items-center gap-1.5" :class="tab === 'access_requests' ? 'border-indigo-500 text-primary' : 'border-transparent text-secondary hover:text-primary'">

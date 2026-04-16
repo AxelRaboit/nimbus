@@ -95,8 +95,8 @@ auth:
     error_email_taken: 'Este correo electrónico ya está en uso.'
     error_password_length: 'La contraseña debe tener al menos 8 caracteres.'
     error_password_mismatch: 'Las contraseñas no coinciden.'
-    closed_title: 'Registros cerrados'
-    closed_desc: 'Los registros están temporalmente desactivados. Por favor, inténtelo más tarde.'
+    closed_title: 'Las inscripciones están cerradas'
+    closed_desc: 'Las inscripciones no están abiertas por el momento. Vuelve más tarde o contacta al administrador.'
 
 profile:
   title: 'Mi perfil'
