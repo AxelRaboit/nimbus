@@ -1,0 +1,28 @@
+{% extends 'base_guest.html.twig' %}
+
+{% block title %}Accès restreint - Nimbus{% endblock %}
+
+{% block content %}
+    <h1 class="text-xl font-bold text-primary mb-6">Accès restreint</h1>
+
+    <form method="POST" action="{{ path('dev_access_check') }}" class="flex flex-col gap-4">
+        <div>
+            {{ include('components/form_input.html.twig', {
+                id: 'password',
+                type: 'password',
+                name: 'password',
+                label: 'Mot de passe',
+                placeholder: '••••••••',
+                value: '',
+                error: error is defined ? error : null,
+                required: true,
+                autofocus: true,
+                autocomplete: 'current-password',
+            }, false) }}
+        </div>
+
+        <button type="submit" class="w-full justify-center inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-500 transition-colors">
+            Accéder
+        </button>
+    </form>
+{% endblock %}
