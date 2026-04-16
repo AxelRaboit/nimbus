@@ -52,7 +52,7 @@
                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                 <span class="text-sm text-secondary">{{ 'auth.login.remember'|trans }}</span>
             </label>
-            <a href="{{ path('app_forgot_password') }}" class="text-sm text-link hover:text-link-hover underline transition-colors">
+            <a href="{{ path('app_forgot_password') }}" class="text-sm text-gray-600 hover:text-gray-900 underline transition-colors">
                 {{ 'auth.login.forgot'|trans }}
             </a>
         </div>
@@ -67,7 +67,7 @@
     {{ include('components/divider_or.html.twig') }}
 
     <div class="mt-4 text-center">
-        <a href="{{ path('app_register') }}" class="text-sm text-link hover:text-link-hover underline transition-colors">
+        <a href="{{ path('app_register') }}" class="text-sm text-gray-600 hover:text-gray-900 underline transition-colors">
             {{ 'auth.login.no_account'|trans }}
         </a>
     </div>

@@ -25,8 +25,6 @@
     --color-secondary:  var(--th-secondary);
     --color-muted:      var(--th-muted);
     --color-subtle:     var(--th-subtle);
-    --color-link:       var(--th-link);
-    --color-link-hover: var(--th-link-hover);
 
     --color-line:        var(--color-border);
     --color-line-strong: var(--color-border-strong);
@@ -56,8 +54,6 @@
     --th-secondary:  rgb(107 114 128);
     --th-muted:      rgb(156 163 175);
     --th-subtle:     rgb(209 213 219);
-    --th-link:       rgb(79  70 229);
-    --th-link-hover: rgb(67  56 202);
 
     --th-badge-danger-bg:    rgb(254 226 226);
     --th-badge-danger-text:  rgb(185  28  28);
@@ -84,8 +80,6 @@
     --th-secondary:  rgb(156 163 175);
     --th-muted:      rgb(107 114 128);
     --th-subtle:     rgb( 75  85  99);
-    --th-link:       rgb(129 140 248);
-    --th-link-hover: rgb(165 180 252);
 
     --th-badge-danger-bg:    rgb(127  29  29);
     --th-badge-danger-text:  rgb(252 165 165);
