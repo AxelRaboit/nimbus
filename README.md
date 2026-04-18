@@ -245,7 +245,7 @@ Lorsque l'accès à Nimbus est protégé par un mot de passe, les visiteurs peuv
 
 ![Limite accordée](docs/readme/screenshots/access_request/05-admin-modale-taille.jpg)
 
-> Ici l'administrateur accorde 500 Mo au lieu du 1 Go demandé.
+> Ici l'administrateur accorde 1 Go (1000 Mo) au lieu des 5 Go demandés.
 
 ![Demande approuvée](docs/readme/screenshots/access_request/06-admin-approuve.jpg)
 
@@ -289,7 +289,7 @@ L'administrateur peut définir une limite de taille de fichier personnalisée po
 
 ![Modale limite saisie](docs/readme/screenshots/user_limits/03-modale-limite-saisie.jpg)
 
-> Ici, l'administrateur fixe une limite de 50 Mo pour cet utilisateur, quelle que soit sa formule.
+> Ici, l'administrateur fixe une limite de 500 Mo pour cet utilisateur, quelle que soit sa formule.
 
 ---
 
@@ -319,6 +319,22 @@ L'administrateur peut définir une limite de taille de fichier personnalisée po
 
 ---
 
+## Formules & Tarifs
+
+![Formules & Tarifs](docs/readme/screenshots/plan.jpg)
+
+> Comparatif Free (0 €/mois — 100 Mo, 3 fichiers, expiration 24h) et Pro (9,99 €/mois — 5 Go, 20 fichiers, expiration 7 jours, accès Mes transferts). Changement de formule possible à tout moment.
+
+---
+
+## Profil
+
+![Profil](docs/readme/screenshots/profil.png)
+
+> Gestion du profil : langue d'affichage, informations personnelles (nom, e-mail), modification du mot de passe et suppression du compte.
+
+---
+
 ## Upload résumable — protocole TUS
 
 ### Sélection des fichiers
@@ -339,7 +355,7 @@ L'administrateur peut définir une limite de taille de fichier personnalisée po
 
 ### Progression par fichier
 
-![Progression upload](docs/readme/screenshots/upload/progression.jpg)
+![Progression upload](docs/readme/screenshots/upload/progression.png)
 
 > La progression est affichée fichier par fichier. Les fichiers déjà uploadés (100%) ne sont pas renvoyés, l'upload reprend à l'offset exact des fichiers en cours.
 
