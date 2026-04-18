@@ -38,23 +38,23 @@ final class TransfersController extends AbstractController
         ]);
     }
 
-    private function serialize(Transfer $t): array
+    private function serialize(Transfer $transfer): array
     {
         return [
-            'id' => $t->getId(),
-            'reference' => $t->getReference(),
-            'ownerToken' => $t->getOwnerToken(),
-            'senderEmail' => $t->getSenderEmail(),
-            'senderName' => $t->getSenderName(),
-            'status' => $t->getStatus()->value,
-            'isExpired' => $t->isExpired(),
-            'expiresAt' => $t->getExpiresAt()->format('c'),
-            'createdAt' => $t->getCreatedAt()->format('c'),
-            'filesCount' => $t->getFiles()->count(),
-            'totalSize' => $t->getTotalFilesSize(),
-            'recipientsCount' => $t->getRecipients()->count(),
-            'downloadedCount' => $t->getRecipients()->filter(fn ($r): bool => $r->hasDownloaded())->count(),
-            'isPasswordProtected' => $t->isPasswordProtected(),
+            'id' => $transfer->getId(),
+            'reference' => $transfer->getReference(),
+            'ownerToken' => $transfer->getOwnerToken(),
+            'senderEmail' => $transfer->getSenderEmail(),
+            'senderName' => $transfer->getSenderName(),
+            'status' => $transfer->getStatus()->value,
+            'isExpired' => $transfer->isExpired(),
+            'expiresAt' => $transfer->getExpiresAt()->format('c'),
+            'createdAt' => $transfer->getCreatedAt()->format('c'),
+            'filesCount' => $transfer->getFiles()->count(),
+            'totalSize' => $transfer->getTotalFilesSize(),
+            'recipientsCount' => $transfer->getRecipients()->count(),
+            'downloadedCount' => $transfer->getRecipients()->filter(fn ($recipient): bool => $recipient->hasDownloaded())->count(),
+            'isPasswordProtected' => $transfer->isPasswordProtected(),
         ];
     }
 }

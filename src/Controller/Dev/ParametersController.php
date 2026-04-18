@@ -32,7 +32,7 @@ final class ParametersController extends AbstractController
             'tab' => 'parameters',
             'parameters' => [
                 'items' => array_map(
-                    fn ($p): array => ['key' => $p->getKey(), 'value' => $p->getValue(), 'description' => $p->getDescription()],
+                    fn ($parameter): array => ['key' => $parameter->getKey(), 'value' => $parameter->getValue(), 'description' => $parameter->getDescription()],
                     $result['items']
                 ),
                 'total' => $result['total'],

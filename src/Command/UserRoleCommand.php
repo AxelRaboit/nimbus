@@ -37,7 +37,7 @@ class UserRoleCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $symfonyStyle = new SymfonyStyle($input, $output);
 
         $email = $input->getArgument('email');
         $role = mb_strtoupper((string) $input->getArgument('role'));
@@ -45,7 +45,7 @@ class UserRoleCommand extends Command
         $user = $this->userRepository->findOneBy(['email' => $email]);
 
         if (!$user instanceof User) {
-            $io->error(sprintf('User "%s" not found.', $email));
+            $symfonyStyle->error(sprintf('User "%s" not found.', $email));
 
             return Command::FAILURE;
         }
@@ -53,11 +53,11 @@ class UserRoleCommand extends Command
         $roles = $user->getRoles();
         if (!in_array($role, $roles, true)) {
             $roles[] = $role;
-            $user->setRoles(array_values(array_filter($roles, fn ($r): bool => UserRoleEnum::User->value !== $r)));
+            $user->setRoles(array_values(array_filter($roles, fn ($storedRole): bool => UserRoleEnum::User->value !== $storedRole)));
             $this->entityManager->flush();
         }
 
-        $io->success(sprintf('Role %s assigned to %s', $role, $email));
+        $symfonyStyle->success(sprintf('Role %s assigned to %s', $role, $email));
 
         return Command::SUCCESS;
     }

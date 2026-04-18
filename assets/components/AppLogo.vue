@@ -5,8 +5,8 @@ defineProps({
     size: { type: Number, default: 40 },
 });
 
-const uid = getCurrentInstance().uid;
-const gradientId = `nimbus-bg-${uid}`;
+const instanceUid = getCurrentInstance().uid;
+const gradientId = `nimbus-bg-${instanceUid}`;
 </script>
 
 <template>

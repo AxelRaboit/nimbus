@@ -33,10 +33,10 @@ function getUnits(locale) {
  * @returns {string} Formatted size (e.g. "500 Mo" or "10 Go")
  */
 export function formatFileSize(mb, locale) {
-    const num = Number(mb);
+    const numericValue = Number(mb);
     const units = getUnits(locale);
-    if (num >= 1000) {
-        return `${(num / 1000).toFixed(1).replace(/\.0$/, "")} ${units.gb}`;
+    if (numericValue >= 1000) {
+        return `${(numericValue / 1000).toFixed(1).replace(/\.0$/, "")} ${units.gb}`;
     }
-    return `${Math.round(num)} ${units.mb}`;
+    return `${Math.round(numericValue)} ${units.mb}`;
 }

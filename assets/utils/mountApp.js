@@ -8,19 +8,19 @@ import { createAppI18n } from "@/i18n.js";
  * @param {function} [transformProps] - Optional function to transform el.dataset into component props
  */
 export function mountApp(elementId, component, transformProps) {
-    const el = document.getElementById(elementId);
-    if (el) {
-        const locale = el.dataset.locale || "fr";
+    const mountElement = document.getElementById(elementId);
+    if (mountElement) {
+        const locale = mountElement.dataset.locale || "fr";
         let props;
 
         if (transformProps) {
-            props = transformProps(el.dataset);
+            props = transformProps(mountElement.dataset);
         } else {
             // Convert string values to appropriate types
             props = {};
-            for (const [key, value] of Object.entries(el.dataset).filter(
-                ([k]) => k !== "locale",
-            )) {
+            for (const [key, value] of Object.entries(
+                mountElement.dataset,
+            ).filter(([k]) => k !== "locale")) {
                 if (value === "true" || value === "false") {
                     props[key] = value === "true";
                 } else if (!isNaN(value) && value !== "") {
@@ -31,6 +31,8 @@ export function mountApp(elementId, component, transformProps) {
             }
         }
 
-        createApp(component, props).use(createAppI18n(locale)).mount(el);
+        createApp(component, props)
+            .use(createAppI18n(locale))
+            .mount(mountElement);
     }
 }

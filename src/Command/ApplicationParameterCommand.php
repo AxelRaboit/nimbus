@@ -36,29 +36,29 @@ class ApplicationParameterCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $symfonyStyle = new SymfonyStyle($input, $output);
         $dryRun = (bool) $input->getOption('dry-run');
 
         if ($dryRun) {
-            $io->note('Mode dry-run — aucun changement ne sera enregistré.');
+            $symfonyStyle->note('Mode dry-run — aucun changement ne sera enregistré.');
         }
 
         $enumCases = NimbusApplicationParameterEnum::cases();
-        $enumKeys = array_map(fn ($c): string => $c->getKey(), $enumCases);
+        $enumKeys = array_map(fn ($enumCase): string => $enumCase->getKey(), $enumCases);
         $existing = [];
 
         foreach ($this->repository->findAll() as $param) {
             $existing[$param->getKey()] = $param;
         }
 
-        $created = $this->createMissing($enumCases, $existing, $io, $dryRun);
-        $deleted = $this->deleteObsolete($enumKeys, $existing, $io, $dryRun);
+        $created = $this->createMissing($enumCases, $existing, $symfonyStyle, $dryRun);
+        $deleted = $this->deleteObsolete($enumKeys, $existing, $symfonyStyle, $dryRun);
 
         if (!$dryRun) {
             $this->entityManager->flush();
         }
 
-        $io->success(sprintf('%d créé(s), %d supprimé(s).', $created, $deleted));
+        $symfonyStyle->success(sprintf('%d créé(s), %d supprimé(s).', $created, $deleted));
 
         return Command::SUCCESS;
     }
@@ -67,17 +67,17 @@ class ApplicationParameterCommand extends Command
      * @param NimbusApplicationParameterEnum[]    $enumCases
      * @param array<string, ApplicationParameter> $existing
      */
-    private function createMissing(array $enumCases, array $existing, SymfonyStyle $io, bool $dryRun): int
+    private function createMissing(array $enumCases, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {
         $created = 0;
 
         foreach ($enumCases as $case) {
             if (isset($existing[$case->getKey()])) {
-                $this->syncDescription($case, $existing[$case->getKey()], $io, $dryRun);
+                $this->syncDescription($case, $existing[$case->getKey()], $symfonyStyle, $dryRun);
                 continue;
             }
 
-            $io->writeln(sprintf('  <info>+</info> %s (défaut : %s)', $case->getKey(), $case->getDefaultValue()));
+            $symfonyStyle->writeln(sprintf('  <info>+</info> %s (défaut : %s)', $case->getKey(), $case->getDefaultValue()));
             ++$created;
 
             if (!$dryRun) {
@@ -88,13 +88,13 @@ class ApplicationParameterCommand extends Command
         return $created;
     }
 
-    private function syncDescription(NimbusApplicationParameterEnum $case, ApplicationParameter $param, SymfonyStyle $io, bool $dryRun): void
+    private function syncDescription(NimbusApplicationParameterEnum $case, ApplicationParameter $param, SymfonyStyle $symfonyStyle, bool $dryRun): void
     {
         if ($param->getDescription() === $case->getDescription()) {
             return;
         }
 
-        $io->writeln(sprintf('  <comment>~</comment> %s (description mise à jour)', $case->getKey()));
+        $symfonyStyle->writeln(sprintf('  <comment>~</comment> %s (description mise à jour)', $case->getKey()));
 
         if (!$dryRun) {
             $param->setDescription($case->getDescription());
@@ -105,7 +105,7 @@ class ApplicationParameterCommand extends Command
      * @param string[]                            $enumKeys
      * @param array<string, ApplicationParameter> $existing
      */
-    private function deleteObsolete(array $enumKeys, array $existing, SymfonyStyle $io, bool $dryRun): int
+    private function deleteObsolete(array $enumKeys, array $existing, SymfonyStyle $symfonyStyle, bool $dryRun): int
     {
         $deleted = 0;
 
@@ -114,7 +114,7 @@ class ApplicationParameterCommand extends Command
                 continue;
             }
 
-            $io->writeln(sprintf('  <fg=red>-</fg=red> %s (obsolète)', $key));
+            $symfonyStyle->writeln(sprintf('  <fg=red>-</fg=red> %s (obsolète)', $key));
             ++$deleted;
 
             if (!$dryRun) {

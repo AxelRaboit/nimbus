@@ -146,8 +146,8 @@ final readonly class TransferManager
         // Clean up local directory (also handles orphan files not tracked in DB)
         $storageDir = sprintf('%s/%s', $this->transferStoragePath, $transfer->getToken());
         if (is_dir($storageDir)) {
-            foreach (glob(sprintf('%s/*', $storageDir)) ?: [] as $f) {
-                @unlink($f);
+            foreach (glob(sprintf('%s/*', $storageDir)) ?: [] as $filePath) {
+                @unlink($filePath);
             }
 
             rmdir($storageDir);

@@ -8,36 +8,43 @@ function currentTheme() {
         : "light";
 }
 
-function applyTheme(t) {
-    const el = document.documentElement;
-    el.classList.add("theme-transitioning");
-    el.classList.toggle("dark", t === "dark");
-    localStorage.setItem(THEME_KEY, t);
-    window.setTimeout(() => el.classList.remove("theme-transitioning"), 300);
+function applyTheme(theme) {
+    const htmlElement = document.documentElement;
+    htmlElement.classList.add("theme-transitioning");
+    htmlElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem(THEME_KEY, theme);
+    window.setTimeout(
+        () => htmlElement.classList.remove("theme-transitioning"),
+        300,
+    );
 }
 
 function initThemeToggle() {
-    const btn = document.getElementById("theme-toggle");
-    const btnMobile = document.getElementById("theme-toggle-mobile");
+    const button = document.getElementById("theme-toggle");
+    const mobileButton = document.getElementById("theme-toggle-mobile");
 
     function render() {
         const dark = currentTheme() === "dark";
         [
-            [btn, ".icon-moon", ".icon-sun", ".theme-label"],
+            [button, ".icon-moon", ".icon-sun", ".theme-label"],
             [
-                btnMobile,
+                mobileButton,
                 ".icon-moon-mobile",
                 ".icon-sun-mobile",
                 ".theme-label-mobile",
             ],
-        ].forEach(([b, moonSel, sunSel, labelSel]) => {
-            if (!b) return;
-            b.querySelector(moonSel).style.display = dark ? "none" : "";
-            b.querySelector(sunSel).style.display = dark ? "" : "none";
-            b.querySelectorAll(labelSel).forEach((el) => {
-                el.textContent = dark
-                    ? b.dataset.labelDark
-                    : b.dataset.labelLight;
+        ].forEach(([buttonElement, moonSel, sunSel, labelSel]) => {
+            if (!buttonElement) return;
+            buttonElement.querySelector(moonSel).style.display = dark
+                ? "none"
+                : "";
+            buttonElement.querySelector(sunSel).style.display = dark
+                ? ""
+                : "none";
+            buttonElement.querySelectorAll(labelSel).forEach((labelElement) => {
+                labelElement.textContent = dark
+                    ? buttonElement.dataset.labelDark
+                    : buttonElement.dataset.labelLight;
             });
         });
     }
@@ -47,8 +54,8 @@ function initThemeToggle() {
         render();
     }
 
-    btn?.addEventListener("click", toggle);
-    btnMobile?.addEventListener("click", toggle);
+    button?.addEventListener("click", toggle);
+    mobileButton?.addEventListener("click", toggle);
 
     render();
 }
@@ -56,7 +63,7 @@ function initThemeToggle() {
 // ── Language switcher ─────────────────────────────────────────────────────────
 
 function initLangSwitcher() {
-    const btn =
+    const langButton =
         document.getElementById("sidebar-lang-btn") ||
         document.getElementById("lang-btn");
     const dropdown =
@@ -65,7 +72,7 @@ function initLangSwitcher() {
     const chevron =
         document.getElementById("sidebar-lang-chevron") ||
         document.getElementById("lang-chevron");
-    if (!btn || !dropdown) return;
+    if (!langButton || !dropdown) return;
 
     function open() {
         dropdown.classList.remove("hidden");
@@ -77,16 +84,16 @@ function initLangSwitcher() {
         if (chevron) chevron.style.transform = "";
     }
 
-    btn.addEventListener("click", (e) => {
-        e.stopPropagation();
+    langButton.addEventListener("click", (event) => {
+        event.stopPropagation();
         dropdown.classList.contains("hidden") ? open() : close();
     });
 
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", (event) => {
         const switcher =
             document.getElementById("sidebar-lang-switcher") ||
             document.getElementById("lang-switcher");
-        if (!switcher?.contains(e.target)) close();
+        if (!switcher?.contains(event.target)) close();
     });
 
     dropdown.querySelectorAll(".lang-option").forEach((option) => {

@@ -20,17 +20,17 @@ export function useForm() {
      * @returns {boolean} true if no errors
      */
     function validate(checks) {
-        const e = {};
+        const validationErrors = {};
         for (const [field, check] of Object.entries(checks)) {
             const error = check();
-            if (error) e[field] = error;
+            if (error) validationErrors[field] = error;
         }
-        errors.value = e;
-        return Object.keys(e).length === 0;
+        errors.value = validationErrors;
+        return Object.keys(validationErrors).length === 0;
     }
 
-    function setErrors(e) {
-        errors.value = e;
+    function setErrors(newErrors) {
+        errors.value = newErrors;
     }
 
     function clearErrors() {

@@ -70,18 +70,18 @@ final class AccessRequestsController extends AbstractController
         return $this->redirectToRoute('dev_access_requests');
     }
 
-    private function serialize(AccessRequest $r): array
+    private function serialize(AccessRequest $accessRequest): array
     {
         return [
-            'id' => $r->getId(),
-            'requesterEmail' => $r->getRequesterEmail(),
-            'requesterName' => $r->getRequesterName(),
-            'message' => $r->getMessage(),
-            'status' => $r->getStatus()->value,
-            'expiresAt' => $r->getExpiresAt()->format('c'),
-            'createdAt' => $r->getCreatedAt()->format('c'),
-            'requestedFileSizeMb' => $r->getRequestedFileSizeMb(),
-            'grantedFileSizeMb' => $r->getGrantedFileSizeMb(),
+            'id' => $accessRequest->getId(),
+            'requesterEmail' => $accessRequest->getRequesterEmail(),
+            'requesterName' => $accessRequest->getRequesterName(),
+            'message' => $accessRequest->getMessage(),
+            'status' => $accessRequest->getStatus()->value,
+            'expiresAt' => $accessRequest->getExpiresAt()->format('c'),
+            'createdAt' => $accessRequest->getCreatedAt()->format('c'),
+            'requestedFileSizeMb' => $accessRequest->getRequestedFileSizeMb(),
+            'grantedFileSizeMb' => $accessRequest->getGrantedFileSizeMb(),
         ];
     }
 }
