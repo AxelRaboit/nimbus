@@ -8,6 +8,8 @@ import {
 } from "chart.js";
 import { Bar, Line, Doughnut } from "vue-chartjs";
 import { useFileSize } from "@/composables/useFileSize.js";
+import { useDateFormat } from "@/composables/useDateFormat.js";
+import { submitForm } from "@/utils/formSubmit.js";
 import {
     Users, ArrowUpRight, FileStack, Activity,
     ExternalLink,
@@ -21,6 +23,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointEleme
 
 const { t: translate, locale } = useI18n();
 const { formatSize } = useFileSize();
+const { formatDateShort, formatMonth } = useDateFormat();
 
 const props = defineProps({
     tab:                  { type: String, default: "stats" },
@@ -48,23 +51,17 @@ const props = defineProps({
     csrfToken:                   { type: String, default: "" },
 });
 
-// ── Parsed data ──────────────────────────────────────────────────────────────
-
 const parsedStats = computed(() => { try { return JSON.parse(props.stats); } catch { return {}; } });
 const parsedTransfers = computed(() => { try { return JSON.parse(props.transfers); } catch { return {}; } });
 const parsedUsers = computed(() => { try { return JSON.parse(props.users); } catch { return {}; } });
 const parsedParameters = computed(() => { try { return JSON.parse(props.parameters); } catch { return {}; } });
 const parsedAccessRequests = computed(() => { try { return JSON.parse(props.accessRequests); } catch { return {}; } });
 
-// ── Tab nav scroll ───────────────────────────────────────────────────────────
-
 const tabNav = ref(null);
 onMounted(() => {
     const active = tabNav.value?.querySelector('[aria-current="page"]');
     active?.scrollIntoView({ block: 'nearest', inline: 'center' });
 });
-
-// ── Charts ───────────────────────────────────────────────────────────────────
 
 const isDark = ref(document.documentElement.classList.contains("dark"));
 const textColor = computed(() => isDark.value ? "#94a3b8" : "#64748b");
@@ -87,22 +84,14 @@ const donutOpts = computed(() => ({
     plugins: { legend: { position: "bottom", labels: { color: textColor.value, padding: 14, boxWidth: 12 } } },
 }));
 
-function fmtMonth(yyyyMm) {
-    const [y, m] = yyyyMm.split("-");
-    return new Intl.DateTimeFormat(locale.value, { month: "short", year: "2-digit" }).format(new Date(+y, +m - 1));
-}
-
-function fmtDate(iso) {
-    return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
-}
 
 const usersLineData = computed(() => ({
-    labels: parsedStats.value.usersByMonth?.map(m => fmtMonth(m.month)) ?? [],
+    labels: parsedStats.value.usersByMonth?.map(m => formatMonth(m.month)) ?? [],
     datasets: [{ data: parsedStats.value.usersByMonth?.map(m => m.count) ?? [], borderColor: "#6366f1", backgroundColor: "rgba(99,102,241,0.12)", borderWidth: 2, pointRadius: 3, tension: 0.4, fill: true }],
 }));
 
 const transfersBarData = computed(() => ({
-    labels: parsedStats.value.transfersByMonth?.map(m => fmtMonth(m.month)) ?? [],
+    labels: parsedStats.value.transfersByMonth?.map(m => formatMonth(m.month)) ?? [],
     datasets: [{ data: parsedStats.value.transfersByMonth?.map(m => m.count) ?? [], backgroundColor: "#6366f1", borderRadius: 6 }],
 }));
 
@@ -113,8 +102,6 @@ const statusDonutData = computed(() => {
     return { labels: entries.map(([k]) => k), datasets: [{ data: entries.map(([, v]) => v), backgroundColor: entries.map(([k]) => statusColors[k] ?? "#6b7280"), borderWidth: 0 }] };
 });
 const hasStatusData = computed(() => Object.values(parsedStats.value.transfers?.byStatus ?? {}).some(v => v > 0));
-
-// ── Transfers tab ────────────────────────────────────────────────────────────
 
 const currentStatus = ref(props.status);
 const statusBadge = { ready: "bg-badge-success-bg text-badge-success-text", pending: "bg-badge-warning-bg text-badge-warning-text", expired: "bg-surface-2 text-muted", deleted: "bg-badge-danger-bg text-badge-danger-text" };
@@ -140,8 +127,6 @@ function parametersUrl(page) {
     return urlObject.toString();
 }
 
-// ── Parameters tab ───────────────────────────────────────────────────────────
-
 const editingKey = ref(null);
 const editingValue = ref("");
 const editSaving = ref(false);
@@ -159,8 +144,6 @@ async function saveEdit(param) {
     } finally { editSaving.value = false; }
 }
 
-// ── Users tab ────────────────────────────────────────────────────────────────
-
 const searchInput = ref(props.search);
 
 function performSearch() {
@@ -172,34 +155,13 @@ function performSearch() {
 const pendingDelete = ref(null);
 const pendingToggleRole = ref(null);
 
-function submitForm(action, extraFields = {}) {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = action;
-    const csrf = document.createElement("input");
-    csrf.type = "hidden";
-    csrf.name = "_token";
-    csrf.value = props.csrfToken;
-    form.appendChild(csrf);
-    for (const [name, value] of Object.entries(extraFields)) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = value ?? "";
-        form.appendChild(input);
-    }
-    document.body.appendChild(form);
-    form.submit();
-}
 
 function confirmDelete(user) { pendingDelete.value = user; }
 function doDelete() {
     if (!pendingDelete.value) return;
-    submitForm(props.userDeletePath.replace("__id__", pendingDelete.value.id));
+    submitForm(props.userDeletePath.replace("__id__", pendingDelete.value.id), props.csrfToken);
     pendingDelete.value = null;
 }
-
-// ── Access requests tab ───────────────────────────────────────────────────────
 
 const statusBadgeAR = {
     pending: "bg-badge-warning-bg text-badge-warning-text",
@@ -216,7 +178,7 @@ const statusLabelAR = {
 const confirmPurge = ref(false);
 
 function doPurgeApproved() {
-    submitForm(props.accessRequestPurgeApprovedPath);
+    submitForm(props.accessRequestPurgeApprovedPath, props.csrfToken);
     confirmPurge.value = false;
 }
 
@@ -239,6 +201,7 @@ function doApproveRequest() {
     if (!pendingApprove.value) return;
     submitForm(
         props.accessRequestApprovePath.replace("__id__", pendingApprove.value.id),
+        props.csrfToken,
         { granted_file_size_mb: approveGrantedSize.value ?? "" },
     );
     pendingApprove.value = null;
@@ -246,7 +209,7 @@ function doApproveRequest() {
 
 function doRejectRequest() {
     if (!pendingReject.value) return;
-    submitForm(props.accessRequestRejectPath.replace("__id__", pendingReject.value.id));
+    submitForm(props.accessRequestRejectPath.replace("__id__", pendingReject.value.id), props.csrfToken);
     pendingReject.value = null;
 }
 
@@ -262,6 +225,7 @@ function doUpdateCustomSize() {
     if (!pendingCustomSize.value) return;
     submitForm(
         props.userCustomFileSizePath.replace("__id__", pendingCustomSize.value.id),
+        props.csrfToken,
         { custom_file_size_mb: pendingCustomSizeValue.value ?? "" },
     );
     pendingCustomSize.value = null;
@@ -270,11 +234,9 @@ function doUpdateCustomSize() {
 function confirmToggleRole(user) { pendingToggleRole.value = user; }
 function doToggleRole() {
     if (!pendingToggleRole.value) return;
-    submitForm(props.userToggleRolePath.replace("__id__", pendingToggleRole.value.id));
+    submitForm(props.userToggleRolePath.replace("__id__", pendingToggleRole.value.id), props.csrfToken);
     pendingToggleRole.value = null;
 }
-
-// ── Invitations tab ──────────────────────────────────────────────────────────
 
 const invitationEmail = ref("");
 const invitationMessage = ref("");
@@ -408,7 +370,6 @@ function submitInvitation() {
             </div>
         </div>
 
-        <!-- Users tab -->
         <div v-else-if="tab === 'users'" class="space-y-4">
             <div class="flex flex-col sm:flex-row gap-2">
                 <input
@@ -423,7 +384,6 @@ function submitInvitation() {
                 </button>
             </div>
 
-            <!-- Mobile cards -->
             <div class="sm:hidden space-y-3">
                 <AppNoData v-if="!parsedUsers.items?.length" :message="translate('admin.users.noResults')" />
                 <div v-for="user in parsedUsers.items" :key="user.id" class="bg-surface border border-line rounded-lg p-4 space-y-3">
@@ -442,7 +402,7 @@ function submitInvitation() {
                         <span v-if="user.isCapped" class="text-amber-400 font-medium ml-1">→ {{ user.effectiveFileSizeMb >= 1000 ? (user.effectiveFileSizeMb / 1000).toFixed(1) + ' Go' : user.effectiveFileSizeMb + ' Mo' }} (cappé)</span>
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-line">
-                        <p class="text-xs text-muted">{{ fmtDate(user.createdAt) }}</p>
+                        <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
                         <div class="flex items-center gap-1">
                             <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" title="Limite de taille" v-on:click="openCustomSizeModal(user)">
                                 <HardDrive class="w-4 h-4" :stroke-width="2" />
@@ -496,7 +456,7 @@ function submitInvitation() {
                                 </template>
                                 <span v-else class="text-xs text-muted">—</span>
                             </td>
-                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ fmtDate(user.createdAt) }}</td>
+                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-1">
                                     <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" title="Limite de taille" v-on:click="openCustomSizeModal(user)">
@@ -742,7 +702,7 @@ function submitInvitation() {
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-line text-xs text-muted">
                         <span>{{ tr.filesCount }} fichier{{ tr.filesCount > 1 ? 's' : '' }} · {{ formatSize(tr.totalSize) }} · {{ tr.downloadedCount }}/{{ tr.recipientsCount }}</span>
-                        <span>expire {{ fmtDate(tr.expiresAt) }}</span>
+                        <span>expire {{ formatDateShort(tr.expiresAt) }}</span>
                     </div>
                 </div>
                 <AppPagination
@@ -787,8 +747,8 @@ function submitInvitation() {
                             </td>
                             <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ tr.filesCount }} · {{ formatSize(tr.totalSize) }}</td>
                             <td class="px-4 py-3 text-secondary hidden md:table-cell">{{ tr.downloadedCount }}/{{ tr.recipientsCount }}</td>
-                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ fmtDate(tr.expiresAt) }}</td>
-                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ fmtDate(tr.createdAt) }}</td>
+                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(tr.expiresAt) }}</td>
+                            <td class="px-4 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(tr.createdAt) }}</td>
                             <td class="px-4 py-3">
                                 <a :href="`/manage/${tr.ownerToken}`" target="_blank" class="p-1.5 text-muted hover:text-primary transition-colors inline-flex">
                                     <ExternalLink class="w-3.5 h-3.5" :stroke-width="2" />
@@ -841,7 +801,7 @@ function submitInvitation() {
                         <span v-if="accessRequest.grantedFileSizeMb">Accordé : <strong class="text-emerald-400">{{ accessRequest.grantedFileSizeMb >= 1000 ? (accessRequest.grantedFileSizeMb / 1000).toFixed(1) + ' Go' : accessRequest.grantedFileSizeMb + ' Mo' }}</strong></span>
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-line">
-                        <p class="text-xs text-muted">{{ fmtDate(accessRequest.createdAt) }} · expire {{ fmtDate(accessRequest.expiresAt) }}</p>
+                        <p class="text-xs text-muted">{{ formatDateShort(accessRequest.createdAt) }} · expire {{ formatDateShort(accessRequest.expiresAt) }}</p>
                         <div v-if="accessRequest.status === 'pending'" class="flex items-center gap-1">
                             <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" title="Approuver" v-on:click="openApproveModal(accessRequest)">
                                 <Check class="w-4 h-4" :stroke-width="2" />
@@ -897,8 +857,8 @@ function submitInvitation() {
                                     {{ statusLabelAR[accessRequest.status] ?? accessRequest.status }}
                                 </span>
                             </td>
-                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ fmtDate(accessRequest.createdAt) }}</td>
-                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ fmtDate(accessRequest.expiresAt) }}</td>
+                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.createdAt) }}</td>
+                            <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(accessRequest.expiresAt) }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-1">
                                     <template v-if="accessRequest.status === 'pending'">

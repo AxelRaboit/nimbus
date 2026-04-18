@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { UploadCloud, FileText, X, AlertCircle, FolderOpen } from "lucide-vue-next";
 import { useFileSize } from "@/composables/useFileSize.js";
-import { ALLOWED_EXTENSIONS, ALLOWED_EXTENSIONS_ACCEPT } from "@/utils/allowedExtensions.js";
+import { ALLOWED_EXTENSIONS_ACCEPT, isAllowedExt } from "@/utils/allowedExtensions.js";
 import { getDisallowedZipFiles } from "@/utils/zipValidator.js";
 
 const { t: translate } = useI18n();
@@ -18,11 +18,6 @@ const { formatSize } = useFileSize();
 const isDragging  = ref(false);
 const dropErrors  = ref([]);
 
-function isAllowedExt(name) {
-    const dotIndex = name.lastIndexOf(".");
-    const ext = dotIndex !== -1 ? name.slice(dotIndex).toLowerCase() : "";
-    return { ext, allowed: ALLOWED_EXTENSIONS.includes(ext) };
-}
 
 function wrapWithPath(file, path) {
     if (!path || path === file.name) return file;

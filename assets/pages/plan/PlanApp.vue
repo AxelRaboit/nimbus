@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { Check, X, Sparkles } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 import { formatFileSize } from "@/utils/validation.js";
+import { submitForm } from "@/utils/formSubmit.js";
 
 const { t, locale } = useI18n();
 
@@ -30,27 +31,14 @@ const trialEndsAtFormatted = computed(() => {
     return new Intl.DateTimeFormat(locale.value, { day: "numeric", month: "long", year: "numeric" }).format(new Date(props.trialEndsAt));
 });
 
-function submitForm(path) {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = path;
-    const token = document.createElement("input");
-    token.type  = "hidden";
-    token.name  = "_token";
-    token.value = props.csrfToken;
-    form.appendChild(token);
-    document.body.appendChild(form);
-    form.submit();
-}
-
 function upgrade() {
     upgradeLoading.value = true;
-    submitForm(props.upgradePath);
+    submitForm(props.upgradePath, props.csrfToken);
 }
 
 function downgrade() {
     downgradeLoading.value = true;
-    submitForm(props.downgradePath);
+    submitForm(props.downgradePath, props.csrfToken);
 }
 </script>
 

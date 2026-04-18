@@ -8,11 +8,13 @@ import UploadProgress from "./components/UploadProgress.vue";
 import TransferSuccess from "./components/TransferSuccess.vue";
 import AppButton from "@/components/AppButton.vue";
 import { useTransferDraft } from "@/composables/useTransferDraft.js";
-import { formatFileSize } from "@/utils/validation.js";
+import { formatFileSize, normalizeServerErrors } from "@/utils/validation.js";
 
 
 const { t: translate, locale } = useI18n();
 const { saveDraft, getDraft, clearDraft, clearTusFingerprints } = useTransferDraft();
+
+const transferServerErrors = ref({});
 
 const props = defineProps({
     userEmail:              { type: String, default: "" },
@@ -220,6 +222,10 @@ async function onFormSubmit(formData) {
         });
         if (!response.ok) {
             const data = await response.json().catch(() => ({}));
+            if (response.status === 422 && data.errors) {
+                transferServerErrors.value = normalizeServerErrors(data.errors);
+                return;
+            }
             throw new Error(data.error || `Erreur serveur (${response.status})`);
         }
         const data = await response.json();
@@ -435,6 +441,7 @@ function reset() {
             <TransferForm
                 v-if="step === 'form'"
                 :key="formKey"
+                :server-errors="transferServerErrors"
                 :prefill-email="props.userEmail"
                 :draft="resumeDraft"
                 :max-files="Number(props.maxFiles)"

@@ -6,6 +6,7 @@ import AppButton from "@/components/AppButton.vue";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { useDateFormat } from "@/composables/useDateFormat.js";
 import { isImage, isPdf, isPreviewable } from "@/utils/mimeTypes.js";
+import { fileDownloadUrl, filePreviewUrl } from "@/utils/routes.js";
 
 const { t } = useI18n();
 const { formatSize } = useFileSize();
@@ -24,13 +25,8 @@ const expiresDate = computed(() => formatDate(props.expiresAt));
 const totalSize = computed(() => parsedFiles.value.reduce((acc, f) => acc + f.size, 0));
 const downloadUrl = computed(() => `/t/${props.token}/download`);
 
-function fileDownloadUrl(filename) {
-    return `/t/${props.token}/download/${filename}`;
-}
-
-function filePreviewUrl(filename) {
-    return `/t/${props.token}/preview/${filename}`;
-}
+const fileDownload = (filename) => fileDownload(props.token, filename);
+const filePreview  = (filename) => filePreview(props.token, filename);
 
 
 const previewFile = ref(null);
@@ -78,7 +74,7 @@ if (typeof window !== "undefined") {
                             v-on:click="openPreview(file)"
                         >
                             <img
-                                :src="filePreviewUrl(file.filename)"
+                                :src="filePreview(file.filename)"
                                 :alt="file.name"
                                 class="w-full max-h-48 object-cover hover:opacity-90 transition-opacity"
                                 loading="lazy"
@@ -104,7 +100,7 @@ if (typeof window !== "undefined") {
                                     <Eye class="w-4 h-4" :stroke-width="2" />
                                 </button>
                                 <a
-                                    :href="fileDownloadUrl(file.filename)"
+                                    :href="fileDownload(file.filename)"
                                     class="p-2 text-muted hover:text-primary transition-colors"
                                     :title="t('transfer.show.download')"
                                 >
@@ -150,13 +146,13 @@ if (typeof window !== "undefined") {
                     <div class="relative overflow-hidden rounded-b-xl bg-black/50 flex items-center justify-center" style="max-height: calc(90vh - 52px)">
                         <img
                             v-if="isImage(previewFile.mimeType)"
-                            :src="filePreviewUrl(previewFile.filename)"
+                            :src="filePreview(previewFile.filename)"
                             :alt="previewFile.name"
                             class="max-w-full max-h-full object-contain"
                         >
                         <iframe
                             v-else-if="isPdf(previewFile.mimeType)"
-                            :src="filePreviewUrl(previewFile.filename)"
+                            :src="filePreview(previewFile.filename)"
                             class="w-full bg-white rounded-b-xl"
                             style="height: calc(90vh - 52px)"
                         />

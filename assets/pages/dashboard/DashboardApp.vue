@@ -5,6 +5,8 @@ import { Check, FileText, Settings, UploadCloud } from "lucide-vue-next";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { useDateFormat } from "@/composables/useDateFormat.js";
 import AppButton from "@/components/AppButton.vue";
+import { manageUrl, } from "@/utils/routes.js";
+import { downloadedCount, totalSize } from "@/utils/transferHelpers.js";
 
 const { t: translate } = useI18n();
 const { formatSize } = useFileSize();
@@ -54,17 +56,6 @@ const statusClass = {
     deleted: "bg-badge-danger-bg text-badge-danger-text",
 };
 
-function manageUrl(ownerToken) {
-    return `/manage/${ownerToken}`;
-}
-
-function downloadedCount(recipients) {
-    return recipients.filter((recipient) => recipient.downloaded).length;
-}
-
-function totalSize(files) {
-    return files.reduce((acc, file) => acc + file.size, 0);
-}
 </script>
 
 <template>

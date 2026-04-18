@@ -7,10 +7,6 @@ namespace App\Controller\Api;
 use App\Entity\Transfer;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
-use App\Exception\DisallowedFileTypeException;
-use App\Exception\DisallowedZipContentException;
-use App\Exception\FileLimitExceededException;
-use App\Exception\SizeLimitExceededException;
 use App\Manager\TransferManager;
 use App\Model\Pagination;
 use App\Repository\TransferRepository;
@@ -21,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -56,7 +53,12 @@ class TransferApiController extends AbstractController
         ValidatorInterface $validator,
         TransferManager $transferManager,
         PlanService $planService,
+        RateLimiterFactoryInterface $transferCreateLimiter,
     ): JsonResponse {
+        if (!$transferCreateLimiter->create($request->getClientIp())->consume()->isAccepted()) {
+            return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         $data = json_decode($request->getContent(), true);
 
         $maxRecipients = $planService->getProMaxRecipients();
@@ -117,7 +119,12 @@ class TransferApiController extends AbstractController
         Request $request,
         TransferRepository $transferRepository,
         TransferManager $transferManager,
+        RateLimiterFactoryInterface $transferFinalizeLimiter,
     ): JsonResponse {
+        if (!$transferFinalizeLimiter->create($request->getClientIp())->consume()->isAccepted()) {
+            return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         $transfer = $transferRepository->findByToken($token);
 
         if (!$transfer instanceof Transfer) {
@@ -136,16 +143,7 @@ class TransferApiController extends AbstractController
             return $this->json(['error' => 'No upload keys provided'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        try {
-            $transferManager->finalize($transfer, $uploadKeys, $plainPassword);
-        } catch (FileLimitExceededException|SizeLimitExceededException|DisallowedFileTypeException $exception) {
-            return $this->json(['error' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (DisallowedZipContentException $exception) {
-            return $this->json(
-                ['error' => 'zip_content_not_allowed', 'disallowed_files' => $exception->getDisallowedFiles()],
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-            );
-        }
+        $transferManager->finalize($transfer, $uploadKeys, $plainPassword);
 
         return $this->json([
             'status' => $transfer->getStatus()->value,
