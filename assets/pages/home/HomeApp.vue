@@ -490,19 +490,8 @@ function reset() {
                     </div>
 
                     <div class="px-6 pb-6 flex flex-col gap-2">
-                        <a
-                            :href="loginPath"
-                            class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
-                        >
-                            Se connecter
-                        </a>
-                        <a
-                            v-if="registrationEnabled"
-                            :href="registerPath"
-                            class="w-full flex items-center justify-center gap-2 bg-surface-2 hover:bg-surface-3 text-primary text-sm font-medium px-4 py-2.5 rounded-xl transition-colors"
-                        >
-                            Créer un compte
-                        </a>
+                        <AppButton :href="loginPath" class="w-full">Se connecter</AppButton>
+                        <AppButton v-if="registrationEnabled" :href="registerPath" variant="secondary" class="w-full">Créer un compte</AppButton>
                         <button
                             class="text-xs text-muted hover:text-secondary transition-colors mt-1"
                             v-on:click="dismissGuestModal"

@@ -122,12 +122,10 @@ if (typeof window !== "undefined") {
                         </p>
                         <p class="text-sm font-bold text-primary">{{ formatSize(totalSize) }}</p>
                     </div>
-                    <a :href="downloadUrl">
-                        <AppButton size="md">
-                            <Download class="w-4 h-4" :stroke-width="2" />
-                            {{ parsedFiles.length > 1 ? t('transfer.show.download_all') : t('transfer.show.download') }}
-                        </AppButton>
-                    </a>
+                    <AppButton :href="downloadUrl" size="md">
+                        <Download class="w-4 h-4" :stroke-width="2" />
+                        {{ parsedFiles.length > 1 ? t('transfer.show.download_all') : t('transfer.show.download') }}
+                    </AppButton>
                 </div>
             </div>
         </div>

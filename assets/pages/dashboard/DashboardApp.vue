@@ -85,9 +85,7 @@ function totalSize(files) {
                 <p class="text-sm font-medium text-primary">{{ t('dashboard.empty_title') }}</p>
                 <p class="text-xs text-muted mt-1">{{ t('dashboard.empty_desc') }}</p>
             </div>
-            <a href="/" class="text-xs text-link hover:text-link-hover font-medium transition-colors">
-                {{ t('dashboard.new_transfer') }}
-            </a>
+            <AppButton href="/">{{ t('dashboard.new_transfer') }}</AppButton>
         </div>
 
         <div v-else class="flex flex-col gap-3">
@@ -125,13 +123,10 @@ function totalSize(files) {
                     </div>
                 </div>
 
-                <a
-                    :href="manageUrl(transfer.ownerToken)"
-                    class="shrink-0 flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary border border-line rounded-lg px-3 py-2 transition-colors hover:bg-surface-2"
-                >
+                <AppButton variant="secondary" size="sm" :href="manageUrl(transfer.ownerToken)">
                     <Settings class="w-3.5 h-3.5" :stroke-width="2" />
                     {{ t('dashboard.manage') }}
-                </a>
+                </AppButton>
             </div>
 
             <div v-if="hasMore" class="flex justify-center pt-2">
