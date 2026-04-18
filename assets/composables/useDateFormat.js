@@ -25,7 +25,10 @@ export function useDateFormat() {
 
     function formatMonth(yyyyMm) {
         const [y, m] = yyyyMm.split("-");
-        return new Intl.DateTimeFormat(locale.value, { month: "short", year: "2-digit" }).format(new Date(+y, +m - 1));
+        return new Intl.DateTimeFormat(locale.value, {
+            month: "short",
+            year: "2-digit",
+        }).format(new Date(+y, +m - 1));
     }
 
     return { formatDate, formatDateShort, formatMonth };
