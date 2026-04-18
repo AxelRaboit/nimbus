@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
+use App\Contract\AccessRequestManagerInterface;
 use App\Entity\AccessRequest;
 use App\Enum\AccessRequestStatusEnum;
 use App\Enum\ApplicationParameter\NimbusApplicationParameterEnum;
@@ -17,7 +18,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment as TwigEnvironment;
 
-final readonly class AccessRequestManager
+final readonly class AccessRequestManager implements AccessRequestManagerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,

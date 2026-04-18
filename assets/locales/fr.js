@@ -192,6 +192,13 @@ export default {
                 "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
             submit: "Supprimer mon compte",
         },
+        errors: {
+            name_required: "Le nom est requis.",
+            email_invalid: "Adresse email invalide.",
+            password_too_short:
+                "Le mot de passe doit contenir au moins 8 caractères.",
+            password_mismatch: "Les mots de passe ne correspondent pas.",
+        },
     },
     transfer_password: {
         title: "Transfert protégé",

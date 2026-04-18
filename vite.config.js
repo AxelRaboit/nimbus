@@ -19,6 +19,7 @@ export default defineConfig({
         rolldownOptions: {
             input: {
                 app: './assets/app.js',
+                theme: './assets/theme.js',
                 sidebar: './assets/sidebar.js',
                 flash: './assets/flash.js',
                 home: './assets/pages/home/index.js',

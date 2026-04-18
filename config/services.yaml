@@ -61,6 +61,10 @@ services:
             $mailerSender: '%mailer.sender%'
             $mailerSenderName: '%mailer.sender_name%'
 
+    App\Contract\UserManagerInterface: '@App\Manager\UserManager'
+    App\Contract\AccessRequestManagerInterface: '@App\Manager\AccessRequestManager'
+    App\Contract\PasswordResetManagerInterface: '@App\Manager\PasswordResetManager'
+
     App\Service\TransferNotifier: ~
 
     App\Twig\VersionExtension:

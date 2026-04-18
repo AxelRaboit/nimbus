@@ -4,24 +4,29 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Manager\UserManager;
+use App\Contract\UserManagerInterface;
+use App\DTO\RegisterInput;
 use App\Repository\ApplicationParameterRepository;
-use App\Service\EmailValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class RegistrationController extends AbstractController
 {
+    public function __construct(
+        private readonly UserManagerInterface $userManager,
+        private readonly ValidatorInterface $validator,
+        private readonly TranslatorInterface $translator,
+    ) {}
+
     #[Route('/register', name: 'app_register')]
     public function register(
         Request $request,
-        UserManager $userManager,
-        TranslatorInterface $translator,
         Security $security,
         ApplicationParameterRepository $params,
     ): Response {
@@ -40,31 +45,22 @@ final class RegistrationController extends AbstractController
         $errors = [];
 
         if ($request->isMethod('POST')) {
-            $name = mb_trim($request->request->get('name', ''));
-            $email = mb_trim($request->request->get('email', ''));
-            $password = $request->request->get('password', '');
-            $passwordConfirm = $request->request->get('password_confirmation', '');
+            $input = RegisterInput::fromRequest($request);
 
-            if ('' === $name || '0' === $name) {
-                $errors['name'] = $translator->trans('auth.register.error_name_required');
+            $violations = $this->validator->validate($input);
+            foreach ($violations as $violation) {
+                $field = $violation->getPropertyPath();
+                if (!isset($errors[$field])) {
+                    $errors[$field] = $violation->getMessage();
+                }
             }
 
-            if ('' === $email || '0' === $email) {
-                $errors['email'] = $translator->trans('auth.register.error_email_required');
-            } elseif (!EmailValidator::isValid($email)) {
-                $errors['email'] = $translator->trans('auth.register.error_email_invalid');
-            } elseif ($userManager->isEmailTaken($email)) {
-                $errors['email'] = $translator->trans('auth.register.error_email_taken');
-            }
-
-            if (mb_strlen($password) < 8) {
-                $errors['password'] = $translator->trans('auth.register.error_password_length');
-            } elseif ($password !== $passwordConfirm) {
-                $errors['password_confirmation'] = $translator->trans('auth.register.error_password_mismatch');
+            if (!isset($errors['password']) && $input->password !== $input->passwordConfirmation) {
+                $errors['password_confirmation'] = $this->translator->trans('auth.register.error_password_mismatch');
             }
 
             if ([] === $errors) {
-                $user = $userManager->create($name, $email, $password);
+                $user = $this->userManager->create($input->name, $input->email, $input->password);
                 $security->login($user, 'form_login', 'main');
 
                 return $this->redirectToRoute('home');

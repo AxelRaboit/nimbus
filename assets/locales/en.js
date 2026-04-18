@@ -186,6 +186,12 @@ export default {
                 "Are you sure you want to delete your account? This action is irreversible.",
             submit: "Delete my account",
         },
+        errors: {
+            name_required: "Name is required.",
+            email_invalid: "Invalid email address.",
+            password_too_short: "Password must be at least 8 characters.",
+            password_mismatch: "Passwords do not match.",
+        },
     },
     transfer_password: {
         title: "Protected transfer",

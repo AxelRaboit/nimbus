@@ -4,22 +4,33 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Contract\UserManagerInterface;
+use App\Controller\Trait\JsonValidationTrait;
+use App\DTO\ChangePasswordInput;
+use App\DTO\UpdateProfileInput;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
-use App\Manager\UserManager;
-use App\Service\EmailValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[IsGranted(UserRoleEnum::User->value)]
 final class ProfileController extends AbstractController
 {
+    use JsonValidationTrait;
+
+    public function __construct(
+        private readonly UserManagerInterface $userManager,
+        private readonly ValidatorInterface $validator,
+        private readonly TranslatorInterface $translator,
+    ) {}
+
     #[Route('/profile', name: 'profile')]
     public function edit(): Response
     {
@@ -27,89 +38,64 @@ final class ProfileController extends AbstractController
     }
 
     #[Route('/profile/update', name: 'profile_update', methods: [HttpMethodEnum::Post->value])]
-    public function update(
-        Request $request,
-        UserManager $userManager,
-        TranslatorInterface $translator,
-    ): JsonResponse {
+    public function update(Request $request): JsonResponse
+    {
         /** @var User $user */
         $user = $this->getUser();
-        $errors = [];
+        $input = UpdateProfileInput::fromArray(json_decode($request->getContent(), true) ?? []);
 
-        $body = json_decode($request->getContent(), true) ?? [];
-        $name = mb_trim($body['name'] ?? '');
-        $email = mb_trim($body['email'] ?? '');
-
-        if ('' === $name || '0' === $name) {
-            $errors['name'] = $translator->trans('auth.register.error_name_required');
+        $violations = $this->validator->validate($input);
+        if (count($violations) > 0) {
+            return $this->json(['errors' => $this->formatViolations($violations)]);
         }
 
-        if ('' === $email || '0' === $email) {
-            $errors['email'] = $translator->trans('auth.register.error_email_required');
-        } elseif (!EmailValidator::isValid($email)) {
-            $errors['email'] = $translator->trans('auth.register.error_email_invalid');
-        } elseif ($userManager->isEmailTaken($email, $user)) {
-            $errors['email'] = $translator->trans('auth.register.error_email_taken');
-        }
+        $this->userManager->update($user, $input->name, $input->email);
 
-        if ([] === $errors) {
-            $userManager->update($user, $name, $email);
-
-            return new JsonResponse(['success' => true]);
-        }
-
-        return new JsonResponse(['errors' => $errors]);
+        return $this->json(['success' => true]);
     }
 
     #[Route('/profile/password', name: 'profile_password', methods: [HttpMethodEnum::Post->value])]
-    public function changePassword(
-        Request $request,
-        UserManager $userManager,
-        TranslatorInterface $translator,
-    ): JsonResponse {
+    public function changePassword(Request $request): JsonResponse
+    {
         /** @var User $user */
         $user = $this->getUser();
-        $errors = [];
+        $input = ChangePasswordInput::fromArray(json_decode($request->getContent(), true) ?? []);
 
-        $body = json_decode($request->getContent(), true) ?? [];
-        $current = $body['current_password'] ?? '';
-        $new = $body['password'] ?? '';
-        $confirm = $body['password_confirmation'] ?? '';
-
-        if (!$userManager->isPasswordValid($user, $current)) {
-            $errors['current_password'] = $translator->trans('profile.password.error_current');
-        } elseif (mb_strlen((string) $new) < 8) {
-            $errors['password'] = $translator->trans('auth.register.error_password_length');
-        } elseif ($new !== $confirm) {
-            $errors['password_confirmation'] = $translator->trans('auth.register.error_password_mismatch');
+        $violations = $this->validator->validate($input);
+        if (count($violations) > 0) {
+            return $this->json(['errors' => $this->formatViolations($violations)]);
         }
 
-        if ([] === $errors) {
-            $userManager->changePassword($user, $new);
-
-            return new JsonResponse(['success' => true]);
+        if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {
+            return $this->json(['errors' => [
+                'current_password' => $this->translator->trans('profile.password.error_current'),
+            ]]);
         }
 
-        return new JsonResponse(['errors' => $errors]);
+        if ($input->password !== $input->passwordConfirmation) {
+            return $this->json(['errors' => [
+                'password_confirmation' => $this->translator->trans('auth.register.error_password_mismatch'),
+            ]]);
+        }
+
+        $this->userManager->changePassword($user, $input->password);
+
+        return $this->json(['success' => true]);
     }
 
     #[Route('/profile/delete', name: 'profile_delete', methods: [HttpMethodEnum::Post->value])]
-    public function delete(
-        Request $request,
-        UserManager $userManager,
-        TranslatorInterface $translator,
-    ): JsonResponse {
+    public function delete(Request $request): JsonResponse
+    {
         /** @var User $user */
         $user = $this->getUser();
-
         $body = json_decode($request->getContent(), true) ?? [];
 
         if (!$this->isCsrfTokenValid('delete_account', $body['_token'] ?? '')) {
-            throw $this->createAccessDeniedException($translator->trans('error.csrf_invalid'));
+            throw $this->createAccessDeniedException($this->translator->trans('error.csrf_invalid'));
         }
 
-        $userManager->delete($user);
+        $this->userManager->delete($user);
 
-        return new JsonResponse(['success' => true, 'redirectUrl' => $this->generateUrl('app_login')]);
+        return $this->json(['success' => true, 'redirectUrl' => $this->generateUrl('app_login')]);
     }
 }

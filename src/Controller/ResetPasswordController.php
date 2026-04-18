@@ -4,23 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Contract\PasswordResetManagerInterface;
+use App\DTO\ResetPasswordInput;
 use App\Entity\ResetPasswordRequest;
-use App\Manager\PasswordResetManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ResetPasswordController extends AbstractController
 {
+    public function __construct(
+        private readonly PasswordResetManagerInterface $passwordResetManager,
+        private readonly ValidatorInterface $validator,
+        private readonly TranslatorInterface $translator,
+    ) {}
+
     #[Route('/forgot-password', name: 'app_forgot_password')]
-    public function request(
-        Request $request,
-        PasswordResetManager $passwordResetManager,
-        TranslatorInterface $translator,
-    ): Response {
+    public function request(Request $request): Response
+    {
         if ($this->getUser() instanceof UserInterface) {
             return $this->redirectToRoute('home');
         }
@@ -29,8 +34,8 @@ final class ResetPasswordController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $email = mb_trim($request->request->get('email', ''));
-            $passwordResetManager->sendResetLink($email);
-            $status = $translator->trans('auth.forgot_password.sent');
+            $this->passwordResetManager->sendResetLink($email);
+            $status = $this->translator->trans('auth.forgot_password.sent');
         }
 
         return $this->render('security/forgot_password.html.twig', [
@@ -44,17 +49,15 @@ final class ResetPasswordController extends AbstractController
         string $selector,
         string $token,
         Request $request,
-        PasswordResetManager $passwordResetManager,
-        TranslatorInterface $translator,
     ): Response {
         if ($this->getUser() instanceof UserInterface) {
             return $this->redirectToRoute('home');
         }
 
-        $resetRequest = $passwordResetManager->validateToken($selector, $token);
+        $resetRequest = $this->passwordResetManager->validateToken($selector, $token);
 
         if (!$resetRequest instanceof ResetPasswordRequest) {
-            $this->addFlash('error', $translator->trans('auth.reset_password.invalid_link'));
+            $this->addFlash('error', $this->translator->trans('auth.reset_password.invalid_link'));
 
             return $this->redirectToRoute('app_forgot_password');
         }
@@ -62,17 +65,22 @@ final class ResetPasswordController extends AbstractController
         $errors = [];
 
         if ($request->isMethod('POST')) {
-            $password = $request->request->get('password', '');
-            $confirm = $request->request->get('password_confirmation', '');
+            $input = ResetPasswordInput::fromRequest($request);
 
-            if (mb_strlen($password) < 8) {
-                $errors['password'] = $translator->trans('auth.register.error_password_length');
-            } elseif ($password !== $confirm) {
-                $errors['password_confirmation'] = $translator->trans('auth.register.error_password_mismatch');
+            $violations = $this->validator->validate($input);
+            foreach ($violations as $violation) {
+                $field = $violation->getPropertyPath();
+                if (!isset($errors[$field])) {
+                    $errors[$field] = $violation->getMessage();
+                }
+            }
+
+            if (!isset($errors['password']) && $input->password !== $input->passwordConfirmation) {
+                $errors['password_confirmation'] = $this->translator->trans('auth.register.error_password_mismatch');
             }
 
             if ([] === $errors) {
-                $passwordResetManager->resetPassword($resetRequest, $password);
+                $this->passwordResetManager->resetPassword($resetRequest, $input->password);
 
                 return $this->redirectToRoute('app_login', ['reset' => 1]);
             }

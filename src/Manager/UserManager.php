@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
+use App\Contract\UserManagerInterface;
 use App\Entity\User;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-final readonly class UserManager
+final readonly class UserManager implements UserManagerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,

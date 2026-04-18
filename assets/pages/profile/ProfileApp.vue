@@ -1,7 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { toast } from "vue-sonner";
 import AppButton from "@/components/AppButton.vue";
+import AppInput from "@/components/AppInput.vue";
+import { useForm } from "@/composables/useForm.js";
+import { required, email, compose } from "@/utils/validators.js";
 
 const { t } = useI18n();
 
@@ -17,59 +21,95 @@ const props = defineProps({
     loginPath: { type: String, required: true },
 });
 
+// ── Locale ────────────────────────────────────────────────────────────────────
+
 const selectedLocale = ref(props.locale);
+const localeLoading = ref(false);
 
 async function changeLocale() {
-    await fetch(props.localePath, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale: selectedLocale.value }),
-    });
-    window.location.reload();
+    if (selectedLocale.value === props.locale) return;
+    localeLoading.value = true;
+    try {
+        const response = await fetch(props.localePath, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ locale: selectedLocale.value }),
+        });
+        if (!response.ok) {
+            selectedLocale.value = props.locale;
+            return;
+        }
+        window.location.reload();
+    } catch {
+        selectedLocale.value = props.locale;
+    } finally {
+        localeLoading.value = false;
+    }
 }
+
+// ── Profile info ──────────────────────────────────────────────────────────────
 
 const infoName = ref(props.userName);
 const infoEmail = ref(props.userEmail);
-const infoErrors = ref({});
-const infoSuccess = ref(false);
 const infoLoading = ref(false);
+const { errors: infoErrors, validate: validateInfo, setErrors: setInfoErrors, clearErrors: clearInfoErrors } = useForm();
 
 async function saveInfo() {
-    infoErrors.value = {};
-    infoSuccess.value = false;
+    const isValid = validateInfo({
+        name: () => required(t("profile.errors.name_required"))(infoName.value),
+        email: () => compose(
+            required(t("profile.errors.email_invalid")),
+            email(t("profile.errors.email_invalid")),
+        )(infoEmail.value),
+    });
+
+    if (!isValid) return;
+
     infoLoading.value = true;
     try {
-        const res = await fetch(props.updatePath, {
+        const response = await fetch(props.updatePath, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: infoName.value, email: infoEmail.value }),
         });
-        const data = await res.json();
+        const data = await response.json();
         if (data.success) {
-            infoSuccess.value = true;
+            clearInfoErrors();
+            toast.success(t("profile.info.saved"));
         } else {
-            infoErrors.value = data.errors || {};
+            setInfoErrors(data.errors ?? {});
         }
-    } catch {
-        infoErrors.value = { name: t('profile.info.saved') };
     } finally {
         infoLoading.value = false;
     }
 }
 
+// ── Password ──────────────────────────────────────────────────────────────────
+
 const currentPassword = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
-const passwordErrors = ref({});
-const passwordSuccess = ref(false);
 const passwordLoading = ref(false);
+const { errors: passwordErrors, validate: validatePassword, setErrors: setPasswordErrors, clearErrors: clearPasswordErrors } = useForm();
 
 async function savePassword() {
-    passwordErrors.value = {};
-    passwordSuccess.value = false;
+    const isValid = validatePassword({
+        current_password: () => required(t("profile.password.error_current"))(currentPassword.value),
+        password: () => {
+            if (!newPassword.value || newPassword.value.length < 8) return t("profile.errors.password_too_short");
+            return null;
+        },
+        password_confirmation: () => {
+            if (newPassword.value && newPassword.value !== confirmPassword.value) return t("profile.errors.password_mismatch");
+            return null;
+        },
+    });
+
+    if (!isValid) return;
+
     passwordLoading.value = true;
     try {
-        const res = await fetch(props.passwordPath, {
+        const response = await fetch(props.passwordPath, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -78,38 +118,38 @@ async function savePassword() {
                 password_confirmation: confirmPassword.value,
             }),
         });
-        const data = await res.json();
+        const data = await response.json();
         if (data.success) {
-            passwordSuccess.value = true;
+            clearPasswordErrors();
+            toast.success(t("profile.password.saved"));
             currentPassword.value = "";
             newPassword.value = "";
             confirmPassword.value = "";
         } else {
-            passwordErrors.value = data.errors || {};
+            setPasswordErrors(data.errors ?? {});
         }
-    } catch {
-        passwordErrors.value = { current_password: t('profile.password.error_current') };
     } finally {
         passwordLoading.value = false;
     }
 }
 
+// ── Delete account ────────────────────────────────────────────────────────────
+
 const deleteLoading = ref(false);
 
 async function deleteAccount() {
-    if (!confirm(t('profile.danger.confirm'))) return;
+    if (!confirm(t("profile.danger.confirm"))) return;
     deleteLoading.value = true;
     try {
-        const res = await fetch(props.deletePath, {
+        const response = await fetch(props.deletePath, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ _token: props.deleteCsrf }),
         });
-        const data = await res.json();
+        const data = await response.json();
         if (data.success) {
             window.location.href = props.loginPath;
         }
-    } catch {
     } finally {
         deleteLoading.value = false;
     }
@@ -118,6 +158,7 @@ async function deleteAccount() {
 
 <template>
     <div class="max-w-2xl mx-auto space-y-6">
+        <!-- Locale -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.locale.title') }}</h2>
@@ -127,7 +168,8 @@ async function deleteAccount() {
                 <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.locale.field') }}</label>
                 <select
                     v-model="selectedLocale"
-                    class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-line focus:border-indigo-500 focus:outline-none transition"
+                    :disabled="localeLoading"
+                    class="w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border border-line focus:border-indigo-500 focus:outline-none transition disabled:opacity-50"
                     v-on:change="changeLocale"
                 >
                     <option value="fr">{{ t('locales.fr') }}</option>
@@ -138,113 +180,84 @@ async function deleteAccount() {
             </div>
         </div>
 
+        <!-- Info -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.info.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('profile.info.subtitle') }}</p>
             </header>
-
-            <div v-if="infoSuccess" class="mb-4 text-sm text-emerald-400">{{ t('profile.info.saved') }}</div>
-
-            <form class="space-y-5" v-on:submit.prevent="saveInfo">
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.info.name') }}</label>
-                    <input
-                        v-model="infoName"
-                        type="text"
-                        required
-                        autocomplete="name"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', infoErrors.name ? 'border-red-500' : 'border-line']"
-                    >
-                    <p v-if="infoErrors.name" class="mt-1 text-xs text-rose-400">{{ infoErrors.name }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.info.email') }}</label>
-                    <input
-                        v-model="infoEmail"
-                        type="email"
-                        required
-                        autocomplete="email"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', infoErrors.email ? 'border-red-500' : 'border-line']"
-                    >
-                    <p v-if="infoErrors.email" class="mt-1 text-xs text-rose-400">{{ infoErrors.email }}</p>
-                </div>
-
-                <div class="flex items-center gap-3 pt-1">
-                    <AppButton type="submit" :loading="infoLoading">
-                        {{ t('common.save') }}
-                    </AppButton>
+            <form class="space-y-4" v-on:submit.prevent="saveInfo">
+                <AppInput
+                    v-model="infoName"
+                    :label="t('profile.info.name')"
+                    :error="infoErrors.name"
+                    autocomplete="name"
+                    required
+                />
+                <AppInput
+                    v-model="infoEmail"
+                    type="email"
+                    :label="t('profile.info.email')"
+                    :error="infoErrors.email"
+                    autocomplete="email"
+                    required
+                />
+                <div class="pt-1">
+                    <AppButton type="submit" :loading="infoLoading">{{ t('common.save') }}</AppButton>
                 </div>
             </form>
         </div>
 
+        <!-- Password -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-primary">{{ t('profile.password.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('profile.password.subtitle') }}</p>
             </header>
-
-            <div v-if="passwordSuccess" class="mb-4 text-sm text-emerald-400">{{ t('profile.password.saved') }}</div>
-
-            <form class="space-y-5" v-on:submit.prevent="savePassword">
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.password.current') }}</label>
-                    <input
-                        v-model="currentPassword"
-                        type="password"
-                        required
-                        autocomplete="current-password"
-                        placeholder="••••••••"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.current_password ? 'border-red-500' : 'border-line']"
-                    >
-                    <p v-if="passwordErrors.current_password" class="mt-1 text-xs text-rose-400">{{ passwordErrors.current_password }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.password.new') }}</label>
-                    <input
-                        v-model="newPassword"
-                        type="password"
-                        required
-                        autocomplete="new-password"
-                        placeholder="••••••••"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.password ? 'border-red-500' : 'border-line']"
-                    >
-                    <p v-if="passwordErrors.password" class="mt-1 text-xs text-rose-400">{{ passwordErrors.password }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-xs text-secondary uppercase tracking-wide mb-1.5">{{ t('profile.password.confirm') }}</label>
-                    <input
-                        v-model="confirmPassword"
-                        type="password"
-                        required
-                        autocomplete="new-password"
-                        placeholder="••••••••"
-                        :class="['w-full bg-surface-2 text-primary rounded-lg px-3 py-2.5 border focus:border-indigo-500 focus:outline-none transition', passwordErrors.password_confirmation ? 'border-red-500' : 'border-line']"
-                    >
-                    <p v-if="passwordErrors.password_confirmation" class="mt-1 text-xs text-rose-400">{{ passwordErrors.password_confirmation }}</p>
-                </div>
-
-                <div class="flex items-center gap-3 pt-1">
-                    <AppButton type="submit" :loading="passwordLoading">
-                        {{ t('common.save') }}
-                    </AppButton>
+            <form class="space-y-4" v-on:submit.prevent="savePassword">
+                <AppInput
+                    v-model="currentPassword"
+                    :label="t('profile.password.current')"
+                    :error="passwordErrors.current_password"
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                    toggleable
+                    required
+                />
+                <AppInput
+                    v-model="newPassword"
+                    :label="t('profile.password.new')"
+                    :error="passwordErrors.password"
+                    placeholder="••••••••"
+                    autocomplete="new-password"
+                    toggleable
+                    required
+                />
+                <AppInput
+                    v-model="confirmPassword"
+                    :label="t('profile.password.confirm')"
+                    :error="passwordErrors.password_confirmation"
+                    placeholder="••••••••"
+                    autocomplete="new-password"
+                    toggleable
+                    required
+                />
+                <div class="pt-1">
+                    <AppButton type="submit" :loading="passwordLoading">{{ t('common.save') }}</AppButton>
                 </div>
             </form>
         </div>
 
+        <!-- Danger zone -->
         <div class="bg-surface border border-rose-900/40 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
                 <h2 class="text-lg font-semibold text-rose-400">{{ t('profile.danger.title') }}</h2>
                 <p class="mt-1 text-sm text-secondary">{{ t('profile.danger.description') }}</p>
             </header>
-
             <button
                 type="button"
                 :disabled="deleteLoading"
-                class="px-4 py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-600/40 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-4 py-2.5 rounded-lg text-sm font-medium bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-900/40 transition-colors disabled:opacity-50"
                 v-on:click="deleteAccount"
             >
                 {{ t('profile.danger.submit') }}

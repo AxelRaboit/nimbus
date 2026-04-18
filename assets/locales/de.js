@@ -191,6 +191,13 @@ export default {
                 "Bist du sicher, dass du dein Konto löschen möchtest? Diese Aktion ist unumkehrbar.",
             submit: "Mein Konto löschen",
         },
+        errors: {
+            name_required: "Name ist erforderlich.",
+            email_invalid: "Ungültige E-Mail-Adresse.",
+            password_too_short:
+                "Das Passwort muss mindestens 8 Zeichen lang sein.",
+            password_mismatch: "Die Passwörter stimmen nicht überein.",
+        },
     },
     transfer_password: {
         title: "Geschützte Übertragung",
