@@ -470,9 +470,8 @@ make fixtures
 ### Développement
 
 ```bash
-make start              # serveur Symfony + mailer Docker
-make dev                # Vite HMR (dans un second terminal)
-make start-dev-worker   # worker Messenger + Scheduler (dans un troisième terminal)
+make start              # mailer Docker + serveur Symfony + Vite HMR
+make start-dev-worker   # worker Messenger + Scheduler (dans un second terminal)
 ```
 
 ### Production
