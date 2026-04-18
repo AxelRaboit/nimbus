@@ -7,6 +7,7 @@ defineProps({
     size: { type: String, default: 'md' },
     disabled: { type: Boolean, default: false },
     loading: { type: Boolean, default: false },
+    href: { type: String, default: null },
 });
 
 const base = 'inline-flex items-center justify-center gap-2 rounded transition duration-150 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
@@ -30,7 +31,15 @@ const sizes = {
 </script>
 
 <template>
+    <a
+        v-if="href"
+        :href="href"
+        :class="[base, variants[variant] ?? variants.primary, sizes[size] ?? sizes.md]"
+    >
+        <slot />
+    </a>
     <button
+        v-else
         :type="type"
         :disabled="disabled || loading"
         :class="[base, variants[variant] ?? variants.primary, sizes[size] ?? sizes.md]"
