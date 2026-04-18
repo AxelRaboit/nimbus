@@ -17,6 +17,7 @@ const emit = defineEmits(["submit", "open-help"]);
 const props = defineProps({
     prefillEmail:  { type: String,  default: "" },
     draft:         { type: Object,  default: null },
+    serverErrors:  { type: Object,  default: () => ({}) },
     maxFiles:      { type: Number,  default: 20 },
     maxRecipients: { type: Number,  default: 20 },
     maxSizeMb:     { type: Number,  default: 10000 },
@@ -33,7 +34,11 @@ const expiresIn    = ref(1);
 const password     = ref("");
 const isPublic     = ref(false);
 
-const { errors, validate } = useForm();
+const { errors, validate, setErrors } = useForm();
+
+watch(() => props.serverErrors, (errs) => {
+    if (errs && Object.keys(errs).length > 0) setErrors(errs);
+});
 
 watch(() => props.draft, (draft) => {
     if (!draft) return;

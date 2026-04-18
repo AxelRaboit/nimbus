@@ -1,4 +1,17 @@
 /**
+ * Normalize Symfony validation error keys (e.g. "[senderEmail]" → "senderEmail").
+ * @param {Record<string, string>} errors
+ * @returns {Record<string, string>}
+ */
+export function normalizeServerErrors(errors) {
+    const result = {};
+    for (const [key, value] of Object.entries(errors)) {
+        result[key.replace(/^\[|\]$/g, "")] = value;
+    }
+    return result;
+}
+
+/**
  * Email validation regex
  * Simple pattern: local@domain.extension
  */
