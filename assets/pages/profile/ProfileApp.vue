@@ -190,6 +190,7 @@ async function deleteAccount() {
                 <AppInput
                     v-model="infoName"
                     :label="t('profile.info.name')"
+                    :placeholder="t('profile.info.namePlaceholder')"
                     :error="infoErrors.name"
                     autocomplete="name"
                     required
@@ -198,6 +199,7 @@ async function deleteAccount() {
                     v-model="infoEmail"
                     type="email"
                     :label="t('profile.info.email')"
+                    :placeholder="t('profile.info.emailPlaceholder')"
                     :error="infoErrors.email"
                     autocomplete="email"
                     required
