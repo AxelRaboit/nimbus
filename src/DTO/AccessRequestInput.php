@@ -6,15 +6,15 @@ namespace App\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class AccessRequestInput
+final readonly class AccessRequestInput
 {
     public function __construct(
         #[Assert\NotBlank(message: 'invalid_email')]
         #[Assert\Email(message: 'invalid_email')]
-        public readonly string $email,
-        public readonly ?string $name,
-        public readonly ?string $message,
-        public readonly ?int $requestedFileSizeMb,
+        public string $email,
+        public ?string $name,
+        public ?string $message,
+        public ?int $requestedFileSizeMb,
     ) {}
 
     public static function fromArray(array $data): self

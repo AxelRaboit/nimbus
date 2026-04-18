@@ -195,7 +195,8 @@ export default {
         errors: {
             name_required: "El nombre es obligatorio.",
             email_invalid: "Dirección de correo inválida.",
-            password_too_short: "La contraseña debe tener al menos 8 caracteres.",
+            password_too_short:
+                "La contraseña debe tener al menos 8 caracteres.",
             password_mismatch: "Las contraseñas no coinciden.",
         },
     },

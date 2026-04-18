@@ -194,7 +194,8 @@ export default {
         errors: {
             name_required: "Name ist erforderlich.",
             email_invalid: "Ungültige E-Mail-Adresse.",
-            password_too_short: "Das Passwort muss mindestens 8 Zeichen lang sein.",
+            password_too_short:
+                "Das Passwort muss mindestens 8 Zeichen lang sein.",
             password_mismatch: "Die Passwörter stimmen nicht überein.",
         },
     },

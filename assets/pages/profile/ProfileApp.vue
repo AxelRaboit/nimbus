@@ -158,7 +158,6 @@ async function deleteAccount() {
 
 <template>
     <div class="max-w-2xl mx-auto space-y-6">
-
         <!-- Locale -->
         <div class="bg-surface border border-line/60 rounded-2xl p-6 shadow-sm">
             <header class="mb-6">
@@ -264,6 +263,5 @@ async function deleteAccount() {
                 {{ t('profile.danger.submit') }}
             </button>
         </div>
-
     </div>
 </template>

@@ -68,7 +68,7 @@ final class ProfileController extends AbstractController
 
         if (!$this->userManager->isPasswordValid($user, $input->currentPassword)) {
             return $this->json(['errors' => [
-                'currentPassword' => $this->translator->trans('profile.password.error_current'),
+                'current_password' => $this->translator->trans('profile.password.error_current'),
             ]]);
         }
 

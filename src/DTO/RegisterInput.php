@@ -8,19 +8,19 @@ use App\Validator\Constraint\UniqueEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class RegisterInput
+final readonly class RegisterInput
 {
     public function __construct(
         #[Assert\NotBlank(message: 'auth.register.error_name_required')]
-        public readonly string $name,
+        public string $name,
         #[Assert\NotBlank(message: 'auth.register.error_email_invalid')]
         #[Assert\Email(message: 'auth.register.error_email_invalid')]
         #[UniqueEmail(message: 'auth.register.error_email_taken')]
-        public readonly string $email,
+        public string $email,
         #[Assert\NotBlank(message: 'auth.register.error_password_length')]
         #[Assert\Length(min: 8, minMessage: 'auth.register.error_password_length')]
-        public readonly string $password,
-        public readonly string $passwordConfirmation,
+        public string $password,
+        public string $passwordConfirmation,
     ) {}
 
     public static function fromRequest(Request $request): self
