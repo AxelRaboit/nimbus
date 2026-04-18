@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { Check, Copy } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 import AppQrCode from "@/components/AppQrCode.vue";
+import { copyToClipboard } from "@/utils/clipboard.js";
 
 const { t } = useI18n();
 
@@ -24,13 +25,6 @@ const downloadUrl = computed(() =>
 const copied = ref(false);
 const copiedManage = ref(false);
 
-async function copyLink(text, flag) {
-    try {
-        await navigator.clipboard.writeText(text);
-        flag.value = true;
-        setTimeout(() => (flag.value = false), 2000);
-    } catch {}
-}
 </script>
 
 <template>
@@ -62,7 +56,7 @@ async function copyLink(text, flag) {
                     class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                     v-on:click="$event.target.select()"
                 >
-                <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(downloadUrl, copied)">
+                <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyToClipboard(downloadUrl, copied)">
                     <Check v-if="copied" class="w-4 h-4 text-green-500" :stroke-width="2" />
                     <Copy v-else class="w-4 h-4" :stroke-width="2" />
                     <span class="hidden sm:inline">{{ copied ? t('transfer.success.copied') : t('transfer.success.copy') }}</span>
@@ -81,7 +75,7 @@ async function copyLink(text, flag) {
                     class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                     v-on:click="$event.target.select()"
                 >
-                <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(manageUrl, copiedManage)">
+                <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyToClipboard(manageUrl, copiedManage)">
                     <Check v-if="copiedManage" class="w-4 h-4 text-green-500" :stroke-width="2" />
                     <Copy v-else class="w-4 h-4" :stroke-width="2" />
                     <span class="hidden sm:inline">{{ copiedManage ? t('transfer.success.copied') : t('transfer.success.copy') }}</span>

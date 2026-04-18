@@ -6,6 +6,7 @@ import AppButton from "@/components/AppButton.vue";
 import AppQrCode from "@/components/AppQrCode.vue";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { useDateFormat } from "@/composables/useDateFormat.js";
+import { copyToClipboard } from "@/utils/clipboard.js";
 
 const { t: translate } = useI18n();
 const { formatSize } = useFileSize();
@@ -35,13 +36,6 @@ const downloadUrl = computed(() =>
 const expiresDate = computed(() => formatDate(props.expiresAt));
 
 const copiedLink = ref(false);
-async function copyLink(text, flag) {
-    try {
-        await navigator.clipboard.writeText(text);
-        flag.value = true;
-        setTimeout(() => (flag.value = false), 2000);
-    } catch {}
-}
 
 const copiedDownload = ref(false);
 
@@ -144,7 +138,7 @@ function submitDeleteForm(event) {
                         class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
-                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyLink(downloadUrl, copiedLink)">
+                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copyToClipboard(downloadUrl, copiedLink)">
                         <Check v-if="copiedLink" class="w-4 h-4 text-green-500" :stroke-width="2" />
                         <Copy v-else class="w-4 h-4" :stroke-width="2" />
                     </AppButton>
@@ -164,7 +158,7 @@ function submitDeleteForm(event) {
                         class="block w-full rounded border border-line bg-surface px-3 py-2 text-sm text-primary focus:outline-none truncate min-w-0"
                         v-on:click="$event.target.select()"
                     >
-                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copiedDownload ? null : copyLink(downloadUrl, copiedDownload)">
+                    <AppButton variant="secondary" size="sm" class="shrink-0" v-on:click="copiedDownload ? null : copyToClipboard(downloadUrl, copiedDownload)">
                         <Check v-if="copiedDownload" class="w-4 h-4 text-green-500" :stroke-width="2" />
                         <Copy v-else class="w-4 h-4" :stroke-width="2" />
                     </AppButton>
