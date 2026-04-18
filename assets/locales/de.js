@@ -170,7 +170,9 @@ export default {
             title: "Profilinformationen",
             subtitle: "Aktualisiere deinen Namen und deine E-Mail-Adresse.",
             name: "Vollständiger Name",
+            namePlaceholder: "Max Mustermann",
             email: "E-Mail-Adresse",
+            emailPlaceholder: "du{'@'}beispiel.de",
             saved: "Profil erfolgreich aktualisiert.",
         },
         password: {

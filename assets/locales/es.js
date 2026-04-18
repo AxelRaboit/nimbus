@@ -171,7 +171,9 @@ export default {
             title: "Información del perfil",
             subtitle: "Actualiza tu nombre y dirección de correo electrónico.",
             name: "Nombre completo",
+            namePlaceholder: "Juan García",
             email: "Dirección de correo electrónico",
+            emailPlaceholder: "tú{'@'}ejemplo.com",
             saved: "Perfil actualizado con éxito.",
         },
         password: {
