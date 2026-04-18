@@ -25,8 +25,8 @@ const expiresDate = computed(() => formatDate(props.expiresAt));
 const totalSize = computed(() => parsedFiles.value.reduce((acc, f) => acc + f.size, 0));
 const downloadUrl = computed(() => `/t/${props.token}/download`);
 
-const fileDownload = (filename) => fileDownload(props.token, filename);
-const filePreview  = (filename) => filePreview(props.token, filename);
+const fileDownload = (filename) => fileDownloadUrl(props.token, filename);
+const filePreview  = (filename) => filePreviewUrl(props.token, filename);
 
 
 const previewFile = ref(null);
