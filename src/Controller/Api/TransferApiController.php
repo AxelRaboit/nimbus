@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -52,7 +53,12 @@ class TransferApiController extends AbstractController
         ValidatorInterface $validator,
         TransferManager $transferManager,
         PlanService $planService,
+        RateLimiterFactoryInterface $transferCreateLimiter,
     ): JsonResponse {
+        if (!$transferCreateLimiter->create($request->getClientIp())->consume()->isAccepted()) {
+            return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         $data = json_decode($request->getContent(), true);
 
         $maxRecipients = $planService->getProMaxRecipients();
@@ -113,7 +119,12 @@ class TransferApiController extends AbstractController
         Request $request,
         TransferRepository $transferRepository,
         TransferManager $transferManager,
+        RateLimiterFactoryInterface $transferFinalizeLimiter,
     ): JsonResponse {
+        if (!$transferFinalizeLimiter->create($request->getClientIp())->consume()->isAccepted()) {
+            return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
         $transfer = $transferRepository->findByToken($token);
 
         if (!$transfer instanceof Transfer) {
