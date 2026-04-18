@@ -7,10 +7,6 @@ namespace App\Controller\Api;
 use App\Entity\Transfer;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
-use App\Exception\DisallowedFileTypeException;
-use App\Exception\DisallowedZipContentException;
-use App\Exception\FileLimitExceededException;
-use App\Exception\SizeLimitExceededException;
 use App\Manager\TransferManager;
 use App\Model\Pagination;
 use App\Repository\TransferRepository;
@@ -136,16 +132,7 @@ class TransferApiController extends AbstractController
             return $this->json(['error' => 'No upload keys provided'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        try {
-            $transferManager->finalize($transfer, $uploadKeys, $plainPassword);
-        } catch (FileLimitExceededException|SizeLimitExceededException|DisallowedFileTypeException $exception) {
-            return $this->json(['error' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (DisallowedZipContentException $exception) {
-            return $this->json(
-                ['error' => 'zip_content_not_allowed', 'disallowed_files' => $exception->getDisallowedFiles()],
-                Response::HTTP_UNPROCESSABLE_ENTITY,
-            );
-        }
+        $transferManager->finalize($transfer, $uploadKeys, $plainPassword);
 
         return $this->json([
             'status' => $transfer->getStatus()->value,
