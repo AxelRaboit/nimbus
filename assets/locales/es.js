@@ -192,6 +192,12 @@ export default {
                 "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible.",
             submit: "Eliminar mi cuenta",
         },
+        errors: {
+            name_required: "El nombre es obligatorio.",
+            email_invalid: "Dirección de correo inválida.",
+            password_too_short: "La contraseña debe tener al menos 8 caracteres.",
+            password_mismatch: "Las contraseñas no coinciden.",
+        },
     },
     transfer_password: {
         title: "Transferencia protegida",

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
+use App\Contract\PasswordResetManagerInterface;
 use App\Entity\ResetPasswordRequest;
 use App\Entity\User;
 use App\Repository\ResetPasswordRequestRepository;
@@ -17,7 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class PasswordResetManager
+final readonly class PasswordResetManager implements PasswordResetManagerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,

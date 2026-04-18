@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\Contract\AccessRequestManagerInterface;
+use App\Controller\Trait\JsonValidationTrait;
+use App\DTO\AccessRequestInput;
 use App\Enum\HttpMethodEnum;
-use App\Manager\AccessRequestManager;
 use App\Service\AccessChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,14 +15,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use function is_array;
 
 #[Route('/api/home')]
 class HomeApiController extends AbstractController
 {
+    use JsonValidationTrait;
+
     public function __construct(
         private readonly AccessChecker $accessChecker,
+        private readonly AccessRequestManagerInterface $accessRequestManager,
+        private readonly ValidatorInterface $validator,
     ) {}
 
     #[Route('/verify-access', name: 'api_home_verify_access', methods: [HttpMethodEnum::Post->value])]
@@ -47,7 +54,7 @@ class HomeApiController extends AbstractController
     }
 
     #[Route('/request-access', name: 'api_home_request_access', methods: [HttpMethodEnum::Post->value])]
-    public function requestAccess(Request $request, AccessRequestManager $accessRequestManager, RateLimiterFactoryInterface $homeRequestAccessLimiter): JsonResponse
+    public function requestAccess(Request $request, RateLimiterFactoryInterface $homeRequestAccessLimiter): JsonResponse
     {
         if (!$homeRequestAccessLimiter->create($request->getClientIp())->consume()->isAccepted()) {
             return $this->json(['error' => 'too_many_attempts'], Response::HTTP_TOO_MANY_REQUESTS);
@@ -62,16 +69,14 @@ class HomeApiController extends AbstractController
             return $this->json(['error' => 'invalid_payload'], Response::HTTP_BAD_REQUEST);
         }
 
-        $email = mb_trim((string) ($data['email'] ?? ''));
-        if ('' === $email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $input = AccessRequestInput::fromArray($data);
+
+        $violations = $this->validator->validate($input);
+        if (count($violations) > 0) {
             return $this->json(['error' => 'invalid_email'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $name = isset($data['name']) ? mb_trim((string) $data['name']) : null;
-        $message = isset($data['message']) ? mb_trim((string) $data['message']) : null;
-        $requestedFileSizeMb = isset($data['requestedFileSizeMb']) ? abs((int) $data['requestedFileSizeMb']) : null;
-
-        $accessRequestManager->create($email, $name ?: null, $message ?: null, $requestedFileSizeMb ?: null);
+        $this->accessRequestManager->create($input->email, $input->name, $input->message, $input->requestedFileSizeMb);
 
         return $this->json(['ok' => true], Response::HTTP_CREATED);
     }
