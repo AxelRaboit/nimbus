@@ -22,13 +22,13 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // ── Users ────────────────────────────────────────────────────────────
-        $dev = new User();
-        $dev->setEmail('dev@nimbus.app');
-        $dev->setName('Dev User');
-        $dev->setRoles([UserRoleEnum::Dev->value]);
-        $dev->setPassword($this->hasher->hashPassword($dev, 'password'));
+        $devUser = new User();
+        $devUser->setEmail('dev@nimbus.app');
+        $devUser->setName('Dev User');
+        $devUser->setRoles([UserRoleEnum::Dev->value]);
+        $devUser->setPassword($this->hasher->hashPassword($devUser, 'password'));
 
-        $manager->persist($dev);
+        $manager->persist($devUser);
 
         $user = new User();
         $user->setEmail('user@nimbus.app');
@@ -109,10 +109,10 @@ class AppFixtures extends Fixture
             $manager->persist($file);
         }
 
-        foreach ($recipientEmails as $i => $email) {
+        foreach ($recipientEmails as $recipientIndex => $email) {
             $recipient = new Recipient();
             $recipient->setEmail($email);
-            if ($i === $downloadedIndex) {
+            if ($recipientIndex === $downloadedIndex) {
                 $recipient->markAsDownloaded();
             }
 

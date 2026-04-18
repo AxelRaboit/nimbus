@@ -97,8 +97,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $result = [];
-        for ($i = $months - 1; $i >= 0; --$i) {
-            $month = new DateTimeImmutable(sprintf('first day of -%d months', $i))->format('Y-m');
+        for ($monthOffset = $months - 1; $monthOffset >= 0; --$monthOffset) {
+            $month = new DateTimeImmutable(sprintf('first day of -%d months', $monthOffset))->format('Y-m');
             $result[] = ['month' => $month, 'count' => $indexed[$month] ?? 0];
         }
 

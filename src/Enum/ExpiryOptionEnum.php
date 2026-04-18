@@ -32,7 +32,7 @@ enum ExpiryOptionEnum: int
 
         $options = array_values(array_filter(
             array_column(self::cases(), 'value'),
-            fn (int $h): bool => $h < $maxHours,
+            fn (int $hours): bool => $hours < $maxHours,
         ));
 
         $options[] = $maxHours;

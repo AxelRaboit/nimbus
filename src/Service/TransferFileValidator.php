@@ -76,8 +76,8 @@ final readonly class TransferFileValidator
         $disallowed = [];
         $totalDecompressedSize = 0;
 
-        for ($i = 0; $i < $zip->count(); ++$i) {
-            $stat = $zip->statIndex($i);
+        for ($fileIndex = 0; $fileIndex < $zip->count(); ++$fileIndex) {
+            $stat = $zip->statIndex($fileIndex);
             if (!$stat) {
                 continue;
             }

@@ -3,8 +3,8 @@ import { Toaster, toast } from "vue-sonner";
 import "vue-sonner/style.css";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const el = document.createElement("div");
-    document.body.appendChild(el);
+    const toasterContainer = document.createElement("div");
+    document.body.appendChild(toasterContainer);
     createApp({
         render: () =>
             h(Toaster, {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 position: "bottom-center",
                 richColors: true,
             }),
-    }).mount(el);
+    }).mount(toasterContainer);
 
     const flashes = window.__flash__ ?? {};
     for (const [type, messages] of Object.entries(flashes)) {

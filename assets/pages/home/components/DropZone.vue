@@ -6,7 +6,7 @@ import { useFileSize } from "@/composables/useFileSize.js";
 import { ALLOWED_EXTENSIONS, ALLOWED_EXTENSIONS_ACCEPT } from "@/utils/allowedExtensions.js";
 import { getDisallowedZipFiles } from "@/utils/zipValidator.js";
 
-const { t } = useI18n();
+const { t: translate } = useI18n();
 
 const props = defineProps({
     files: { type: Array, default: () => [] },
@@ -35,15 +35,15 @@ async function readDirectoryEntry(entry, prefix = "") {
 
     let batch;
     do {
-        batch = await new Promise((res, rej) => reader.readEntries(res, rej));
+        batch = await new Promise((resolve, reject) => reader.readEntries(resolve, reject));
         for (const child of batch) {
             const childPath = prefix ? `${prefix}/${child.name}` : child.name;
             if (child.isFile) {
-                const file = await new Promise((res, rej) => child.file(res, rej));
+                const file = await new Promise((resolve, reject) => child.file(resolve, reject));
                 files.push(wrapWithPath(file, childPath));
             } else if (child.isDirectory) {
-                const sub = await readDirectoryEntry(child, childPath);
-                files.push(...sub);
+                const subdirectoryFiles = await readDirectoryEntry(child, childPath);
+                files.push(...subdirectoryFiles);
             }
         }
     } while (batch.length > 0);
@@ -51,12 +51,12 @@ async function readDirectoryEntry(entry, prefix = "") {
     return files;
 }
 
-async function onDrop(e) {
+async function onDrop(event) {
     isDragging.value = false;
     const rawFiles = [];
 
-    if (e.dataTransfer.items) {
-        for (const item of e.dataTransfer.items) {
+    if (event.dataTransfer.items) {
+        for (const item of event.dataTransfer.items) {
             const entry = item.webkitGetAsEntry?.();
             if (!entry) continue;
             if (entry.isDirectory) {
@@ -68,23 +68,23 @@ async function onDrop(e) {
             }
         }
     } else {
-        rawFiles.push(...Array.from(e.dataTransfer.files));
+        rawFiles.push(...Array.from(event.dataTransfer.files));
     }
 
     await addFiles(rawFiles);
 }
 
-async function onFileInput(e) {
-    await addFiles(Array.from(e.target.files));
-    e.target.value = "";
+async function onFileInput(event) {
+    await addFiles(Array.from(event.target.files));
+    event.target.value = "";
 }
 
-async function onFolderInput(e) {
-    const wrapped = Array.from(e.target.files).map((f) =>
-        wrapWithPath(f, f.webkitRelativePath || f.name)
+async function onFolderInput(event) {
+    const wrapped = Array.from(event.target.files).map((inputFile) =>
+        wrapWithPath(inputFile, inputFile.webkitRelativePath || inputFile.name)
     );
     await addFiles(wrapped);
-    e.target.value = "";
+    event.target.value = "";
 }
 
 async function addFiles(newFiles) {
@@ -94,7 +94,7 @@ async function addFiles(newFiles) {
     const zipErrors  = [];
 
     for (const file of newFiles) {
-        if (props.files.find((f) => f.name === file.name && f.size === file.size)) continue;
+        if (props.files.find((existingFile) => existingFile.name === file.name && existingFile.size === file.size)) continue;
 
         const { ext, allowed } = isAllowedExt(file.name);
 
@@ -119,11 +119,11 @@ async function addFiles(newFiles) {
     }
 
     if (typeErrors.length > 0) {
-        dropErrors.value.push(t("transfer.dropzone.error_type", { files: typeErrors.join(", ") }));
+        dropErrors.value.push(translate("transfer.dropzone.error_type", { files: typeErrors.join(", ") }));
     }
     if (zipErrors.length > 0) {
-        const names = zipErrors.flatMap((e) => e.disallowed).join(", ");
-        dropErrors.value.push(t("transfer.dropzone.error_zip", { files: names }));
+        const names = zipErrors.flatMap((zipError) => zipError.disallowed).join(", ");
+        dropErrors.value.push(translate("transfer.dropzone.error_zip", { files: names }));
     }
 
     if (valid.length > 0) {
@@ -132,7 +132,7 @@ async function addFiles(newFiles) {
 }
 
 function removeFile(index) {
-    emit("update:files", props.files.filter((_, i) => i !== index));
+    emit("update:files", props.files.filter((_, fileIndex) => fileIndex !== index));
 }
 </script>
 
@@ -168,9 +168,9 @@ function removeFile(index) {
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-primary">
-                        {{ isDragging ? t('transfer.dropzone.drop') : t('transfer.dropzone.drag') }}
+                        {{ isDragging ? translate('transfer.dropzone.drop') : translate('transfer.dropzone.drag') }}
                     </p>
-                    <p class="text-xs text-muted mt-0.5">{{ t('transfer.dropzone.hint') }}</p>
+                    <p class="text-xs text-muted mt-0.5">{{ translate('transfer.dropzone.hint') }}</p>
                 </div>
             </div>
         </div>
@@ -181,17 +181,17 @@ function removeFile(index) {
             v-on:click="$refs.folderInput.click()"
         >
             <FolderOpen class="w-3.5 h-3.5" :stroke-width="2" />
-            {{ t('transfer.dropzone.upload_folder') }}
+            {{ translate('transfer.dropzone.upload_folder') }}
         </button>
 
         <div v-if="dropErrors.length" class="mt-2 flex flex-col gap-1">
             <p
-                v-for="(err, i) in dropErrors"
-                :key="i"
+                v-for="(errorMessage, index) in dropErrors"
+                :key="index"
                 class="flex items-start gap-1.5 text-xs text-red-500"
             >
                 <AlertCircle class="w-3.5 h-3.5 shrink-0 mt-0.5" :stroke-width="2" />
-                {{ err }}
+                {{ errorMessage }}
             </p>
         </div>
 

@@ -11,7 +11,7 @@ const props = defineProps({
     urlFn:      { type: Function, required: true },
 });
 
-const { t } = useI18n({ useScope: 'global' });
+const { t: translate } = useI18n({ useScope: 'global' });
 
 const from = computed(() => props.total === 0 ? 0 : (props.page - 1) * props.perPage + 1);
 const to   = computed(() => Math.min(props.page * props.perPage, props.total));
@@ -21,7 +21,7 @@ const pageNumbers = computed(() => {
     const total = props.totalPages;
     const current = props.page;
     if (total <= 7) {
-        return Array.from({ length: total }, (_, i) => i + 1);
+        return Array.from({ length: total }, (_, index) => index + 1);
     }
     const pages = [];
     pages.push(1);
@@ -38,7 +38,7 @@ const pageNumbers = computed(() => {
 <template>
     <div v-if="totalPages > 1" class="mt-4 space-y-3 flex flex-col items-center">
         <p class="text-sm text-secondary">
-            {{ t('pagination.results', { from, to, total }) }}
+            {{ translate('pagination.results', { from, to, total }) }}
         </p>
 
         <div class="flex flex-wrap gap-1 items-center justify-center">
@@ -48,17 +48,17 @@ const pageNumbers = computed(() => {
                 :class="page > 1 ? 'bg-surface-2 text-secondary hover:bg-surface-3' : 'bg-surface-2/50 text-subtle cursor-not-allowed pointer-events-none'"
             >
                 <ChevronLeft class="w-3.5 h-3.5" :stroke-width="2" />
-                {{ t('pagination.previous') }}
+                {{ translate('pagination.previous') }}
             </a>
 
-            <template v-for="(num, i) in pageNumbers" :key="i">
+            <template v-for="(pageNumber, index) in pageNumbers" :key="index">
                 <a
-                    v-if="num !== null"
-                    :href="urlFn(num)"
+                    v-if="pageNumber !== null"
+                    :href="urlFn(pageNumber)"
                     class="px-3 py-1 rounded text-sm transition"
-                    :class="num === page ? 'bg-violet-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
+                    :class="pageNumber === page ? 'bg-violet-600 text-white' : 'bg-surface-2 text-secondary hover:bg-surface-3'"
                 >
-                    {{ num }}
+                    {{ pageNumber }}
                 </a>
                 <span v-else class="px-1 text-sm text-subtle">…</span>
             </template>
@@ -68,7 +68,7 @@ const pageNumbers = computed(() => {
                 class="px-3 py-1 rounded text-sm transition inline-flex items-center gap-1"
                 :class="page < totalPages ? 'bg-surface-2 text-secondary hover:bg-surface-3' : 'bg-surface-2/50 text-subtle cursor-not-allowed pointer-events-none'"
             >
-                {{ t('pagination.next') }}
+                {{ translate('pagination.next') }}
                 <ChevronRight class="w-3.5 h-3.5" :stroke-width="2" />
             </a>
         </div>

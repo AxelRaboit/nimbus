@@ -56,11 +56,11 @@ final readonly class UserManager implements UserManagerInterface
     {
         $roles = array_values(array_filter(
             $user->getRoles(),
-            fn (string $r): bool => $r !== UserRoleEnum::User->value,
+            fn (string $role): bool => $role !== UserRoleEnum::User->value,
         ));
 
         if (in_array(UserRoleEnum::Dev->value, $roles, true)) {
-            $user->setRoles(array_values(array_filter($roles, fn (string $r): bool => $r !== UserRoleEnum::Dev->value)));
+            $user->setRoles(array_values(array_filter($roles, fn (string $role): bool => $role !== UserRoleEnum::Dev->value)));
         } else {
             $user->setRoles([...$roles, UserRoleEnum::Dev->value]);
         }

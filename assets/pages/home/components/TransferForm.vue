@@ -11,7 +11,7 @@ import AppTextarea from "@/components/AppTextarea.vue";
 import AppSelect from "@/components/AppSelect.vue";
 import DropZone from "./DropZone.vue";
 
-const { t, locale } = useI18n();
+const { t: translate, locale } = useI18n();
 const emit = defineEmits(["submit", "open-help"]);
 
 const props = defineProps({
@@ -52,7 +52,7 @@ watch(() => props.maxExpiryDays, (max) => {
 
 const locked = computed(() => !!props.draft && files.value.length === 0);
 const validRecipients = computed(() =>
-    recipients.value.filter((r) => r.trim() !== "")
+    recipients.value.filter((recipient) => recipient.trim() !== "")
 );
 
 function addRecipient() {
@@ -64,34 +64,34 @@ function removeRecipient(index) {
 }
 
 function submit() {
-    const ok = validate({
+    const isValid = validate({
         files: () => {
-            if (files.value.length === 0) return t("transfer.create.error_files");
-            if (files.value.length > props.maxFiles) return t("transfer.create.error_max_files", { max: props.maxFiles });
-            const total = files.value.reduce((sum, f) => sum + (f.size ?? 0), 0);
-            if (total > props.maxSizeMb * 1024 * 1024) return t("transfer.create.error_max_size", { max: formatFileSize(props.maxSizeMb, locale.value) });
+            if (files.value.length === 0) return translate("transfer.create.error_files");
+            if (files.value.length > props.maxFiles) return translate("transfer.create.error_max_files", { max: props.maxFiles });
+            const total = files.value.reduce((sum, file) => sum + (file.size ?? 0), 0);
+            if (total > props.maxSizeMb * 1024 * 1024) return translate("transfer.create.error_max_size", { max: formatFileSize(props.maxSizeMb, locale.value) });
             return null;
         },
         senderEmail: () => isPublic.value ? null : compose(
-            required(t("transfer.create.error_email_required")),
-            email(t("transfer.create.error_email_invalid")),
+            required(translate("transfer.create.error_email_required")),
+            email(translate("transfer.create.error_email_invalid")),
         )(senderEmail.value),
         recipients: () => {
             if (isPublic.value) return null;
-            if (validRecipients.value.length === 0) return t("transfer.create.error_recipients_required");
-            const bad = validRecipients.value.find((r) => !isValidEmail(r));
-            return bad ? t("transfer.create.error_recipient_invalid", { email: bad }) : null;
+            if (validRecipients.value.length === 0) return translate("transfer.create.error_recipients_required");
+            const firstInvalidEmail = validRecipients.value.find((recipient) => !isValidEmail(recipient));
+            return firstInvalidEmail ? translate("transfer.create.error_recipient_invalid", { email: firstInvalidEmail }) : null;
         },
     });
 
-    if (!ok) return;
+    if (!isValid) return;
 
     emit("submit", {
         files: files.value,
         isPublic: isPublic.value,
         senderEmail: isPublic.value ? null : senderEmail.value.trim(),
         senderName: isPublic.value ? null : senderName.value.trim(),
-        recipients: isPublic.value ? [] : validRecipients.value.map((r) => r.trim()),
+        recipients: isPublic.value ? [] : validRecipients.value.map((recipient) => recipient.trim()),
         message: message.value.trim(),
         expiresIn: expiresIn.value,
         password: password.value,
@@ -103,20 +103,20 @@ function submit() {
     <form novalidate class="space-y-5" v-on:submit.prevent="submit">
         <div class="flex flex-col gap-1.5">
             <div class="flex items-center justify-between">
-                <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('transfer.create.files_label') }}</label>
+                <label class="block text-xs text-secondary uppercase tracking-wide">{{ translate('transfer.create.files_label') }}</label>
                 <div class="flex items-center gap-2">
                     <span class="text-xs text-muted">
                         <span class="sm:hidden">{{ formatFileSize(Number(props.maxSizeMb), locale) }}</span>
-                        <span class="hidden sm:inline">{{ t('transfer.create.max_size', { max: formatFileSize(Number(props.maxSizeMb), locale) }) }}</span>
+                        <span class="hidden sm:inline">{{ translate('transfer.create.max_size', { max: formatFileSize(Number(props.maxSizeMb), locale) }) }}</span>
                     </span>
                     <button
                         type="button"
                         class="text-xs text-link hover:text-link-hover transition-colors flex items-center"
-                        :aria-label="t('transfer.create.how_it_works')"
+                        :aria-label="translate('transfer.create.how_it_works')"
                         v-on:click="emit('open-help')"
                     >
                         <HelpCircle class="w-4 h-4 sm:hidden" :stroke-width="2" />
-                        <span class="hidden sm:inline">{{ t('transfer.create.how_it_works') }}</span>
+                        <span class="hidden sm:inline">{{ translate('transfer.create.how_it_works') }}</span>
                     </button>
                 </div>
             </div>
@@ -125,7 +125,7 @@ function submit() {
         </div>
 
         <div class="flex flex-col gap-1.5" :class="{ 'opacity-40 pointer-events-none select-none': locked }">
-            <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('transfer.create.mode_label') }}</label>
+            <label class="block text-xs text-secondary uppercase tracking-wide">{{ translate('transfer.create.mode_label') }}</label>
             <div class="flex rounded-lg border border-line overflow-hidden text-sm">
                 <button
                     type="button"
@@ -133,7 +133,7 @@ function submit() {
                     :class="!isPublic ? 'bg-indigo-600 text-white' : 'bg-surface text-secondary hover:bg-surface-2'"
                     v-on:click="isPublic = false"
                 >
-                    {{ t('transfer.create.mode_email') }}
+                    {{ translate('transfer.create.mode_email') }}
                 </button>
                 <button
                     type="button"
@@ -142,14 +142,14 @@ function submit() {
                     v-on:click="isPublic = true"
                 >
                     <Link class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ t('transfer.create.mode_link') }}
+                    {{ translate('transfer.create.mode_link') }}
                 </button>
             </div>
         </div>
 
         <div v-if="!isPublic" class="flex flex-col gap-1.5" :class="{ 'opacity-40 pointer-events-none select-none': locked }">
             <label class="block text-xs text-secondary uppercase tracking-wide">
-                {{ t('transfer.create.recipients_label') }}
+                {{ translate('transfer.create.recipients_label') }}
                 <span class="text-red-500 ml-0.5">*</span>
             </label>
             <div class="flex flex-col gap-2">
@@ -179,7 +179,7 @@ function submit() {
                 v-on:click="addRecipient"
             >
                 <Plus class="w-3.5 h-3.5" :stroke-width="2" />
-                {{ t('transfer.create.add_recipient') }}
+                {{ translate('transfer.create.add_recipient') }}
             </button>
         </div>
 
@@ -187,45 +187,45 @@ function submit() {
             <AppInput
                 v-model="senderEmail"
                 type="email"
-                :label="t('transfer.create.sender_email')"
-                :placeholder="t('transfer.create.sender_email_placeholder')"
+                :label="translate('transfer.create.sender_email')"
+                :placeholder="translate('transfer.create.sender_email_placeholder')"
                 :error="errors.senderEmail"
                 required
             />
             <AppInput
                 v-model="senderName"
-                :label="t('transfer.create.sender_name')"
-                :placeholder="t('transfer.create.sender_name_placeholder')"
+                :label="translate('transfer.create.sender_name')"
+                :placeholder="translate('transfer.create.sender_name_placeholder')"
             />
         </div>
 
         <AppTextarea
             v-model="message"
-            :label="t('transfer.create.message_label')"
-            :placeholder="t('transfer.create.message_placeholder')"
+            :label="translate('transfer.create.message_label')"
+            :placeholder="translate('transfer.create.message_placeholder')"
             :class="{ 'opacity-40 pointer-events-none select-none': locked }"
         />
 
         <div class="space-y-5" :class="{ 'opacity-40 pointer-events-none select-none': locked }">
-            <AppSelect v-model="expiresIn" :label="t('transfer.create.expiry_label')">
-                <option v-for="h in props.expiryOptions" :key="h" :value="h">
-                    {{ h < 24
-                        ? t('transfer.create.expiry_hours', { n: h }, h)
-                        : t('transfer.create.expiry_days', { n: h / 24 }, h / 24) }}
+            <AppSelect v-model="expiresIn" :label="translate('transfer.create.expiry_label')">
+                <option v-for="hours in props.expiryOptions" :key="hours" :value="hours">
+                    {{ hours < 24
+                        ? translate('transfer.create.expiry_hours', { n: hours }, hours)
+                        : translate('transfer.create.expiry_days', { n: hours / 24 }, hours / 24) }}
                 </option>
             </AppSelect>
 
             <AppInput
                 v-model="password"
-                :label="t('transfer.create.password_label')"
-                :placeholder="t('transfer.create.password_placeholder')"
+                :label="translate('transfer.create.password_label')"
+                :placeholder="translate('transfer.create.password_placeholder')"
                 toggleable
             />
         </div>
 
         <AppButton type="submit" size="lg" class="w-full" :disabled="locked">
             <Send class="w-4 h-4" :stroke-width="2" />
-            {{ t('transfer.create.submit') }}
+            {{ translate('transfer.create.submit') }}
         </AppButton>
     </form>
 </template>

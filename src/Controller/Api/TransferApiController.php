@@ -138,11 +138,11 @@ class TransferApiController extends AbstractController
 
         try {
             $transferManager->finalize($transfer, $uploadKeys, $plainPassword);
-        } catch (FileLimitExceededException|SizeLimitExceededException|DisallowedFileTypeException $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (DisallowedZipContentException $e) {
+        } catch (FileLimitExceededException|SizeLimitExceededException|DisallowedFileTypeException $exception) {
+            return $this->json(['error' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (DisallowedZipContentException $exception) {
             return $this->json(
-                ['error' => 'zip_content_not_allowed', 'disallowed_files' => $e->getDisallowedFiles()],
+                ['error' => 'zip_content_not_allowed', 'disallowed_files' => $exception->getDisallowedFiles()],
                 Response::HTTP_UNPROCESSABLE_ENTITY,
             );
         }
@@ -190,25 +190,25 @@ class TransferApiController extends AbstractController
         return $this->json(['ok' => true]);
     }
 
-    private function serializeTransferSummary(Transfer $t): array
+    private function serializeTransferSummary(Transfer $transfer): array
     {
         return [
-            'reference' => $t->getReference(),
-            'ownerToken' => $t->getOwnerToken(),
-            'token' => $t->getToken(),
-            'status' => $t->getStatus()->value,
-            'isPublic' => $t->isPublic(),
-            'files' => array_map(fn ($f): array => [
-                'name' => $f->getOriginalName(),
-                'size' => $f->getFileSize(),
-            ], $t->getFiles()->toArray()),
-            'recipients' => array_map(fn ($r): array => [
-                'email' => $r->getEmail(),
-                'downloaded' => $r->hasDownloaded(),
-            ], $t->getRecipients()->toArray()),
-            'publicDownloadCount' => $t->getPublicDownloadCount(),
-            'expiresAt' => $t->getExpiresAt()->format(DateTimeInterface::ATOM),
-            'createdAt' => $t->getCreatedAt()->format(DateTimeInterface::ATOM),
+            'reference' => $transfer->getReference(),
+            'ownerToken' => $transfer->getOwnerToken(),
+            'token' => $transfer->getToken(),
+            'status' => $transfer->getStatus()->value,
+            'isPublic' => $transfer->isPublic(),
+            'files' => array_map(fn ($transferFile): array => [
+                'name' => $transferFile->getOriginalName(),
+                'size' => $transferFile->getFileSize(),
+            ], $transfer->getFiles()->toArray()),
+            'recipients' => array_map(fn ($recipient): array => [
+                'email' => $recipient->getEmail(),
+                'downloaded' => $recipient->hasDownloaded(),
+            ], $transfer->getRecipients()->toArray()),
+            'publicDownloadCount' => $transfer->getPublicDownloadCount(),
+            'expiresAt' => $transfer->getExpiresAt()->format(DateTimeInterface::ATOM),
+            'createdAt' => $transfer->getCreatedAt()->format(DateTimeInterface::ATOM),
         ];
     }
 
@@ -225,10 +225,10 @@ class TransferApiController extends AbstractController
             'reference' => $transfer->getReference(),
             'status' => $transfer->getStatus()->value,
             'expiresAt' => $transfer->getExpiresAt()->format(DateTimeInterface::ATOM),
-            'files' => array_map(fn ($f): array => [
-                'name' => $f->getOriginalName(),
-                'size' => $f->getFileSize(),
-                'mimeType' => $f->getMimeType(),
+            'files' => array_map(fn ($transferFile): array => [
+                'name' => $transferFile->getOriginalName(),
+                'size' => $transferFile->getFileSize(),
+                'mimeType' => $transferFile->getMimeType(),
             ], $transfer->getFiles()->toArray()),
             'recipientCount' => $transfer->getRecipients()->count(),
         ]);

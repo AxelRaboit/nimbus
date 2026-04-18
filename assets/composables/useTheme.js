@@ -10,11 +10,14 @@ function getInitial() {
         : "light";
 }
 
-function apply(t) {
-    const el = document.documentElement;
-    el.classList.add("theme-transitioning");
-    el.classList.toggle("dark", t === "dark");
-    window.setTimeout(() => el.classList.remove("theme-transitioning"), 300);
+function apply(newTheme) {
+    const htmlElement = document.documentElement;
+    htmlElement.classList.add("theme-transitioning");
+    htmlElement.classList.toggle("dark", newTheme === "dark");
+    window.setTimeout(
+        () => htmlElement.classList.remove("theme-transitioning"),
+        300,
+    );
 }
 
 // Singleton — shared across all composable calls
@@ -22,9 +25,9 @@ const theme = ref(getInitial());
 apply(theme.value);
 
 export function useTheme() {
-    watch(theme, (t) => {
-        apply(t);
-        localStorage.setItem(STORAGE_KEY, t);
+    watch(theme, (newTheme) => {
+        apply(newTheme);
+        localStorage.setItem(STORAGE_KEY, newTheme);
     });
 
     function toggle() {

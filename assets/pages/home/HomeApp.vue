@@ -11,7 +11,7 @@ import { useTransferDraft } from "@/composables/useTransferDraft.js";
 import { formatFileSize } from "@/utils/validation.js";
 
 
-const { t, locale } = useI18n();
+const { t: translate, locale } = useI18n();
 const { saveDraft, getDraft, clearDraft, clearTusFingerprints } = useTransferDraft();
 
 const props = defineProps({
@@ -37,7 +37,7 @@ const props = defineProps({
 const fileTypeGroups = computed(() => {
     const groups = JSON.parse(props.extensionGroups || "{}");
     return Object.entries(groups).map(([key, exts]) => ({
-        label: t(`home.file_groups.${key}`, key),
+        label: translate(`home.file_groups.${key}`, key),
         exts,
     }));
 });
@@ -67,7 +67,7 @@ const requestError = ref("");
 const requestSent = ref(false);
 
 const fileSizeOptions = computed(() => {
-    const all = [
+    const allOptions = [
         { label: "Pas de préférence", value: null },
         { label: "100 Mo", value: 100 },
         { label: "500 Mo", value: 500 },
@@ -77,7 +77,7 @@ const fileSizeOptions = computed(() => {
         { label: "20 Go", value: 20000 },
         { label: "50 Go", value: 50000 },
     ];
-    return all.filter(opt => opt.value === null || opt.value <= props.proMaxSizeMb);
+    return allOptions.filter(opt => opt.value === null || opt.value <= props.proMaxSizeMb);
 });
 
 async function submitAccessRequest() {
@@ -88,7 +88,7 @@ async function submitAccessRequest() {
     }
     requestLoading.value = true;
     try {
-        const res = await fetch("/api/home/request-access", {
+        const response = await fetch("/api/home/request-access", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -98,7 +98,7 @@ async function submitAccessRequest() {
                 requestedFileSizeMb: requestedFileSizeMb.value,
             }),
         });
-        if (!res.ok) {
+        if (!response.ok) {
             requestError.value = "Une erreur est survenue. Veuillez réessayer.";
             return;
         }
@@ -111,8 +111,8 @@ async function submitAccessRequest() {
 }
 
 if (typeof window !== "undefined") {
-    window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
             dismissGuestModal();
             showHelp.value = false;
         }
@@ -137,9 +137,9 @@ onMounted(async () => {
     if (!draft?.token) return;
 
     try {
-        const res = await fetch(`/api/transfer/${draft.token}/resume-check`);
-        if (res.ok) {
-            const data = await res.json();
+        const response = await fetch(`/api/transfer/${draft.token}/resume-check`);
+        if (response.ok) {
+            const data = await response.json();
             if (data.resumable) {
                 resumeDraft.value = draft;
                 return;
@@ -171,19 +171,19 @@ async function verifyAccess() {
     accessModalLoading.value = true;
     accessModalError.value = "";
     try {
-        const res = await fetch("/api/home/verify-access", {
+        const response = await fetch("/api/home/verify-access", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ password: accessModalPassword.value }),
         });
-        if (res.ok) {
+        if (response.ok) {
             accessGrantedLocal.value = true;
             accessModalPassword.value = "";
         } else {
-            accessModalError.value = t("home.access_password.error");
+            accessModalError.value = translate("home.access_password.error");
         }
     } catch {
-        accessModalError.value = t("home.access_password.error");
+        accessModalError.value = translate("home.access_password.error");
     } finally {
         accessModalLoading.value = false;
     }
@@ -205,7 +205,7 @@ async function onFormSubmit(formData) {
     }
 
     try {
-        const res = await fetch("/api/transfer", {
+        const response = await fetch("/api/transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -218,11 +218,11 @@ async function onFormSubmit(formData) {
                 password: formData.password || null,
             }),
         });
-        if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.error || `Erreur serveur (${res.status})`);
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || `Erreur serveur (${response.status})`);
         }
-        const data = await res.json();
+        const data = await response.json();
         transferToken.value = data.token;
         transferOwnerToken.value = data.ownerToken;
         transferReference.value = data.reference;
@@ -241,7 +241,7 @@ async function onFormSubmit(formData) {
             message: formData.message,
             expiresIn: formData.expiresIn,
             password: formData.password,
-            fileNames: formData.files.map((f) => ({ name: f.name, size: f.size })),
+            fileNames: formData.files.map((file) => ({ name: file.name, size: file.size })),
             savedAt: Date.now(),
         });
 
@@ -255,18 +255,18 @@ async function onUploadDone({ uploadKeys: keys }) {
     apiError.value = null;
     uploadKeys.value = keys;
     try {
-        const res = await fetch(`/api/transfer/${transferToken.value}/finalize`, {
+        const response = await fetch(`/api/transfer/${transferToken.value}/finalize`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ uploadKeys: keys, password: pendingFormData.value?.password || null }),
         });
-        if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
             if (data.error === "zip_content_not_allowed") {
                 const names = (data.disallowed_files ?? []).join(", ");
-                throw new Error(t("transfer.dropzone.error_zip", { files: names || "?" }));
+                throw new Error(translate("transfer.dropzone.error_zip", { files: names || "?" }));
             }
-            throw new Error(data.error || `Erreur serveur (${res.status})`);
+            throw new Error(data.error || `Erreur serveur (${response.status})`);
         }
         clearDraft();
         clearTusFingerprints();
@@ -372,8 +372,8 @@ function reset() {
                             <Lock class="w-6 h-6 text-indigo-500" :stroke-width="2" />
                         </div>
                     </div>
-                    <h2 class="text-lg font-bold text-primary">{{ t('home.access_password.title') }}</h2>
-                    <p class="text-sm text-secondary mt-1.5">{{ t('home.access_password.subtitle') }}</p>
+                    <h2 class="text-lg font-bold text-primary">{{ translate('home.access_password.title') }}</h2>
+                    <p class="text-sm text-secondary mt-1.5">{{ translate('home.access_password.subtitle') }}</p>
                 </div>
                 <div v-if="accessModalError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
                     {{ accessModalError }}
@@ -399,7 +399,7 @@ function reset() {
                         </button>
                     </div>
                     <AppButton type="submit" :loading="accessModalLoading" class="w-full">
-                        {{ t('home.access_password.submit') }}
+                        {{ translate('home.access_password.submit') }}
                     </AppButton>
                 </form>
                 <div class="mt-4 pt-4 border-t border-line text-center">
@@ -418,7 +418,7 @@ function reset() {
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-amber-400">Transfert en cours détecté</p>
                 <p class="text-xs text-secondary mt-0.5 truncate">
-                    {{ resumeDraft.fileNames?.map(f => f.name).join(', ') || 'Fichiers inconnus' }}
+                    {{ resumeDraft.fileNames?.map(file => file.name).join(', ') || 'Fichiers inconnus' }}
                 </p>
                 <p class="text-xs text-muted mt-1">Re-sélectionnez vos fichiers pour reprendre automatiquement.</p>
             </div>
@@ -516,7 +516,7 @@ function reset() {
                     <div class="flex items-center justify-between px-6 py-4 border-b border-line">
                         <h2 class="text-base font-semibold text-primary flex items-center gap-2">
                             <HelpCircle class="w-4 h-4 text-indigo-500" :stroke-width="2" />
-                            {{ t('home.hero.heading') }} {{ t('home.hero.heading_accent') }}
+                            {{ translate('home.hero.heading') }} {{ translate('home.hero.heading_accent') }}
                         </h2>
                         <button class="text-muted hover:text-primary transition-colors" v-on:click="showHelp = false">
                             <X class="w-4 h-4" :stroke-width="2" />
@@ -528,22 +528,22 @@ function reset() {
                             <li class="flex items-start gap-3">
                                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
                                 <div>
-                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_1_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_1_desc') }}</p>
+                                    <p class="font-semibold text-primary text-sm">{{ translate('home.hero.step_1_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ translate('home.hero.step_1_desc') }}</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
                                 <div>
-                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_2_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_2_desc') }}</p>
+                                    <p class="font-semibold text-primary text-sm">{{ translate('home.hero.step_2_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ translate('home.hero.step_2_desc') }}</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">3</span>
                                 <div>
-                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_3_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_3_desc') }}</p>
+                                    <p class="font-semibold text-primary text-sm">{{ translate('home.hero.step_3_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ translate('home.hero.step_3_desc') }}</p>
                                 </div>
                             </li>
                         </ol>
