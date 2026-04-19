@@ -9,6 +9,7 @@ use App\Trait\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: RecipientRepository::class)]
 #[ORM\Table(name: 'recipients')]
@@ -68,6 +69,7 @@ class Recipient
         return $this->token;
     }
 
+    #[Groups(['transfer:list'])]
     public function getEmail(): string
     {
         return $this->email;
@@ -80,6 +82,7 @@ class Recipient
         return $this;
     }
 
+    #[Groups(['transfer:list'])]
     public function hasDownloaded(): bool
     {
         return $this->downloadedAt instanceof DateTimeImmutable;
