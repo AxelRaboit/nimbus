@@ -20,11 +20,11 @@ class TransferFileRepository extends ServiceEntityRepository
 
     public function countAll(): int
     {
-        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM transfer_file');
+        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM transfer_files');
     }
 
     public function sumSize(): int
     {
-        return (int) ($this->getEntityManager()->getConnection()->fetchOne('SELECT COALESCE(SUM(file_size), 0) FROM transfer_file') ?? 0);
+        return (int) ($this->getEntityManager()->getConnection()->fetchOne('SELECT COALESCE(SUM(file_size), 0) FROM transfer_files') ?? 0);
     }
 }

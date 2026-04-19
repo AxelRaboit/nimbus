@@ -45,8 +45,8 @@ class ApplicationParameterRepository extends ServiceEntityRepository
     public function increment(string $key, int $by = 1): void
     {
         $this->getEntityManager()->getConnection()->executeStatement(
-            'INSERT INTO application_parameter (key, value) VALUES (:key, :by)
-             ON CONFLICT (key) DO UPDATE SET value = (COALESCE(application_parameter.value, \'0\')::bigint + :by)::text',
+            'INSERT INTO application_parameters (key, value) VALUES (:key, :by)
+             ON CONFLICT (key) DO UPDATE SET value = (COALESCE(application_parameters.value, \'0\')::bigint + :by)::text',
             ['key' => $key, 'by' => $by]
         );
     }

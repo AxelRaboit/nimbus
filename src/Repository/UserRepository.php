@@ -56,7 +56,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function countNewThisMonth(): int
     {
         return (int) $this->getEntityManager()->getConnection()->fetchOne(
-            "SELECT COUNT(*) FROM \"user\" WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', NOW())"
+            "SELECT COUNT(*) FROM \"users\" WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', NOW())"
         );
     }
 
@@ -68,7 +68,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             sprintf(
                 "SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month, COUNT(*) AS count
-                 FROM \"user\"
+                 FROM \"users\"
                  WHERE created_at >= DATE_TRUNC('month', NOW() - INTERVAL '%d months')
                  GROUP BY month
                  ORDER BY month",

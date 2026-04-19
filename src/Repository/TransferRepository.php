@@ -65,7 +65,7 @@ class TransferRepository extends ServiceEntityRepository
     public function countActive(): int
     {
         return (int) $this->getEntityManager()->getConnection()->fetchOne(
-            sprintf("SELECT COUNT(*) FROM transfer WHERE status = '%s' AND expires_at > NOW()", TransferStatusEnum::Ready->value)
+            sprintf("SELECT COUNT(*) FROM transfers WHERE status = '%s' AND expires_at > NOW()", TransferStatusEnum::Ready->value)
         );
     }
 
@@ -77,7 +77,7 @@ class TransferRepository extends ServiceEntityRepository
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             sprintf(
                 "SELECT TO_CHAR(DATE_TRUNC('month', created_at), 'YYYY-MM') AS month, COUNT(*) AS count
-                 FROM transfer
+                 FROM transfers
                  WHERE created_at >= DATE_TRUNC('month', NOW() - INTERVAL '%d months')
                  GROUP BY month
                  ORDER BY month",

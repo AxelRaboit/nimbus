@@ -18,6 +18,7 @@ import {
 } from "lucide-vue-next";
 import AppNoData from "@/components/AppNoData.vue";
 import AppPagination from "@/components/AppPagination.vue";
+import AppModal from "@/components/AppModal.vue";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend, Filler);
 
@@ -392,14 +393,18 @@ function submitInvitation() {
                             <p class="font-medium text-primary truncate">{{ user.name }}</p>
                             <p class="text-xs text-secondary truncate">{{ user.email }}</p>
                         </div>
-                        <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full shrink-0" :class="user.plan === 'pro' ? 'bg-amber-500/15 text-amber-400' : 'bg-surface-2 text-muted'">
-                            {{ user.plan === 'pro' ? 'Pro' : 'Free' }}
-                        </span>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full" :class="user.plan === 'pro' ? 'bg-amber-500/15 text-amber-400' : 'bg-surface-2 text-muted'">
+                                {{ user.plan === 'pro' ? 'Pro' : 'Free' }}
+                            </span>
+                            <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full" :class="user.isDevRole ? 'bg-indigo-500/15 text-indigo-400' : 'bg-surface-2 text-muted'">
+                                {{ user.isDevRole ? 'Dev' : 'User' }}
+                            </span>
+                        </div>
                     </div>
                     <div v-if="user.customFileSizeMb" class="text-xs text-muted">
                         Limite custom :
-                        <span class="font-medium" :class="user.isCapped ? 'text-amber-400 line-through' : 'text-emerald-400'">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
-                        <span v-if="user.isCapped" class="text-amber-400 font-medium ml-1">→ {{ user.effectiveFileSizeMb >= 1000 ? (user.effectiveFileSizeMb / 1000).toFixed(1) + ' Go' : user.effectiveFileSizeMb + ' Mo' }} (cappé)</span>
+                        <span class="font-medium text-emerald-400">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
                     </div>
                     <div class="flex items-center justify-between pt-1 border-t border-line">
                         <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
@@ -433,6 +438,7 @@ function submitInvitation() {
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t("admin.users.name") }}</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary">{{ t("admin.users.email") }}</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">{{ t("admin.users.plan") }}</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden md:table-cell">Rôle</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">Taille custom</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-primary hidden lg:table-cell">{{ t("admin.users.created") }}</th>
                             <th class="px-6 py-3 text-right text-sm font-semibold text-primary">{{ t("admin.users.actions") }}</th>
@@ -449,11 +455,13 @@ function submitInvitation() {
                                     {{ user.plan === 'pro' ? 'Pro' : 'Free' }}
                                 </span>
                             </td>
+                            <td class="px-6 py-3 hidden md:table-cell">
+                                <span class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full" :class="user.isDevRole ? 'bg-indigo-500/15 text-indigo-400' : 'bg-surface-2 text-muted'">
+                                    {{ user.isDevRole ? 'Dev' : 'User' }}
+                                </span>
+                            </td>
                             <td class="px-6 py-3 hidden lg:table-cell">
-                                <template v-if="user.customFileSizeMb">
-                                    <span class="text-xs font-medium" :class="user.isCapped ? 'text-amber-400 line-through' : 'text-emerald-400'">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
-                                    <span v-if="user.isCapped" class="text-xs text-amber-400 font-medium ml-1">→ {{ user.effectiveFileSizeMb >= 1000 ? (user.effectiveFileSizeMb / 1000).toFixed(1) + ' Go' : user.effectiveFileSizeMb + ' Mo' }}</span>
-                                </template>
+                                <span v-if="user.customFileSizeMb" class="text-xs font-medium text-emerald-400">{{ user.customFileSizeMb >= 1000 ? (user.customFileSizeMb / 1000).toFixed(1) + ' Go' : user.customFileSizeMb + ' Mo' }}</span>
                                 <span v-else class="text-xs text-muted">—</span>
                             </td>
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
@@ -472,7 +480,7 @@ function submitInvitation() {
                             </td>
                         </tr>
                         <tr v-if="!parsedUsers.items?.length">
-                            <td colspan="6"><AppNoData :message="t('admin.users.noResults')" /></td>
+                            <td colspan="7"><AppNoData :message="t('admin.users.noResults')" /></td>
                         </tr>
                     </tbody>
                 </table>
@@ -488,50 +496,44 @@ function submitInvitation() {
             </div>
 
             <!-- Confirm delete modal -->
-            <div v-if="pendingDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
-                    <p class="text-sm text-primary">{{ t("admin.users.deleteConfirm", { name: pendingDelete.name }) }}</p>
-                    <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingDelete = null">Annuler</button>
-                        <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="doDelete">Supprimer</button>
-                    </div>
+            <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">
+                <p class="text-sm text-primary">{{ t("admin.users.deleteConfirm", { name: pendingDelete?.name }) }}</p>
+                <div class="flex justify-end gap-2">
+                    <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingDelete = null">Annuler</button>
+                    <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="doDelete">Supprimer</button>
                 </div>
-            </div>
+            </AppModal>
 
             <!-- Confirm toggle role modal -->
-            <div v-if="pendingToggleRole" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
-                    <p class="text-sm text-primary">{{ t("admin.users.toggleRoleConfirm", { name: pendingToggleRole.name }) }}</p>
-                    <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingToggleRole = null">Annuler</button>
-                        <button class="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors" v-on:click="doToggleRole">Confirmer</button>
-                    </div>
+            <AppModal :show="!!pendingToggleRole" max-width="sm" v-on:close="pendingToggleRole = null">
+                <p class="text-sm text-primary">{{ t("admin.users.toggleRoleConfirm", { name: pendingToggleRole?.name }) }}</p>
+                <div class="flex justify-end gap-2">
+                    <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingToggleRole = null">Annuler</button>
+                    <button class="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors" v-on:click="doToggleRole">Confirmer</button>
                 </div>
-            </div>
+            </AppModal>
 
             <!-- Custom file size modal -->
-            <div v-if="pendingCustomSize" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
-                    <div>
-                        <p class="text-sm font-medium text-primary mb-0.5">Limite de taille — {{ pendingCustomSize.name }}</p>
-                        <p class="text-xs text-muted">Laissez vide pour revenir à la limite du plan.</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <input
-                            v-model.number="pendingCustomSizeValue"
-                            type="number"
-                            min="1"
-                            placeholder="Défaut plan"
-                            class="flex-1 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                        >
-                        <span class="text-xs text-muted shrink-0">Mo</span>
-                    </div>
-                    <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingCustomSize = null">Annuler</button>
-                        <button class="px-3 py-1.5 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors" v-on:click="doUpdateCustomSize">Enregistrer</button>
-                    </div>
+            <AppModal :show="!!pendingCustomSize" max-width="sm" v-on:close="pendingCustomSize = null">
+                <div>
+                    <p class="text-sm font-medium text-primary mb-0.5">Limite de taille — {{ pendingCustomSize?.name }}</p>
+                    <p class="text-xs text-muted">Laissez vide pour revenir à la limite du plan.</p>
                 </div>
-            </div>
+                <div class="flex items-center gap-2">
+                    <input
+                        v-model.number="pendingCustomSizeValue"
+                        type="number"
+                        min="1"
+                        placeholder="Défaut plan"
+                        class="flex-1 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                    >
+                    <span class="text-xs text-muted shrink-0">Mo</span>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingCustomSize = null">Annuler</button>
+                    <button class="px-3 py-1.5 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors" v-on:click="doUpdateCustomSize">Enregistrer</button>
+                </div>
+            </AppModal>
         </div>
 
         <!-- Invitations tab -->
@@ -889,54 +891,48 @@ function submitInvitation() {
             </div>
 
             <!-- Confirm approve modal -->
-            <div v-if="pendingApprove" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
-                    <p class="text-sm text-primary">Approuver la demande de <strong>{{ pendingApprove.requesterName ?? pendingApprove.requesterEmail }}</strong> ? Un e-mail lui sera envoyé avec un lien d'accès.</p>
-                    <div class="space-y-1.5">
-                        <label class="text-xs text-muted">
-                            Limite de taille accordée
-                            <span v-if="pendingApprove.requestedFileSizeMb" class="text-muted">(demandée : {{ pendingApprove.requestedFileSizeMb >= 1000 ? (pendingApprove.requestedFileSizeMb / 1000).toFixed(1) + ' Go' : pendingApprove.requestedFileSizeMb + ' Mo' }})</span>
-                        </label>
-                        <div class="flex items-center gap-2">
-                            <input
-                                v-model.number="approveGrantedSize"
-                                type="number"
-                                min="1"
-                                placeholder="Défaut plan"
-                                class="flex-1 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                            >
-                            <span class="text-xs text-muted shrink-0">Mo</span>
-                        </div>
-                        <p class="text-xs text-muted">Laisser vide pour appliquer la limite du plan.</p>
+            <AppModal :show="!!pendingApprove" max-width="sm" v-on:close="pendingApprove = null">
+                <p class="text-sm text-primary">Approuver la demande de <strong>{{ pendingApprove?.requesterName ?? pendingApprove?.requesterEmail }}</strong> ? Un e-mail lui sera envoyé avec un lien d'accès.</p>
+                <div class="space-y-1.5">
+                    <label class="text-xs text-muted">
+                        Limite de taille accordée
+                        <span v-if="pendingApprove?.requestedFileSizeMb" class="text-muted">(demandée : {{ pendingApprove?.requestedFileSizeMb >= 1000 ? (pendingApprove?.requestedFileSizeMb / 1000).toFixed(1) + ' Go' : pendingApprove?.requestedFileSizeMb + ' Mo' }})</span>
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <input
+                            v-model.number="approveGrantedSize"
+                            type="number"
+                            min="1"
+                            placeholder="Défaut plan"
+                            class="flex-1 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-primary placeholder-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        >
+                        <span class="text-xs text-muted shrink-0">Mo</span>
                     </div>
-                    <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingApprove = null">Annuler</button>
-                        <button class="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors" v-on:click="doApproveRequest">Approuver</button>
-                    </div>
+                    <p class="text-xs text-muted">Laisser vide pour appliquer la limite du plan.</p>
                 </div>
-            </div>
+                <div class="flex justify-end gap-2">
+                    <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingApprove = null">Annuler</button>
+                    <button class="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors" v-on:click="doApproveRequest">Approuver</button>
+                </div>
+            </AppModal>
 
             <!-- Confirm reject modal -->
-            <div v-if="pendingReject" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
-                    <p class="text-sm text-primary">Rejeter la demande de <strong>{{ pendingReject.requesterName ?? pendingReject.requesterEmail }}</strong> ?</p>
-                    <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingReject = null">Annuler</button>
-                        <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="doRejectRequest">Rejeter</button>
-                    </div>
+            <AppModal :show="!!pendingReject" max-width="sm" v-on:close="pendingReject = null">
+                <p class="text-sm text-primary">Rejeter la demande de <strong>{{ pendingReject?.requesterName ?? pendingReject?.requesterEmail }}</strong> ?</p>
+                <div class="flex justify-end gap-2">
+                    <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="pendingReject = null">Annuler</button>
+                    <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="doRejectRequest">Rejeter</button>
                 </div>
-            </div>
+            </AppModal>
 
             <!-- Confirm purge modal -->
-            <div v-if="confirmPurge" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div class="bg-surface border border-line rounded-xl p-6 max-w-sm w-full mx-4 space-y-4">
-                    <p class="text-sm text-primary">Supprimer toutes les demandes <strong>approuvées et rejetées</strong> ? Cette action est irréversible.</p>
-                    <div class="flex justify-end gap-2">
-                        <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="confirmPurge = false">Annuler</button>
-                        <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="doPurgeApproved">Purger</button>
-                    </div>
+            <AppModal :show="confirmPurge" max-width="sm" v-on:close="confirmPurge = false">
+                <p class="text-sm text-primary">Supprimer toutes les demandes <strong>approuvées et rejetées</strong> ? Cette action est irréversible.</p>
+                <div class="flex justify-end gap-2">
+                    <button class="px-3 py-1.5 text-sm text-secondary hover:text-primary transition-colors" v-on:click="confirmPurge = false">Annuler</button>
+                    <button class="px-3 py-1.5 text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors" v-on:click="doPurgeApproved">Purger</button>
                 </div>
-            </div>
+            </AppModal>
         </div>
     </div>
 </template>
