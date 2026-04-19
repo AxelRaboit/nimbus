@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Dev;
 
+use App\DTO\PaginationRequest;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\ApplicationParameterRepository;
@@ -23,10 +24,9 @@ final class ParametersController extends AbstractController
     ) {}
 
     #[Route('', name: 'dev_parameters')]
-    public function index(Request $request): Response
+    public function index(PaginationRequest $pagination): Response
     {
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->parameterRepository->findPaginated($page);
+        $result = $this->parameterRepository->findPaginated($pagination->page);
 
         return $this->render('dev/index.html.twig', [
             'tab' => 'parameters',
