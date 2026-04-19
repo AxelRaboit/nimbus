@@ -8,7 +8,7 @@ use App\Repository\ApplicationParameterRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ApplicationParameterRepository::class)]
-#[ORM\Table(name: 'application_parameter')]
+#[ORM\Table(name: 'application_parameters')]
 class ApplicationParameter
 {
     public function __construct(

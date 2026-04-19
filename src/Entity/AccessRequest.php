@@ -12,6 +12,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AccessRequestRepository::class)]
+#[ORM\Table(name: 'access_requests')]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'IDX_access_request_token', columns: ['token'])]
 #[ORM\Index(name: 'IDX_access_request_status', columns: ['status'])]

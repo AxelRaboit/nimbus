@@ -14,6 +14,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TransferRepository::class)]
+#[ORM\Table(name: 'transfers')]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(name: 'IDX_transfer_status', columns: ['status'])]
 #[ORM\Index(name: 'IDX_transfer_expires_at', columns: ['expires_at'])]
