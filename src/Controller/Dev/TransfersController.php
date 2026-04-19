@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Dev;
 
+use App\DTO\PaginationRequest;
 use App\Entity\Transfer;
 use App\Enum\UserRoleEnum;
 use App\Repository\TransferRepository;
@@ -22,11 +23,10 @@ final class TransfersController extends AbstractController
     ) {}
 
     #[Route('', name: 'dev_transfers')]
-    public function index(Request $request): Response
+    public function index(Request $request, PaginationRequest $pagination): Response
     {
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $status = $request->query->get('status', '');
-        $result = $this->transferRepository->findPaginatedAdmin($page, $status);
+        $status = $request->query->getString('status');
+        $result = $this->transferRepository->findPaginatedAdmin($pagination->page, $status);
 
         return $this->render('dev/index.html.twig', [
             'tab' => 'transfers',

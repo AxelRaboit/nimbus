@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Entity\Transfer;
 use App\Entity\User;
 use App\Enum\TransferStatusEnum;
-use App\Model\Pagination;
+use App\Repository\Trait\PaginationTrait;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TransferRepository extends ServiceEntityRepository
 {
+    use PaginationTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Transfer::class);
@@ -104,14 +106,7 @@ class TransferRepository extends ServiceEntityRepository
             $countQb->andWhere('t.status = :status')->setParameter('status', TransferStatusEnum::from($status));
         }
 
-        $pagination = Pagination::fromPage($page, limit: 20, total: (int) $countQb->getQuery()->getSingleScalarResult());
-
-        return [
-            'items' => $qb->setMaxResults($pagination->limit)->setFirstResult($pagination->offset)->getQuery()->getResult(),
-            'total' => $pagination->total,
-            'page' => $pagination->page,
-            'totalPages' => $pagination->totalPages,
-        ];
+        return $this->paginate($qb, $countQb, $page);
     }
 
     /**

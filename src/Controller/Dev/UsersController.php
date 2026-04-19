@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Dev;
 
 use App\Contract\UserManagerInterface;
+use App\DTO\PaginationRequest;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
@@ -27,11 +28,9 @@ final class UsersController extends AbstractController
     ) {}
 
     #[Route('', name: 'dev_users')]
-    public function index(Request $request): Response
+    public function index(PaginationRequest $pagination): Response
     {
-        $search = $request->query->getString('search');
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->userRepository->findPaginatedForAdmin($page, $search ?: null);
+        $result = $this->userRepository->findPaginatedForAdmin($pagination->page, $pagination->search);
 
         return $this->render('dev/index.html.twig', [
             'tab' => 'users',
@@ -41,7 +40,7 @@ final class UsersController extends AbstractController
                 'page' => $result['page'],
                 'totalPages' => $result['totalPages'],
             ],
-            'search' => $search,
+            'search' => $pagination->search ?? '',
         ]);
     }
 

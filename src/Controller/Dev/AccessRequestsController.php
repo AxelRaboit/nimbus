@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Dev;
 
 use App\Contract\AccessRequestManagerInterface;
+use App\DTO\PaginationRequest;
 use App\Entity\AccessRequest;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
@@ -25,10 +26,9 @@ final class AccessRequestsController extends AbstractController
     ) {}
 
     #[Route('', name: 'dev_access_requests')]
-    public function index(Request $request): Response
+    public function index(PaginationRequest $pagination): Response
     {
-        $page = max(1, (int) $request->query->get('page', '1'));
-        $result = $this->accessRequestRepository->findPaginatedAdmin($page);
+        $result = $this->accessRequestRepository->findPaginatedAdmin($pagination->page);
 
         return $this->render('dev/index.html.twig', [
             'tab' => 'access_requests',
