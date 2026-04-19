@@ -51,7 +51,7 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 
 ### Inscription
 
-![Inscription](docs/readme/screenshots/email/inscription.jpg)
+![Inscription](docs/readme/screenshots/email/registration.png)
 
 > Formulaire d'inscription : nom complet, adresse e-mail, mot de passe et confirmation.
 
