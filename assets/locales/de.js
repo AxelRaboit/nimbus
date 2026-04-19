@@ -7,6 +7,28 @@ export default {
     common: {
         save: "Speichern",
         download_qr: "QR-Code herunterladen",
+        or: "oder",
+    },
+    auth: {
+        register: {
+            heading: "Konto erstellen",
+            name: "Vollständiger Name",
+            name_placeholder: "Max Mustermann",
+            email: "E-Mail-Adresse",
+            password: "Passwort",
+            password_confirm: "Passwort bestätigen",
+            submit: "Mein Konto erstellen",
+            already_account: "Bereits registriert?",
+            login_link: "Anmelden",
+            error_name_required: "Name ist erforderlich.",
+            error_email_required: "E-Mail-Adresse ist erforderlich.",
+            error_email_invalid: "E-Mail-Adresse ist ungültig.",
+            error_email_taken: "Diese E-Mail-Adresse wird bereits verwendet.",
+            error_password_mismatch: "Die Passwörter stimmen nicht überein.",
+            closed_title: "Registrierung geschlossen",
+            closed_desc:
+                "Die Registrierung ist derzeit nicht geöffnet. Versuchen Sie es später oder kontaktieren Sie den Administrator.",
+        },
     },
     app: {
         theme_dark: "Dunkelmodus aktivieren",
@@ -196,9 +218,23 @@ export default {
         errors: {
             name_required: "Name ist erforderlich.",
             email_invalid: "Ungültige E-Mail-Adresse.",
-            password_too_short:
-                "Das Passwort muss mindestens 8 Zeichen lang sein.",
             password_mismatch: "Die Passwörter stimmen nicht überein.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "Mindestens 8 Zeichen",
+            uppercase: "Ein Großbuchstabe",
+            number: "Eine Zahl",
+            special: "Ein Sonderzeichen",
+        },
+        errors: {
+            too_short: "Das Passwort muss mindestens 8 Zeichen lang sein.",
+            no_uppercase:
+                "Das Passwort muss mindestens einen Großbuchstaben enthalten.",
+            no_number: "Das Passwort muss mindestens eine Zahl enthalten.",
+            no_special:
+                "Das Passwort muss mindestens ein Sonderzeichen enthalten.",
         },
     },
     transfer_password: {

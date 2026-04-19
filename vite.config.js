@@ -22,6 +22,7 @@ export default defineConfig({
                 theme: './assets/theme.js',
                 sidebar: './assets/sidebar.js',
                 flash: './assets/flash.js',
+                register: './assets/pages/register/index.js',
                 home: './assets/pages/home/index.js',
                 transfer: './assets/pages/transfer/index.js',
                 manage: './assets/pages/manage/index.js',

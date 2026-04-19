@@ -4,8 +4,10 @@ import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import AppButton from "@/components/AppButton.vue";
 import AppInput from "@/components/AppInput.vue";
+import PasswordStrength from "@/components/PasswordStrength.vue";
 import { useForm } from "@/composables/useForm.js";
 import { required, email, compose } from "@/utils/validators.js";
+import { passwordValidator } from "@/utils/passwordRules.js";
 
 const { t } = useI18n();
 
@@ -95,10 +97,7 @@ const { errors: passwordErrors, validate: validatePassword, setErrors: setPasswo
 async function savePassword() {
     const isValid = validatePassword({
         current_password: () => required(t("profile.password.error_current"))(currentPassword.value),
-        password: () => {
-            if (!newPassword.value || newPassword.value.length < 8) return t("profile.errors.password_too_short");
-            return null;
-        },
+        password: () => passwordValidator(t)(newPassword.value),
         password_confirmation: () => {
             if (newPassword.value && newPassword.value !== confirmPassword.value) return t("profile.errors.password_mismatch");
             return null;
@@ -226,15 +225,18 @@ async function deleteAccount() {
                     toggleable
                     required
                 />
-                <AppInput
-                    v-model="newPassword"
-                    :label="t('profile.password.new')"
-                    :error="passwordErrors.password"
-                    placeholder="••••••••"
-                    autocomplete="new-password"
-                    toggleable
-                    required
-                />
+                <div>
+                    <AppInput
+                        v-model="newPassword"
+                        :label="t('profile.password.new')"
+                        :error="passwordErrors.password"
+                        placeholder="••••••••"
+                        autocomplete="new-password"
+                        toggleable
+                        required
+                    />
+                    <PasswordStrength :password="newPassword" />
+                </div>
                 <AppInput
                     v-model="confirmPassword"
                     :label="t('profile.password.confirm')"

@@ -7,6 +7,28 @@ export default {
     common: {
         save: "Save",
         download_qr: "Download QR code",
+        or: "or",
+    },
+    auth: {
+        register: {
+            heading: "Create an account",
+            name: "Full name",
+            name_placeholder: "John Doe",
+            email: "Email address",
+            password: "Password",
+            password_confirm: "Confirm password",
+            submit: "Create account",
+            already_account: "Already registered?",
+            login_link: "Sign in",
+            error_name_required: "Name is required.",
+            error_email_required: "Email address is required.",
+            error_email_invalid: "Email address is not valid.",
+            error_email_taken: "This email address is already in use.",
+            error_password_mismatch: "Passwords do not match.",
+            closed_title: "Registration is closed",
+            closed_desc:
+                "Registrations are not open at the moment. Come back later or contact the administrator.",
+        },
     },
     app: {
         theme_dark: "Switch to dark mode",
@@ -191,8 +213,22 @@ export default {
         errors: {
             name_required: "Name is required.",
             email_invalid: "Invalid email address.",
-            password_too_short: "Password must be at least 8 characters.",
             password_mismatch: "Passwords do not match.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "At least 8 characters",
+            uppercase: "One uppercase letter",
+            number: "One number",
+            special: "One special character",
+        },
+        errors: {
+            too_short: "Password must be at least 8 characters.",
+            no_uppercase:
+                "Password must contain at least one uppercase letter.",
+            no_number: "Password must contain at least one number.",
+            no_special: "Password must contain at least one special character.",
         },
     },
     transfer_password: {

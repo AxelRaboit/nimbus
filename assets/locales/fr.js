@@ -7,6 +7,28 @@ export default {
     common: {
         save: "Enregistrer",
         download_qr: "Télécharger le QR code",
+        or: "ou",
+    },
+    auth: {
+        register: {
+            heading: "Créer un compte",
+            name: "Nom complet",
+            name_placeholder: "Jean Dupont",
+            email: "Adresse e-mail",
+            password: "Mot de passe",
+            password_confirm: "Confirmer le mot de passe",
+            submit: "Créer mon compte",
+            already_account: "Déjà inscrit ?",
+            login_link: "Se connecter",
+            error_name_required: "Le nom est obligatoire.",
+            error_email_required: "L'adresse e-mail est obligatoire.",
+            error_email_invalid: "L'adresse e-mail n'est pas valide.",
+            error_email_taken: "Cette adresse e-mail est déjà utilisée.",
+            error_password_mismatch: "Les mots de passe ne correspondent pas.",
+            closed_title: "Les inscriptions sont fermées",
+            closed_desc:
+                "Les inscriptions ne sont pas ouvertes pour le moment. Revenez plus tard ou contactez l'administrateur.",
+        },
     },
     app: {
         theme_dark: "Passer en mode sombre",
@@ -197,9 +219,23 @@ export default {
         errors: {
             name_required: "Le nom est requis.",
             email_invalid: "Adresse email invalide.",
-            password_too_short:
-                "Le mot de passe doit contenir au moins 8 caractères.",
             password_mismatch: "Les mots de passe ne correspondent pas.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "8 caractères minimum",
+            uppercase: "Une lettre majuscule",
+            number: "Un chiffre",
+            special: "Un caractère spécial",
+        },
+        errors: {
+            too_short: "Le mot de passe doit contenir au moins 8 caractères.",
+            no_uppercase:
+                "Le mot de passe doit contenir au moins une majuscule.",
+            no_number: "Le mot de passe doit contenir au moins un chiffre.",
+            no_special:
+                "Le mot de passe doit contenir au moins un caractère spécial.",
         },
     },
     transfer_password: {
