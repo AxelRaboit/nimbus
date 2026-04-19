@@ -10,6 +10,7 @@ use App\Trait\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TransferFileRepository::class)]
+#[ORM\Table(name: 'transfer_files')]
 #[ORM\HasLifecycleCallbacks]
 class TransferFile
 {
