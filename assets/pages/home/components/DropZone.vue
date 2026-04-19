@@ -6,7 +6,7 @@ import { useFileSize } from "@/composables/useFileSize.js";
 import { ALLOWED_EXTENSIONS_ACCEPT, isAllowedExt } from "@/utils/allowedExtensions.js";
 import { getDisallowedZipFiles } from "@/utils/zipValidator.js";
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 
 const props = defineProps({
     files: { type: Array, default: () => [] },
@@ -114,11 +114,11 @@ async function addFiles(newFiles) {
     }
 
     if (typeErrors.length > 0) {
-        dropErrors.value.push(translate("transfer.dropzone.error_type", { files: typeErrors.join(", ") }));
+        dropErrors.value.push(t("transfer.dropzone.error_type", { files: typeErrors.join(", ") }));
     }
     if (zipErrors.length > 0) {
         const names = zipErrors.flatMap((zipError) => zipError.disallowed).join(", ");
-        dropErrors.value.push(translate("transfer.dropzone.error_zip", { files: names }));
+        dropErrors.value.push(t("transfer.dropzone.error_zip", { files: names }));
     }
 
     if (valid.length > 0) {
@@ -163,9 +163,9 @@ function removeFile(index) {
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-primary">
-                        {{ isDragging ? translate('transfer.dropzone.drop') : translate('transfer.dropzone.drag') }}
+                        {{ isDragging ? t('transfer.dropzone.drop') : t('transfer.dropzone.drag') }}
                     </p>
-                    <p class="text-xs text-muted mt-0.5">{{ translate('transfer.dropzone.hint') }}</p>
+                    <p class="text-xs text-muted mt-0.5">{{ t('transfer.dropzone.hint') }}</p>
                 </div>
             </div>
         </div>
@@ -176,7 +176,7 @@ function removeFile(index) {
             v-on:click="$refs.folderInput.click()"
         >
             <FolderOpen class="w-3.5 h-3.5" :stroke-width="2" />
-            {{ translate('transfer.dropzone.upload_folder') }}
+            {{ t('transfer.dropzone.upload_folder') }}
         </button>
 
         <div v-if="dropErrors.length" class="mt-2 flex flex-col gap-1">

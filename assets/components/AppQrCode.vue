@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import QRCode from "qrcode";
 import { Download } from "lucide-vue-next";
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 
 const props = defineProps({
     url: { type: String, required: true },
@@ -52,7 +52,7 @@ function download() {
             v-on:click="download"
         >
             <Download class="w-3 h-3" :stroke-width="2" />
-            {{ translate('common.download_qr') }}
+            {{ t('common.download_qr') }}
         </button>
     </div>
 </template>

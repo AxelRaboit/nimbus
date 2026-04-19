@@ -11,7 +11,7 @@ import { useTransferDraft } from "@/composables/useTransferDraft.js";
 import { formatFileSize, normalizeServerErrors } from "@/utils/validation.js";
 
 
-const { t: translate, locale } = useI18n();
+const { t, locale } = useI18n();
 const { saveDraft, getDraft, clearDraft, clearTusFingerprints } = useTransferDraft();
 
 const transferServerErrors = ref({});
@@ -39,7 +39,7 @@ const props = defineProps({
 const fileTypeGroups = computed(() => {
     const groups = JSON.parse(props.extensionGroups || "{}");
     return Object.entries(groups).map(([key, exts]) => ({
-        label: translate(`home.file_groups.${key}`, key),
+        label: t(`home.file_groups.${key}`, key),
         exts,
     }));
 });
@@ -182,10 +182,10 @@ async function verifyAccess() {
             accessGrantedLocal.value = true;
             accessModalPassword.value = "";
         } else {
-            accessModalError.value = translate("home.access_password.error");
+            accessModalError.value = t("home.access_password.error");
         }
     } catch {
-        accessModalError.value = translate("home.access_password.error");
+        accessModalError.value = t("home.access_password.error");
     } finally {
         accessModalLoading.value = false;
     }
@@ -270,7 +270,7 @@ async function onUploadDone({ uploadKeys: keys }) {
             const data = await response.json().catch(() => ({}));
             if (data.error === "zip_content_not_allowed") {
                 const names = (data.disallowed_files ?? []).join(", ");
-                throw new Error(translate("transfer.dropzone.error_zip", { files: names || "?" }));
+                throw new Error(t("transfer.dropzone.error_zip", { files: names || "?" }));
             }
             throw new Error(data.error || `Erreur serveur (${response.status})`);
         }
@@ -378,8 +378,8 @@ function reset() {
                             <Lock class="w-6 h-6 text-indigo-500" :stroke-width="2" />
                         </div>
                     </div>
-                    <h2 class="text-lg font-bold text-primary">{{ translate('home.access_password.title') }}</h2>
-                    <p class="text-sm text-secondary mt-1.5">{{ translate('home.access_password.subtitle') }}</p>
+                    <h2 class="text-lg font-bold text-primary">{{ t('home.access_password.title') }}</h2>
+                    <p class="text-sm text-secondary mt-1.5">{{ t('home.access_password.subtitle') }}</p>
                 </div>
                 <div v-if="accessModalError" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
                     {{ accessModalError }}
@@ -405,7 +405,7 @@ function reset() {
                         </button>
                     </div>
                     <AppButton type="submit" :loading="accessModalLoading" class="w-full">
-                        {{ translate('home.access_password.submit') }}
+                        {{ t('home.access_password.submit') }}
                     </AppButton>
                 </form>
                 <div class="mt-4 pt-4 border-t border-line text-center">
@@ -523,7 +523,7 @@ function reset() {
                     <div class="flex items-center justify-between px-6 py-4 border-b border-line">
                         <h2 class="text-base font-semibold text-primary flex items-center gap-2">
                             <HelpCircle class="w-4 h-4 text-indigo-500" :stroke-width="2" />
-                            {{ translate('home.hero.heading') }} {{ translate('home.hero.heading_accent') }}
+                            {{ t('home.hero.heading') }} {{ t('home.hero.heading_accent') }}
                         </h2>
                         <button class="text-muted hover:text-primary transition-colors" v-on:click="showHelp = false">
                             <X class="w-4 h-4" :stroke-width="2" />
@@ -535,22 +535,22 @@ function reset() {
                             <li class="flex items-start gap-3">
                                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
                                 <div>
-                                    <p class="font-semibold text-primary text-sm">{{ translate('home.hero.step_1_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ translate('home.hero.step_1_desc') }}</p>
+                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_1_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_1_desc') }}</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
                                 <div>
-                                    <p class="font-semibold text-primary text-sm">{{ translate('home.hero.step_2_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ translate('home.hero.step_2_desc') }}</p>
+                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_2_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_2_desc') }}</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">3</span>
                                 <div>
-                                    <p class="font-semibold text-primary text-sm">{{ translate('home.hero.step_3_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ translate('home.hero.step_3_desc') }}</p>
+                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_3_title') }}</p>
+                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_3_desc') }}</p>
                                 </div>
                             </li>
                         </ol>
