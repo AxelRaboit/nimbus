@@ -8,7 +8,7 @@ import AppButton from "@/components/AppButton.vue";
 import { manageUrl, } from "@/utils/routes.js";
 import { downloadedCount, totalSize } from "@/utils/transferHelpers.js";
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 const { formatSize } = useFileSize();
 const { formatDate } = useDateFormat();
 
@@ -61,11 +61,11 @@ const statusClass = {
 <template>
     <div class="max-w-3xl mx-auto">
         <div v-if="loading" class="flex items-center justify-center py-20 text-muted text-sm">
-            {{ translate('dashboard.loading') }}
+            {{ t('dashboard.loading') }}
         </div>
 
         <div v-else-if="error" class="text-sm text-red-500 py-10 text-center">
-            {{ translate('dashboard.error') }}
+            {{ t('dashboard.error') }}
         </div>
 
         <div v-else-if="transfers.length === 0" class="flex flex-col items-center justify-center py-20 gap-4 text-center">
@@ -73,10 +73,10 @@ const statusClass = {
                 <UploadCloud class="w-6 h-6 text-muted" :stroke-width="1.5" />
             </div>
             <div>
-                <p class="text-sm font-medium text-primary">{{ translate('dashboard.empty_title') }}</p>
-                <p class="text-xs text-muted mt-1">{{ translate('dashboard.empty_desc') }}</p>
+                <p class="text-sm font-medium text-primary">{{ t('dashboard.empty_title') }}</p>
+                <p class="text-xs text-muted mt-1">{{ t('dashboard.empty_desc') }}</p>
             </div>
-            <AppButton href="/">{{ translate('dashboard.new_transfer') }}</AppButton>
+            <AppButton href="/">{{ t('dashboard.new_transfer') }}</AppButton>
         </div>
 
         <div v-else class="flex flex-col gap-3">
@@ -92,7 +92,7 @@ const statusClass = {
                             class="text-xs font-bold px-2 py-0.5 rounded-full"
                             :class="statusClass[transfer.status] ?? 'bg-surface-2 text-muted'"
                         >
-                            {{ translate(`transfer.status.${transfer.status}`, transfer.status) }}
+                            {{ t(`transfer.status.${transfer.status}`, transfer.status) }}
                         </span>
                     </div>
 
@@ -103,26 +103,26 @@ const statusClass = {
                         </span>
 
                         <span v-if="transfer.isPublic">
-                            {{ translate('dashboard.public_link') }} · {{ transfer.publicDownloadCount }} {{ translate('dashboard.downloads') }}
+                            {{ t('dashboard.public_link') }} · {{ transfer.publicDownloadCount }} {{ t('dashboard.downloads') }}
                         </span>
                         <span v-else class="flex items-center gap-1">
                             <Check class="w-3.5 h-3.5 shrink-0" :stroke-width="2" />
-                            {{ downloadedCount(transfer.recipients) }}/{{ transfer.recipients.length }} {{ translate('dashboard.downloaded') }}
+                            {{ downloadedCount(transfer.recipients) }}/{{ transfer.recipients.length }} {{ t('dashboard.downloaded') }}
                         </span>
 
-                        <span>{{ translate('dashboard.expires') }} {{ formatDate(transfer.expiresAt) }}</span>
+                        <span>{{ t('dashboard.expires') }} {{ formatDate(transfer.expiresAt) }}</span>
                     </div>
                 </div>
 
                 <AppButton variant="secondary" size="sm" :href="manageUrl(transfer.ownerToken)">
                     <Settings class="w-3.5 h-3.5" :stroke-width="2" />
-                    {{ translate('dashboard.manage') }}
+                    {{ t('dashboard.manage') }}
                 </AppButton>
             </div>
 
             <div v-if="hasMore" class="flex justify-center pt-2">
                 <AppButton variant="secondary" size="sm" :loading="loadingMore" v-on:click="loadMore">
-                    {{ translate('dashboard.load_more') }}
+                    {{ t('dashboard.load_more') }}
                 </AppButton>
             </div>
         </div>

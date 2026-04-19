@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { Lock } from "lucide-vue-next";
 import AppButton from "@/components/AppButton.vue";
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 
 const props = defineProps({
     token: { type: String, required: true },
@@ -29,10 +29,10 @@ async function submit() {
         if (data.success) {
             window.location.reload();
         } else {
-            error.value = data.error || translate('transfer_password.error');
+            error.value = data.error || t('transfer_password.error');
         }
     } catch {
-        error.value = translate('transfer_password.error');
+        error.value = t('transfer_password.error');
     } finally {
         loading.value = false;
     }
@@ -46,8 +46,8 @@ async function submit() {
                 <div class="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
                     <Lock class="w-7 h-7 text-indigo-600" />
                 </div>
-                <h1 class="text-2xl font-bold text-primary">{{ translate('transfer_password.title') }}</h1>
-                <p class="text-sm text-muted mt-1">{{ translate('transfer_password.subtitle') }}</p>
+                <h1 class="text-2xl font-bold text-primary">{{ t('transfer_password.title') }}</h1>
+                <p class="text-sm text-muted mt-1">{{ t('transfer_password.subtitle') }}</p>
             </div>
 
             <div class="rounded-lg border border-line bg-surface shadow-lg shadow-indigo-500/10 p-6">
@@ -57,7 +57,7 @@ async function submit() {
 
                 <form class="flex flex-col gap-4" v-on:submit.prevent="submit">
                     <div class="flex flex-col gap-1.5">
-                        <label class="block text-xs text-secondary uppercase tracking-wide">{{ translate('transfer_password.label') }}</label>
+                        <label class="block text-xs text-secondary uppercase tracking-wide">{{ t('transfer_password.label') }}</label>
                         <input
                             v-model="password"
                             type="password"
@@ -69,7 +69,7 @@ async function submit() {
                     </div>
 
                     <AppButton type="submit" :loading="loading" class="w-full">
-                        {{ translate('transfer_password.submit') }}
+                        {{ t('transfer_password.submit') }}
                     </AppButton>
                 </form>
             </div>

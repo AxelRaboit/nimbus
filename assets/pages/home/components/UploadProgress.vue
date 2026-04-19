@@ -5,7 +5,7 @@ import { UploadCloud, Check, AlertCircle, FileText } from "lucide-vue-next";
 import { useFileSize } from "@/composables/useFileSize.js";
 import * as tus from "tus-js-client";
 
-const { t: translate } = useI18n();
+const { t } = useI18n();
 
 const props = defineProps({
     files: { type: Array, required: true },
@@ -80,7 +80,7 @@ onMounted(async () => {
         }
         emit("done", { uploadKeys: uploadKeys.value });
     } catch (err) {
-        globalError.value = translate("transfer.progress.error");
+        globalError.value = t("transfer.progress.error");
         emit("error", err);
     }
 });
@@ -92,8 +92,8 @@ onMounted(async () => {
             <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-3">
                 <UploadCloud class="w-6 h-6 text-indigo-600 animate-pulse" :stroke-width="2" />
             </div>
-            <p class="text-sm font-semibold text-primary">{{ translate('transfer.progress.uploading') }}</p>
-            <p class="text-xs text-muted mt-0.5">{{ translate('transfer.progress.do_not_close') }}</p>
+            <p class="text-sm font-semibold text-primary">{{ t('transfer.progress.uploading') }}</p>
+            <p class="text-xs text-muted mt-0.5">{{ t('transfer.progress.do_not_close') }}</p>
         </div>
 
         <ul class="flex flex-col gap-2">
