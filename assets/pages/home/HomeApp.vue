@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { RotateCcw, X, HelpCircle, Lock, Sparkles, Eye, EyeOff, KeyRound, CheckCircle } from "lucide-vue-next";
 import AppLogo from "@/components/AppLogo.vue";
+import AppModal from "@/components/AppModal.vue";
 import TransferForm from "./components/TransferForm.vue";
 import UploadProgress from "./components/UploadProgress.vue";
 import TransferSuccess from "./components/TransferSuccess.vue";
@@ -112,14 +113,6 @@ async function submitAccessRequest() {
     }
 }
 
-if (typeof window !== "undefined") {
-    window.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            dismissGuestModal();
-            showHelp.value = false;
-        }
-    });
-}
 
 const step = ref("form");
 const pendingFiles = ref([]);
@@ -471,168 +464,151 @@ function reset() {
         </div>
     </div>
 
-    <Teleport to="body">
-        <Transition name="modal">
-            <div
-                v-if="showGuestModal"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    <AppModal :show="showGuestModal" max-width="sm" v-on:close="dismissGuestModal">
+        <div class="relative text-center">
+            <button
+                class="absolute -top-1 -right-1 text-muted hover:text-primary transition-colors p-1"
+                v-on:click="dismissGuestModal"
             >
-                <div class="absolute inset-0 bg-black/50" v-on:click="dismissGuestModal" />
-                <div class="relative bg-surface border border-line rounded-2xl shadow-2xl w-full max-w-sm">
-                    <button
-                        class="absolute top-3 right-3 text-muted hover:text-primary transition-colors p-1"
-                        v-on:click="dismissGuestModal"
+                <X class="w-4 h-4" :stroke-width="2" />
+            </button>
+            <div class="flex justify-center mb-4">
+                <AppLogo :size="48" />
+            </div>
+            <h2 class="text-base font-bold text-primary">Bienvenue sur Nimbus</h2>
+            <p class="text-sm text-secondary mt-1.5">
+                L'envoi est gratuit et sans inscription. Créez un compte pour accéder au plan Pro et débloquer plus de limites.
+            </p>
+        </div>
+        <div class="flex flex-col gap-2">
+            <AppButton :href="loginPath" class="w-full">Se connecter</AppButton>
+            <AppButton v-if="registrationEnabled" :href="registerPath" variant="secondary" class="w-full">Créer un compte</AppButton>
+            <button
+                class="text-xs text-muted hover:text-secondary transition-colors mt-1"
+                v-on:click="dismissGuestModal"
+            >
+                Continuer sans compte
+            </button>
+        </div>
+    </AppModal>
+
+    <AppModal
+        :show="showHelp"
+        max-width="md"
+        no-padding
+        scrollable
+        v-on:close="showHelp = false"
+    >
+        <div class="flex items-center justify-between px-6 py-4 border-b border-line">
+            <h2 class="text-base font-semibold text-primary flex items-center gap-2">
+                <HelpCircle class="w-4 h-4 text-indigo-500" :stroke-width="2" />
+                {{ t('home.hero.heading') }} {{ t('home.hero.heading_accent') }}
+            </h2>
+            <button class="text-muted hover:text-primary transition-colors" v-on:click="showHelp = false">
+                <X class="w-4 h-4" :stroke-width="2" />
+            </button>
+        </div>
+
+        <div class="px-6 py-5 space-y-6">
+            <ol class="space-y-4">
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                    <div>
+                        <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_1_title') }}</p>
+                        <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_1_desc') }}</p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+                    <div>
+                        <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_2_title') }}</p>
+                        <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_2_desc') }}</p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+                    <div>
+                        <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_3_title') }}</p>
+                        <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_3_desc') }}</p>
+                    </div>
+                </li>
+            </ol>
+
+            <div class="rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3 space-y-1">
+                <p class="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                    <svg
+                        class="w-3.5 h-3.5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                     >
-                        <X class="w-4 h-4" :stroke-width="2" />
-                    </button>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Reprise automatique des envois interrompus
+                </p>
+                <p class="text-xs text-secondary">
+                    Si votre connexion est coupée pendant un envoi, Nimbus détecte automatiquement le transfert en cours lors de votre prochaine visite et vous propose de reprendre là où vous vous étiez arrêté.
+                </p>
+                <p class="text-xs text-secondary">
+                    Les fichiers temporaires sont conservés pendant <span class="font-semibold text-primary">{{ tusCleanupMaxAgeHours }}h</span>. Passé ce délai, le transfert est considéré comme abandonné et les données sont supprimées.
+                </p>
+            </div>
 
-                    <div class="px-6 pt-6 pb-4 text-center">
-                        <div class="flex justify-center mb-4">
-                            <AppLogo :size="48" />
-                        </div>
-                        <h2 class="text-base font-bold text-primary">Bienvenue sur Nimbus</h2>
-                        <p class="text-sm text-secondary mt-1.5">
-                            L'envoi est gratuit et sans inscription. Créez un compte pour accéder au plan Pro et débloquer plus de limites.
-                        </p>
-                    </div>
-
-                    <div class="px-6 pb-6 flex flex-col gap-2">
-                        <AppButton :href="loginPath" class="w-full">Se connecter</AppButton>
-                        <AppButton v-if="registrationEnabled" :href="registerPath" variant="secondary" class="w-full">Créer un compte</AppButton>
-                        <button
-                            class="text-xs text-muted hover:text-secondary transition-colors mt-1"
-                            v-on:click="dismissGuestModal"
-                        >
-                            Continuer sans compte
-                        </button>
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                <div class="flex items-center justify-between border-b border-line pb-3">
+                    <span class="text-xs text-muted">Taille max</span>
+                    <span class="text-sm font-semibold text-primary">{{ formatFileSize(maxSizeMb, locale) }}</span>
+                </div>
+                <div class="flex items-center justify-between border-b border-line pb-3">
+                    <span class="text-xs text-muted">Fichiers</span>
+                    <span class="text-sm font-semibold text-primary">{{ maxFiles }} max</span>
+                </div>
+                <div class="flex items-center justify-between border-b border-line pb-3">
+                    <span class="text-xs text-muted">Destinataires</span>
+                    <span class="text-sm font-semibold text-primary">{{ maxRecipients }} max</span>
+                </div>
+                <div class="flex items-center justify-between border-b border-line pb-3">
+                    <span class="text-xs text-muted">Durée</span>
+                    <span class="text-sm font-semibold text-primary">jusqu'à {{ maxExpiryDays }}j</span>
                 </div>
             </div>
-        </Transition>
-    </Teleport>
 
-    <Teleport to="body">
-        <Transition name="modal">
-            <div
-                v-if="showHelp"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                v-on:click.self="showHelp = false"
+            <p class="text-xs text-muted flex items-center gap-1.5">
+                <svg
+                    class="w-3.5 h-3.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Protection par mot de passe optionnelle
+            </p>
+
+            <a
+                v-if="!isPro && !isGuest"
+                :href="planPath"
+                class="flex items-center gap-3 bg-indigo-600/10 border border-indigo-500/30 rounded-xl px-4 py-3 hover:bg-indigo-600/15 transition-colors group"
             >
-                <div class="absolute inset-0 bg-black/50" v-on:click="showHelp = false" />
-                <div class="relative bg-surface border border-line rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-line">
-                        <h2 class="text-base font-semibold text-primary flex items-center gap-2">
-                            <HelpCircle class="w-4 h-4 text-indigo-500" :stroke-width="2" />
-                            {{ t('home.hero.heading') }} {{ t('home.hero.heading_accent') }}
-                        </h2>
-                        <button class="text-muted hover:text-primary transition-colors" v-on:click="showHelp = false">
-                            <X class="w-4 h-4" :stroke-width="2" />
-                        </button>
-                    </div>
+                <Sparkles class="w-4 h-4 text-indigo-400 shrink-0" :stroke-width="2" />
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-indigo-400">Passer au plan Pro</p>
+                    <p class="text-xs text-secondary mt-0.5">Plus de stockage, plus de fichiers, expiration plus longue.</p>
+                </div>
+                <span class="text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
+            </a>
 
-                    <div class="px-6 py-5 space-y-6">
-                        <ol class="space-y-4">
-                            <li class="flex items-start gap-3">
-                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
-                                <div>
-                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_1_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_1_desc') }}</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
-                                <div>
-                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_2_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_2_desc') }}</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">3</span>
-                                <div>
-                                    <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_3_title') }}</p>
-                                    <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_3_desc') }}</p>
-                                </div>
-                            </li>
-                        </ol>
-
-                        <div class="rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3 space-y-1">
-                            <p class="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
-                                <svg
-                                    class="w-3.5 h-3.5 shrink-0"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                Reprise automatique des envois interrompus
-                            </p>
-                            <p class="text-xs text-secondary">
-                                Si votre connexion est coupée pendant un envoi, Nimbus détecte automatiquement le transfert en cours lors de votre prochaine visite et vous propose de reprendre là où vous vous étiez arrêté.
-                            </p>
-                            <p class="text-xs text-secondary">
-                                Les fichiers temporaires sont conservés pendant <span class="font-semibold text-primary">{{ tusCleanupMaxAgeHours }}h</span>. Passé ce délai, le transfert est considéré comme abandonné et les données sont supprimées.
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-                            <div class="flex items-center justify-between border-b border-line pb-3">
-                                <span class="text-xs text-muted">Taille max</span>
-                                <span class="text-sm font-semibold text-primary">{{ formatFileSize(maxSizeMb, locale) }}</span>
-                            </div>
-                            <div class="flex items-center justify-between border-b border-line pb-3">
-                                <span class="text-xs text-muted">Fichiers</span>
-                                <span class="text-sm font-semibold text-primary">{{ maxFiles }} max</span>
-                            </div>
-                            <div class="flex items-center justify-between border-b border-line pb-3">
-                                <span class="text-xs text-muted">Destinataires</span>
-                                <span class="text-sm font-semibold text-primary">{{ maxRecipients }} max</span>
-                            </div>
-                            <div class="flex items-center justify-between border-b border-line pb-3">
-                                <span class="text-xs text-muted">Durée</span>
-                                <span class="text-sm font-semibold text-primary">jusqu'à {{ maxExpiryDays }}j</span>
-                            </div>
-                        </div>
-
-                        <p class="text-xs text-muted flex items-center gap-1.5">
-                            <svg
-                                class="w-3.5 h-3.5 shrink-0"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Protection par mot de passe optionnelle
-                        </p>
-
-                        <a
-                            v-if="!isPro && !isGuest"
-                            :href="planPath"
-                            class="flex items-center gap-3 bg-indigo-600/10 border border-indigo-500/30 rounded-xl px-4 py-3 hover:bg-indigo-600/15 transition-colors group"
-                        >
-                            <Sparkles class="w-4 h-4 text-indigo-400 shrink-0" :stroke-width="2" />
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-semibold text-indigo-400">Passer au plan Pro</p>
-                                <p class="text-xs text-secondary mt-0.5">Plus de stockage, plus de fichiers, expiration plus longue.</p>
-                            </div>
-                            <span class="text-xs font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">Pro</span>
-                        </a>
-
-                        <div>
-                            <p class="text-xs text-muted uppercase tracking-wide mb-3">Formats acceptés</p>
-                            <div class="flex flex-col gap-2">
-                                <div v-for="group in fileTypeGroups" :key="group.label" class="flex items-baseline gap-2">
-                                    <span class="text-xs text-muted w-20 shrink-0">{{ group.label }}</span>
-                                    <p class="text-xs font-mono text-secondary leading-relaxed">{{ group.exts.join('  ') }}</p>
-                                </div>
-                            </div>
-                        </div>
+            <div>
+                <p class="text-xs text-muted uppercase tracking-wide mb-3">Formats acceptés</p>
+                <div class="flex flex-col gap-2">
+                    <div v-for="group in fileTypeGroups" :key="group.label" class="flex items-baseline gap-2">
+                        <span class="text-xs text-muted w-20 shrink-0">{{ group.label }}</span>
+                        <p class="text-xs font-mono text-secondary leading-relaxed">{{ group.exts.join('  ') }}</p>
                     </div>
                 </div>
             </div>
-        </Transition>
-    </Teleport>
+        </div>
+    </AppModal>
 </template>

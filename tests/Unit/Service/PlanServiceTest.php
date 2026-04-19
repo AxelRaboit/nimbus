@@ -125,7 +125,7 @@ final class PlanServiceTest extends TestCase
         self::assertSame(50, $this->buildService(params: $params)->getMaxSizeMb($user));
     }
 
-    public function testGetMaxSizeMbCapsCustomSizeToProMax(): void
+    public function testGetMaxSizeMbReturnsCustomSizeEvenAboveProMax(): void
     {
         $user = new User();
         $user->setCustomFileSizeMb(50000);
@@ -133,7 +133,7 @@ final class PlanServiceTest extends TestCase
         $params = $this->createStub(ApplicationParameterRepository::class);
         $params->method('get')->willReturn('10000');
 
-        self::assertSame(10000, $this->buildService(params: $params)->getMaxSizeMb($user));
+        self::assertSame(50000, $this->buildService(params: $params)->getMaxSizeMb($user));
     }
 
     public function testGetMaxSizeMbReturnsProMaxWhenCustomEqualsProMax(): void

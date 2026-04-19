@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
-use App\Service\PlanService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +23,6 @@ final class UsersController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserManagerInterface $userManager,
-        private readonly PlanService $planService,
     ) {}
 
     #[Route('', name: 'dev_users')]
@@ -84,9 +82,6 @@ final class UsersController extends AbstractController
 
     private function serialize(User $user): array
     {
-        $customFileSizeMb = $user->getCustomFileSizeMb();
-        $proMaxSizeMb = $this->planService->getProMaxSizeMb();
-
         return [
             'id' => $user->getId(),
             'name' => $user->getName(),
@@ -95,9 +90,7 @@ final class UsersController extends AbstractController
             'isDevRole' => in_array(UserRoleEnum::Dev->value, $user->getRoles(), true),
             'createdAt' => $user->getCreatedAt()->format('c'),
             'trialEndsAt' => $user->getTrialEndsAt()?->format('c'),
-            'customFileSizeMb' => $customFileSizeMb,
-            'effectiveFileSizeMb' => null !== $customFileSizeMb ? min($customFileSizeMb, $proMaxSizeMb) : null,
-            'isCapped' => null !== $customFileSizeMb && $customFileSizeMb > $proMaxSizeMb,
+            'customFileSizeMb' => $user->getCustomFileSizeMb(),
         ];
     }
 }

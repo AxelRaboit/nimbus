@@ -22,12 +22,12 @@ class RecipientRepository extends ServiceEntityRepository
 
     public function countAll(): int
     {
-        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM recipient');
+        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM recipients');
     }
 
     public function countDownloaded(): int
     {
-        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM recipient WHERE downloaded_at IS NOT NULL');
+        return (int) $this->getEntityManager()->getConnection()->fetchOne('SELECT COUNT(*) FROM recipients WHERE downloaded_at IS NOT NULL');
     }
 
     public function findByToken(string $token): ?Recipient
