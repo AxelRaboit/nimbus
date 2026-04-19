@@ -8,6 +8,8 @@ use App\Enum\StorageBackendEnum;
 use App\Repository\TransferFileRepository;
 use App\Trait\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ORM\Entity(repositoryClass: TransferFileRepository::class)]
 #[ORM\Table(name: 'transfer_files')]
@@ -57,6 +59,8 @@ class TransferFile
         return $this;
     }
 
+    #[Groups(['transfer:list', 'transfer:read'])]
+    #[SerializedName('name')]
     public function getOriginalName(): string
     {
         return $this->originalName;
@@ -81,6 +85,7 @@ class TransferFile
         return $this;
     }
 
+    #[Groups(['transfer:read'])]
     public function getMimeType(): ?string
     {
         return $this->mimeType;
@@ -93,6 +98,8 @@ class TransferFile
         return $this;
     }
 
+    #[Groups(['transfer:list', 'transfer:read'])]
+    #[SerializedName('size')]
     public function getFileSize(): int
     {
         return $this->fileSize;

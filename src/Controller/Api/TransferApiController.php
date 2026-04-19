@@ -12,19 +12,21 @@ use App\Model\Pagination;
 use App\Repository\TransferRepository;
 use App\Service\PlanService;
 use DateTimeImmutable;
-use DateTimeInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api')]
 class TransferApiController extends AbstractController
 {
+    public function __construct(private readonly NormalizerInterface $normalizer) {}
+
     #[Route('/transfers', name: 'transfer_api_list', methods: [HttpMethodEnum::Get->value])]
     public function list(Request $request, TransferRepository $transferRepository): JsonResponse
     {
@@ -39,10 +41,9 @@ class TransferApiController extends AbstractController
         $pagination = Pagination::fromOffset($offset, limit: 10, total: $total);
 
         $transfers = $transferRepository->findByUser($user, $pagination->limit, $pagination->offset);
-        $data = array_map($this->serializeTransferSummary(...), $transfers);
 
         return $this->json([
-            'items' => $data,
+            'items' => $this->normalizer->normalize($transfers, context: ['groups' => ['transfer:list', 'timestamps']]),
             'hasMore' => $pagination->hasMore,
         ]);
     }
@@ -188,28 +189,6 @@ class TransferApiController extends AbstractController
         return $this->json(['ok' => true]);
     }
 
-    private function serializeTransferSummary(Transfer $transfer): array
-    {
-        return [
-            'reference' => $transfer->getReference(),
-            'ownerToken' => $transfer->getOwnerToken(),
-            'token' => $transfer->getToken(),
-            'status' => $transfer->getStatus()->value,
-            'isPublic' => $transfer->isPublic(),
-            'files' => array_map(fn ($transferFile): array => [
-                'name' => $transferFile->getOriginalName(),
-                'size' => $transferFile->getFileSize(),
-            ], $transfer->getFiles()->toArray()),
-            'recipients' => array_map(fn ($recipient): array => [
-                'email' => $recipient->getEmail(),
-                'downloaded' => $recipient->hasDownloaded(),
-            ], $transfer->getRecipients()->toArray()),
-            'publicDownloadCount' => $transfer->getPublicDownloadCount(),
-            'expiresAt' => $transfer->getExpiresAt()->format(DateTimeInterface::ATOM),
-            'createdAt' => $transfer->getCreatedAt()->format(DateTimeInterface::ATOM),
-        ];
-    }
-
     #[Route('/transfer/{token}', name: 'transfer_api_get', methods: [HttpMethodEnum::Get->value])]
     public function get(string $token, TransferRepository $transferRepository): JsonResponse
     {
@@ -219,16 +198,8 @@ class TransferApiController extends AbstractController
             return $this->json(['error' => 'Not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json([
-            'reference' => $transfer->getReference(),
-            'status' => $transfer->getStatus()->value,
-            'expiresAt' => $transfer->getExpiresAt()->format(DateTimeInterface::ATOM),
-            'files' => array_map(fn ($transferFile): array => [
-                'name' => $transferFile->getOriginalName(),
-                'size' => $transferFile->getFileSize(),
-                'mimeType' => $transferFile->getMimeType(),
-            ], $transfer->getFiles()->toArray()),
-            'recipientCount' => $transfer->getRecipients()->count(),
-        ]);
+        return $this->json(
+            $this->normalizer->normalize($transfer, context: ['groups' => ['transfer:read']]),
+        );
     }
 }

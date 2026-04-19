@@ -12,6 +12,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ORM\Entity(repositoryClass: TransferRepository::class)]
 #[ORM\Table(name: 'transfers')]
@@ -101,16 +103,19 @@ class Transfer
         return $this->id;
     }
 
+    #[Groups(['transfer:list'])]
     public function getToken(): string
     {
         return $this->token;
     }
 
+    #[Groups(['transfer:list'])]
     public function getOwnerToken(): string
     {
         return $this->ownerToken;
     }
 
+    #[Groups(['transfer:list', 'transfer:read'])]
     public function getReference(): string
     {
         return $this->reference;
@@ -170,6 +175,7 @@ class Transfer
         return $this;
     }
 
+    #[Groups(['transfer:list', 'transfer:read'])]
     public function getExpiresAt(): DateTimeImmutable
     {
         return $this->expiresAt;
@@ -187,6 +193,7 @@ class Transfer
         return $this->expiresAt < new DateTimeImmutable();
     }
 
+    #[Groups(['transfer:list', 'transfer:read'])]
     public function getStatus(): TransferStatusEnum
     {
         return $this->status;
@@ -241,6 +248,7 @@ class Transfer
     /**
      * @return Collection<int, TransferFile>
      */
+    #[Groups(['transfer:list', 'transfer:read'])]
     public function getFiles(): Collection
     {
         return $this->files;
@@ -276,9 +284,16 @@ class Transfer
     /**
      * @return Collection<int, Recipient>
      */
+    #[Groups(['transfer:list'])]
     public function getRecipients(): Collection
     {
         return $this->recipients;
+    }
+
+    #[Groups(['transfer:read'])]
+    public function getRecipientCount(): int
+    {
+        return $this->recipients->count();
     }
 
     public function addRecipient(Recipient $recipient): static
@@ -315,6 +330,8 @@ class Transfer
         return $this;
     }
 
+    #[Groups(['transfer:list'])]
+    #[SerializedName('isPublic')]
     public function isPublic(): bool
     {
         return $this->isPublic;
@@ -327,6 +344,7 @@ class Transfer
         return $this;
     }
 
+    #[Groups(['transfer:list'])]
     public function getPublicDownloadCount(): int
     {
         return $this->publicDownloadCount;
