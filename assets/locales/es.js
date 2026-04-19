@@ -7,6 +7,28 @@ export default {
     common: {
         save: "Guardar",
         download_qr: "Descargar código QR",
+        or: "o",
+    },
+    auth: {
+        register: {
+            heading: "Crear una cuenta",
+            name: "Nombre completo",
+            name_placeholder: "Juan García",
+            email: "Correo electrónico",
+            password: "Contraseña",
+            password_confirm: "Confirmar contraseña",
+            submit: "Crear mi cuenta",
+            already_account: "¿Ya tienes cuenta?",
+            login_link: "Iniciar sesión",
+            error_name_required: "El nombre es obligatorio.",
+            error_email_required: "El correo electrónico es obligatorio.",
+            error_email_invalid: "El correo electrónico no es válido.",
+            error_email_taken: "Este correo electrónico ya está en uso.",
+            error_password_mismatch: "Las contraseñas no coinciden.",
+            closed_title: "Las inscripciones están cerradas",
+            closed_desc:
+                "Las inscripciones no están abiertas por el momento. Vuelve más tarde o contacta al administrador.",
+        },
     },
     app: {
         theme_dark: "Cambiar al modo oscuro",
@@ -197,9 +219,23 @@ export default {
         errors: {
             name_required: "El nombre es obligatorio.",
             email_invalid: "Dirección de correo inválida.",
-            password_too_short:
-                "La contraseña debe tener al menos 8 caracteres.",
             password_mismatch: "Las contraseñas no coinciden.",
+        },
+    },
+    password: {
+        criteria: {
+            length: "Mínimo 8 caracteres",
+            uppercase: "Una letra mayúscula",
+            number: "Un número",
+            special: "Un carácter especial",
+        },
+        errors: {
+            too_short: "La contraseña debe tener al menos 8 caracteres.",
+            no_uppercase:
+                "La contraseña debe contener al menos una letra mayúscula.",
+            no_number: "La contraseña debe contener al menos un número.",
+            no_special:
+                "La contraseña debe contener al menos un carácter especial.",
         },
     },
     transfer_password: {
