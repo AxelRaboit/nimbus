@@ -152,8 +152,11 @@ jobs:
         run: php bin/console nimbus:application-parameter --env=test
 
       # —— Tests 🧪 —————————————————————————————————————————————————————————
+      - name: Run frontend tests
+        run: make test-frontend
+
       - name: Run unit tests
-        run: make test-unit
+        run: make test-backend-unit
 
       - name: Run integration tests
-        run: make test-integration
+        run: make test-backend-integration

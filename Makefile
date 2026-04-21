@@ -177,14 +177,17 @@ schema-validate:
 	$(CONSOLE) doctrine:schema:validate -vvv
 
 # === Tests ===
-test: db-test
+test-backend: db-test ## Run all backend tests (PHPUnit)
 	$(PHP_BIN) bin/phpunit --testdox
 
-test-unit:
+test-backend-unit: ## Run backend unit tests
 	$(PHP_BIN) bin/phpunit --testdox --testsuite=Unit
 
-test-integration:
+test-backend-integration: ## Run backend integration tests
 	$(PHP_BIN) bin/phpunit --testdox --testsuite=Integration
+
+test-frontend: ## Run frontend unit tests (Vitest)
+	$(PNPM) run test
 
 db-test: ## Create and migrate the test database
 	$(CONSOLE) doctrine:database:create --env=test --if-not-exists
@@ -225,12 +228,14 @@ fix:
 	make fix-rector
 	make fix-php
 	make stan
+	make test-frontend
+	make test-backend
 
 fd: ## Fix code and build dev assets
 	make fix && make dev
 
 ft: ## Fix code and run all tests
-	make fix && make test
+	make fix && make test-backend
 
 # === Setup ===
 setup-env: ## Create .env.local from .env.dev.example template
