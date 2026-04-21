@@ -260,3 +260,7 @@ plan:
     downgraded: 'Vous êtes revenu au plan Free.'
   trial_banner: "Votre période d'essai Pro se termine dans %days% jour(s)."
   trial_banner_cta: 'Voir les formules'
+
+impersonation:
+  banner: 'Connecté en tant que %name%'
+  leave: 'Revenir à mon compte'

@@ -9,16 +9,21 @@ import {
 import { Bar, Line, Doughnut } from "vue-chartjs";
 import { useFileSize } from "@/composables/useFileSize.js";
 import { useDateFormat } from "@/composables/useDateFormat.js";
+import { useForm } from "@/composables/useForm.js";
+import { required, email as emailValidator, compose } from "@/utils/validators.js";
 import { submitForm } from "@/utils/formSubmit.js";
 import {
     Users, ArrowUpRight, FileStack, Activity,
     ExternalLink,
     ShieldCheck, Clock, Trash2, AlertCircle, Pencil, Check, X, Lock,
-    Shield, UserRound, Mail, KeyRound, HardDrive,
+    Shield, UserRound, Mail, KeyRound, HardDrive, Plus, LogIn,
 } from "lucide-vue-next";
 import AppNoData from "@/components/AppNoData.vue";
 import AppPagination from "@/components/AppPagination.vue";
 import AppModal from "@/components/AppModal.vue";
+import AppInput from "@/components/AppInput.vue";
+import AppButton from "@/components/AppButton.vue";
+import ConfirmModal from "@/components/ConfirmModal.vue";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend, Filler);
 
@@ -42,6 +47,9 @@ const props = defineProps({
     invitationSendPath:          { type: String, required: true },
     parametersPath:              { type: String, required: true },
     parameterUpdatePath:         { type: String, required: true },
+    userCreatePath:              { type: String, required: true },
+    userUpdatePath:              { type: String, required: true },
+    userImpersonatePath:         { type: String, required: true },
     userDeletePath:              { type: String, required: true },
     userToggleRolePath:          { type: String, required: true },
     accessRequestsPath:          { type: String, required: true },
@@ -155,6 +163,7 @@ function performSearch() {
 
 const pendingDelete = ref(null);
 const pendingToggleRole = ref(null);
+const pendingImpersonate = ref(null);
 
 
 function confirmDelete(user) { pendingDelete.value = user; }
@@ -232,11 +241,82 @@ function doUpdateCustomSize() {
     pendingCustomSize.value = null;
 }
 
+function doImpersonate() {
+    if (!pendingImpersonate.value) return;
+    submitForm(props.userImpersonatePath.replace("__id__", pendingImpersonate.value.id), props.csrfToken);
+    pendingImpersonate.value = null;
+}
+
 function confirmToggleRole(user) { pendingToggleRole.value = user; }
 function doToggleRole() {
     if (!pendingToggleRole.value) return;
     submitForm(props.userToggleRolePath.replace("__id__", pendingToggleRole.value.id), props.csrfToken);
     pendingToggleRole.value = null;
+}
+
+const { errors: userErrors, validate: validateUser, setErrors: setUserErrors, clearErrors: clearUserErrors } = useForm();
+const userModal = ref(undefined);
+const userModalSaving = ref(false);
+const userForm = ref({ name: "", email: "", password: "", locale: "fr", plan: "free" });
+
+function openCreateModal() {
+    userForm.value = { name: "", email: "", password: "", locale: "fr", plan: "free" };
+    clearUserErrors();
+    userModal.value = null;
+}
+
+function openEditModal(user) {
+    userForm.value = { name: user.name, email: user.email, password: "", locale: user.locale ?? "fr", plan: user.plan ?? "free" };
+    clearUserErrors();
+    userModal.value = user;
+}
+
+function closeUserModal() {
+    userModal.value = undefined;
+}
+
+const userModalOpen = computed(() => userModal.value !== undefined);
+
+async function submitUserForm() {
+    const isEdit = !!userModal.value;
+    const checks = {
+        name: () => required(t("auth.register.error_name_required"))(userForm.value.name),
+        email: () => compose(
+            required(t("auth.register.error_email_required")),
+            emailValidator(t("auth.register.error_email_invalid")),
+        )(userForm.value.email),
+    };
+    if (!isEdit) {
+        checks.password = () => required(t("auth.register.error_password_required"))(userForm.value.password);
+    }
+    if (!validateUser(checks)) return;
+
+    userModalSaving.value = true;
+    try {
+        const url = isEdit
+            ? props.userUpdatePath.replace("__id__", userModal.value.id)
+            : props.userCreatePath;
+        const body = new URLSearchParams({
+            name: userForm.value.name,
+            email: userForm.value.email,
+            password: userForm.value.password,
+            locale: userForm.value.locale,
+            plan: userForm.value.plan,
+        });
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded", "X-CSRF-Token": props.csrfToken },
+            body: body.toString(),
+        });
+        const data = await response.json();
+        if (data.errors) {
+            setUserErrors(data.errors);
+        } else {
+            window.location.reload();
+        }
+    } finally {
+        userModalSaving.value = false;
+    }
 }
 
 const invitationEmail = ref("");
@@ -380,9 +460,13 @@ function submitInvitation() {
                     class="flex-1 px-4 py-2 rounded-lg bg-surface-2 border border-line text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     v-on:keyup.enter="performSearch"
                 >
-                <button class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm font-medium" v-on:click="performSearch">
+                <button class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors" v-on:click="performSearch">
                     {{ t("admin.users.search") }}
                 </button>
+                <AppButton class="w-full sm:w-auto" v-on:click="openCreateModal">
+                    <Plus class="w-4 h-4" :stroke-width="2" />
+                    {{ t("admin.users.create") }}
+                </AppButton>
             </div>
 
             <div class="sm:hidden space-y-3">
@@ -409,6 +493,12 @@ function submitInvitation() {
                     <div class="flex items-center justify-between pt-1 border-t border-line">
                         <p class="text-xs text-muted">{{ formatDateShort(user.createdAt) }}</p>
                         <div class="flex items-center gap-1">
+                            <button class="p-1.5 text-muted hover:text-indigo-400 transition-colors rounded" :title="t('admin.users.editUser')" v-on:click="openEditModal(user)">
+                                <Pencil class="w-4 h-4" :stroke-width="2" />
+                            </button>
+                            <button class="p-1.5 text-muted hover:text-amber-400 transition-colors rounded" :title="t('admin.users.impersonate', { name: user.name })" v-on:click="pendingImpersonate = user">
+                                <LogIn class="w-4 h-4" :stroke-width="2" />
+                            </button>
                             <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" title="Limite de taille" v-on:click="openCustomSizeModal(user)">
                                 <HardDrive class="w-4 h-4" :stroke-width="2" />
                             </button>
@@ -467,6 +557,12 @@ function submitInvitation() {
                             <td class="px-6 py-3 text-sm text-secondary hidden lg:table-cell">{{ formatDateShort(user.createdAt) }}</td>
                             <td class="px-6 py-3">
                                 <div class="flex items-center justify-end gap-1">
+                                    <button class="p-1.5 text-muted hover:text-indigo-400 transition-colors rounded" :title="t('admin.users.editUser')" v-on:click="openEditModal(user)">
+                                        <Pencil class="w-4 h-4" :stroke-width="2" />
+                                    </button>
+                                    <button class="p-1.5 text-muted hover:text-amber-400 transition-colors rounded" :title="t('admin.users.impersonate', { name: user.name })" v-on:click="pendingImpersonate = user">
+                                        <LogIn class="w-4 h-4" :stroke-width="2" />
+                                    </button>
                                     <button class="p-1.5 text-muted hover:text-emerald-400 transition-colors rounded" title="Limite de taille" v-on:click="openCustomSizeModal(user)">
                                         <HardDrive class="w-4 h-4" :stroke-width="2" />
                                     </button>
@@ -494,6 +590,79 @@ function submitInvitation() {
                     />
                 </div>
             </div>
+
+            <!-- Create / edit user modal -->
+            <AppModal :show="userModalOpen" v-on:close="closeUserModal">
+                <h2 class="text-base font-semibold text-primary mb-4">
+                    {{ userModal ? t("admin.users.editUser") : t("admin.users.create") }}
+                </h2>
+                <div class="space-y-3">
+                    <AppInput
+                        v-model="userForm.name"
+                        :label="t('admin.users.name')"
+                        :placeholder="t('admin.users.name')"
+                        :error="userErrors.name"
+                        required
+                    />
+                    <AppInput
+                        v-model="userForm.email"
+                        type="email"
+                        :label="t('admin.users.email')"
+                        :placeholder="t('admin.users.email')"
+                        :error="userErrors.email"
+                        required
+                    />
+                    <AppInput
+                        v-model="userForm.password"
+                        :label="t('admin.users.password')"
+                        :placeholder="userModal ? t('admin.users.passwordPlaceholder') : '••••••••'"
+                        :error="userErrors.password"
+                        :toggleable="true"
+                    />
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("admin.users.locale") }}</label>
+                            <select
+                                v-model="userForm.locale"
+                                class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                            >
+                                <option value="fr">Français</option>
+                                <option value="en">English</option>
+                                <option value="es">Español</option>
+                                <option value="de">Deutsch</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="block text-xs text-secondary uppercase tracking-wide">{{ t("admin.users.plan") }}</label>
+                            <select
+                                v-model="userForm.plan"
+                                class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                            >
+                                <option value="free">Free</option>
+                                <option value="pro">Pro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <AppButton variant="secondary" v-on:click="closeUserModal">{{ t("common.cancel") }}</AppButton>
+                    <AppButton :loading="userModalSaving" v-on:click="submitUserForm">
+                        {{ userModalSaving
+                            ? (userModal ? t("admin.users.saving") : t("admin.users.creating"))
+                            : (userModal ? t("admin.users.save") : t("admin.users.create")) }}
+                    </AppButton>
+                </div>
+            </AppModal>
+
+            <!-- Confirm impersonate modal -->
+            <ConfirmModal
+                :show="!!pendingImpersonate"
+                :message="pendingImpersonate ? t('admin.users.confirmImpersonate', { name: pendingImpersonate.name }) : ''"
+                :confirm-label="pendingImpersonate ? t('admin.users.impersonate', { name: pendingImpersonate.name }) : ''"
+                confirm-variant="primary"
+                v-on:confirm="doImpersonate"
+                v-on:cancel="pendingImpersonate = null"
+            />
 
             <!-- Confirm delete modal -->
             <AppModal :show="!!pendingDelete" max-width="sm" v-on:close="pendingDelete = null">

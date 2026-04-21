@@ -254,3 +254,7 @@ plan:
     downgraded: 'Sie sind zum Free-Plan gewechselt.'
   trial_banner: 'Ihr Pro-Testzeitraum endet in %days% Tag(en).'
   trial_banner_cta: 'Tarife ansehen'
+
+impersonation:
+  banner: 'Eingeloggt als %name%'
+  leave: 'Zurück zu meinem Konto'

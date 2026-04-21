@@ -6,6 +6,9 @@ export default {
     },
     common: {
         save: "Save",
+        cancel: "Cancel",
+        confirm: "Confirm",
+        delete: "Delete",
         download_qr: "Download QR code",
         or: "or",
     },
@@ -24,6 +27,7 @@ export default {
             error_email_required: "Email address is required.",
             error_email_invalid: "Email address is not valid.",
             error_email_taken: "This email address is already in use.",
+            error_password_required: "Password is required.",
             error_password_mismatch: "Passwords do not match.",
             closed_title: "Registration is closed",
             closed_desc:
@@ -331,6 +335,18 @@ export default {
             makeDev: "Make Dev",
             makeUser: "Remove Dev role",
             noResults: "No users found.",
+            create: "Create user",
+            editUser: "Edit user",
+            password: "Password",
+            passwordPlaceholder: "Leave blank to keep unchanged",
+            locale: "Language",
+            plan: "Plan",
+            save: "Save",
+            saving: "Saving…",
+            creating: "Creating…",
+            impersonate: "Impersonate {name}",
+            confirmImpersonate:
+                "You are about to log in as {name}. You can return to your account at any time.",
         },
         invitations: {
             title: "Invitations",

@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace App\Contract;
 
+use App\DTO\AdminCreateUserInput;
+use App\DTO\AdminUpdateUserInput;
 use App\Entity\User;
 
 interface UserManagerInterface
 {
     public function create(string $name, string $email, string $password): User;
 
+    public function adminCreate(AdminCreateUserInput $input): User;
+
     public function update(User $user, string $name, string $email): void;
+
+    public function adminUpdate(User $user, AdminUpdateUserInput $input): void;
 
     public function changePassword(User $user, string $newPassword): void;
 

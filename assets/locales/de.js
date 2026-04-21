@@ -6,6 +6,9 @@ export default {
     },
     common: {
         save: "Speichern",
+        cancel: "Abbrechen",
+        confirm: "Bestätigen",
+        delete: "Löschen",
         download_qr: "QR-Code herunterladen",
         or: "oder",
     },
@@ -24,6 +27,7 @@ export default {
             error_email_required: "E-Mail-Adresse ist erforderlich.",
             error_email_invalid: "E-Mail-Adresse ist ungültig.",
             error_email_taken: "Diese E-Mail-Adresse wird bereits verwendet.",
+            error_password_required: "Das Passwort ist erforderlich.",
             error_password_mismatch: "Die Passwörter stimmen nicht überein.",
             closed_title: "Registrierung geschlossen",
             closed_desc:
@@ -335,6 +339,18 @@ export default {
             makeDev: "Dev-Rolle vergeben",
             makeUser: "Dev-Rolle entfernen",
             noResults: "Keine Benutzer gefunden.",
+            create: "Benutzer erstellen",
+            editUser: "Benutzer bearbeiten",
+            password: "Passwort",
+            passwordPlaceholder: "Leer lassen, um das Passwort nicht zu ändern",
+            locale: "Sprache",
+            plan: "Tarif",
+            save: "Speichern",
+            saving: "Speichern…",
+            creating: "Erstellen…",
+            impersonate: "Imitieren {name}",
+            confirmImpersonate:
+                "Sie werden als {name} eingeloggt. Sie können jederzeit zu Ihrem Konto zurückkehren.",
         },
         invitations: {
             title: "Einladungen",
