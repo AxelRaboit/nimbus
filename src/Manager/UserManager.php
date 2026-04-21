@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Manager;
 
 use App\Contract\UserManagerInterface;
+use App\DTO\AdminCreateUserInput;
+use App\DTO\AdminUpdateUserInput;
 use App\Entity\User;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
@@ -30,6 +32,31 @@ final readonly class UserManager implements UserManagerInterface
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    public function adminCreate(AdminCreateUserInput $input): User
+    {
+        $user = $this->create($input->name, $input->email, $input->password);
+        $user->setLocale($input->locale);
+        $user->setPlan($input->plan);
+
+        $this->entityManager->flush();
+
+        return $user;
+    }
+
+    public function adminUpdate(User $user, AdminUpdateUserInput $input): void
+    {
+        $user->setName($input->name);
+        $user->setEmail($input->email);
+        $user->setLocale($input->locale);
+        $user->setPlan($input->plan);
+
+        if ('' !== $input->password) {
+            $user->setPassword($this->passwordHasher->hashPassword($user, $input->password));
+        }
+
+        $this->entityManager->flush();
     }
 
     public function update(User $user, string $name, string $email): void

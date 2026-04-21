@@ -5,24 +5,36 @@ declare(strict_types=1);
 namespace App\Controller\Dev;
 
 use App\Contract\UserManagerInterface;
+use App\Controller\Trait\JsonValidationTrait;
+use App\DTO\AdminCreateUserInput;
+use App\DTO\AdminUpdateUserInput;
 use App\DTO\PaginationRequest;
 use App\Entity\User;
 use App\Enum\HttpMethodEnum;
 use App\Enum\UserRoleEnum;
 use App\Repository\UserRepository;
+use App\Service\ImpersonationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/dev/dashboard/users')]
 #[IsGranted(UserRoleEnum::Dev->value)]
 final class UsersController extends AbstractController
 {
+    use JsonValidationTrait;
+
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserManagerInterface $userManager,
+        private readonly ValidatorInterface $validator,
+        private readonly TranslatorInterface $translator,
+        private readonly ImpersonationService $impersonationService,
     ) {}
 
     #[Route('', name: 'dev_users')]
@@ -40,6 +52,61 @@ final class UsersController extends AbstractController
             ],
             'search' => $pagination->search ?? '',
         ]);
+    }
+
+    #[Route('/create', name: 'dev_user_create', methods: [HttpMethodEnum::Post->value])]
+    public function store(Request $request): JsonResponse
+    {
+        $input = AdminCreateUserInput::fromRequest($request);
+        $errors = $this->formatViolations($this->validator->validate($input));
+
+        if ([] === $errors && $this->userManager->isEmailTaken($input->email)) {
+            $errors['email'] = $this->translator->trans('auth.register.error_email_taken');
+        }
+
+        if ([] !== $errors) {
+            return new JsonResponse(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->userManager->adminCreate($input);
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/{id}/update', name: 'dev_user_update', methods: [HttpMethodEnum::Post->value])]
+    public function update(User $user, Request $request): JsonResponse
+    {
+        $input = AdminUpdateUserInput::fromRequest($request, $user->getLocale(), $user->getPlan());
+        $errors = $this->formatViolations($this->validator->validate($input));
+
+        if ([] === $errors && $this->userManager->isEmailTaken($input->email, $user)) {
+            $errors['email'] = $this->translator->trans('auth.register.error_email_taken');
+        }
+
+        if ([] !== $errors) {
+            return new JsonResponse(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->userManager->adminUpdate($user, $input);
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/{id}/impersonate', name: 'dev_user_impersonate', methods: [HttpMethodEnum::Post->value])]
+    public function impersonate(User $user, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('dev', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User || $user === $currentUser || $this->impersonationService->isImpersonating()) {
+            return $this->redirectToRoute('dev_users');
+        }
+
+        $this->impersonationService->impersonate($user, $currentUser);
+
+        return $this->redirectToRoute('home');
     }
 
     #[Route('/{id}/delete', name: 'dev_user_delete', methods: [HttpMethodEnum::Post->value])]
@@ -87,6 +154,7 @@ final class UsersController extends AbstractController
             'name' => $user->getName(),
             'email' => $user->getEmail(),
             'plan' => $user->getPlan()->value,
+            'locale' => $user->getLocale()->value,
             'isDevRole' => in_array(UserRoleEnum::Dev->value, $user->getRoles(), true),
             'createdAt' => $user->getCreatedAt()->format('c'),
             'trialEndsAt' => $user->getTrialEndsAt()?->format('c'),

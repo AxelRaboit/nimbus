@@ -6,6 +6,9 @@ export default {
     },
     common: {
         save: "Enregistrer",
+        cancel: "Annuler",
+        confirm: "Confirmer",
+        delete: "Supprimer",
         download_qr: "Télécharger le QR code",
         or: "ou",
     },
@@ -24,6 +27,7 @@ export default {
             error_email_required: "L'adresse e-mail est obligatoire.",
             error_email_invalid: "L'adresse e-mail n'est pas valide.",
             error_email_taken: "Cette adresse e-mail est déjà utilisée.",
+            error_password_required: "Le mot de passe est obligatoire.",
             error_password_mismatch: "Les mots de passe ne correspondent pas.",
             closed_title: "Les inscriptions sont fermées",
             closed_desc:
@@ -342,6 +346,18 @@ export default {
             makeDev: "Passer en Dev",
             makeUser: "Retirer le rôle Dev",
             noResults: "Aucun utilisateur trouvé.",
+            create: "Créer un utilisateur",
+            editUser: "Modifier l'utilisateur",
+            password: "Mot de passe",
+            passwordPlaceholder: "Laisser vide pour ne pas modifier",
+            locale: "Langue",
+            plan: "Formule",
+            save: "Enregistrer",
+            saving: "Enregistrement…",
+            creating: "Création…",
+            impersonate: "Impersonner {name}",
+            confirmImpersonate:
+                "Vous allez vous connecter en tant que {name}. Vous pourrez revenir à votre compte à tout moment.",
         },
         invitations: {
             title: "Invitations",
