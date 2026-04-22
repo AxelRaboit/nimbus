@@ -46,10 +46,10 @@ const fileTypeGroups = computed(() => {
 });
 
 const GUEST_MODAL_KEY = "nimbus-guest-modal-dismissed";
-const showGuestModal = ref(props.isGuest && !localStorage.getItem(GUEST_MODAL_KEY));
+const showGuestModal = ref(props.isGuest && !sessionStorage.getItem(GUEST_MODAL_KEY));
 function dismissGuestModal() {
     showGuestModal.value = false;
-    localStorage.setItem(GUEST_MODAL_KEY, "1");
+    sessionStorage.setItem(GUEST_MODAL_KEY, "1");
 }
 
 const showHelp = ref(false);
@@ -512,21 +512,21 @@ function reset() {
         <div class="px-6 py-5 space-y-6">
             <ol class="space-y-4">
                 <li class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                    <span class="shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">1</span>
                     <div>
                         <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_1_title') }}</p>
                         <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_1_desc') }}</p>
                     </div>
                 </li>
                 <li class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+                    <span class="shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
                     <div>
                         <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_2_title') }}</p>
                         <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_2_desc') }}</p>
                     </div>
                 </li>
                 <li class="flex items-start gap-3">
-                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+                    <span class="shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">3</span>
                     <div>
                         <p class="font-semibold text-primary text-sm">{{ t('home.hero.step_3_title') }}</p>
                         <p class="text-secondary text-xs mt-0.5">{{ t('home.hero.step_3_desc') }}</p>

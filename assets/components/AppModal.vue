@@ -10,25 +10,17 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close"]);
-const dialog = ref();
 const showSlot = ref(props.show);
 
-watch(
-    () => props.show,
-    () => {
-        if (props.show) {
-            document.body.style.overflow = "hidden";
-            showSlot.value = true;
-            dialog.value?.showModal();
-        } else {
-            document.body.style.overflow = "";
-            setTimeout(() => {
-                dialog.value?.close();
-                showSlot.value = false;
-            }, 200);
-        }
-    },
-);
+watch(() => props.show, (show) => {
+    if (show) {
+        document.body.style.overflow = "hidden";
+        showSlot.value = true;
+    } else {
+        document.body.style.overflow = "";
+        setTimeout(() => { showSlot.value = false; }, 200);
+    }
+});
 
 function close() {
     if (props.closeable) emit("close");
@@ -41,7 +33,10 @@ function closeOnEscape(event) {
     }
 }
 
-onMounted(() => document.addEventListener("keydown", closeOnEscape));
+onMounted(() => {
+    document.addEventListener("keydown", closeOnEscape);
+    if (props.show) document.body.style.overflow = "hidden";
+});
 onUnmounted(() => {
     document.removeEventListener("keydown", closeOnEscape);
     document.body.style.overflow = "";
@@ -63,8 +58,8 @@ const panelClass = computed(() => [
 </script>
 
 <template>
-    <dialog ref="dialog" class="z-50 m-0 min-h-full min-w-full overflow-y-auto bg-transparent backdrop:bg-transparent">
-        <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <Teleport to="body">
+        <div v-if="showSlot" class="fixed inset-0 z-50 flex items-center justify-center px-4">
             <Transition
                 enter-active-class="ease-out duration-200"
                 enter-from-class="opacity-0"
@@ -86,12 +81,12 @@ const panelClass = computed(() => [
             >
                 <div
                     v-show="show"
-                    class="relative w-full bg-surface border border-line rounded-xl shadow-xl"
+                    class="relative z-10 w-full bg-surface border border-line rounded-xl shadow-xl"
                     :class="panelClass"
                 >
-                    <slot v-if="showSlot" />
+                    <slot />
                 </div>
             </Transition>
         </div>
-    </dialog>
+    </Teleport>
 </template>
