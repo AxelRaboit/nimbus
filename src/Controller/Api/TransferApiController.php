@@ -62,8 +62,9 @@ class TransferApiController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        $maxRecipients = $planService->getProMaxRecipients();
-        $maxExpiryDays = $planService->getProMaxExpiryDays();
+        $user = $this->getUser();
+        $maxRecipients = $user instanceof User ? $planService->getMaxRecipients($user) : $planService->getFreeMaxRecipients();
+        $maxExpiryHours = $user instanceof User ? $planService->getMaxExpiryHours($user) : $planService->getFreeMaxExpiryHours();
         $isPublic = isset($data['isPublic']) && true === $data['isPublic'];
 
         $fields = [
@@ -72,7 +73,7 @@ class TransferApiController extends AbstractController
             'message' => new Assert\Optional(new Assert\Length(max: 2000)),
             'isPublic' => new Assert\Optional(new Assert\Type('bool')),
             'expiresInHours' => new Assert\Optional([
-                new Assert\Range(min: 1, max: $maxExpiryDays * 24),
+                new Assert\Range(min: 1, max: $maxExpiryHours),
             ]),
             'password' => new Assert\Optional(new Assert\Length(min: 4, max: 128)),
         ];
@@ -99,7 +100,6 @@ class TransferApiController extends AbstractController
             return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $user = $this->getUser();
         $transfer = $transferManager->create(
             array_merge($data, ['isPublic' => $isPublic]),
             $user instanceof User ? $user : null,

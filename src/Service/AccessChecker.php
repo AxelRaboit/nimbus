@@ -28,7 +28,7 @@ class AccessChecker
             return true;
         }
 
-        if ($user instanceof User && $this->isAdminEmail($user->getEmail())) {
+        if ($user instanceof User && ($this->isAdminEmail($user->getEmail()) || $user->isDemo())) {
             return true;
         }
 

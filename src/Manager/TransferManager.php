@@ -96,8 +96,9 @@ final readonly class TransferManager
      */
     public function finalize(Transfer $transfer, array $uploadKeys, ?string $plainPassword = null): void
     {
-        $maxFiles = $this->planService->getProMaxFiles();
-        $maxSizeMb = $this->planService->getProMaxSizeMb();
+        $user = $transfer->getUser();
+        $maxFiles = $user instanceof User ? $this->planService->getMaxFiles($user) : $this->planService->getFreeMaxFiles();
+        $maxSizeMb = $user instanceof User ? $this->planService->getMaxSizeMb($user) : $this->planService->getFreeMaxSizeMb();
 
         $this->fileValidator->validate($uploadKeys, $maxFiles, $maxSizeMb);
 
