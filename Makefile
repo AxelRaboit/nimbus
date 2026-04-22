@@ -231,9 +231,6 @@ fix:
 	make test-frontend
 	make test-backend
 
-fd: ## Fix code and build dev assets
-	make fix && make dev
-
 ft: ## Fix code and run all tests
 	make fix && make test-backend && make test-frontend
 

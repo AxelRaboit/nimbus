@@ -506,26 +506,38 @@ make deploy-prod
 ## Commandes utiles
 
 ```bash
+# Développement
+make start              # mailer Docker + serveur Symfony + Vite HMR
+make stop               # arrêter le mailer
+make start-dev-worker   # worker Messenger + Scheduler (dans un second terminal)
+
 # Tests
-make test-backend            # tous les tests backend (PHPUnit)
-make test-backend-unit       # tests unitaires backend uniquement
+make test-backend             # tous les tests backend (PHPUnit)
+make test-backend-unit        # tests unitaires backend uniquement
 make test-backend-integration # tests d'intégration backend uniquement
-make test-frontend           # tests frontend (Vitest)
-make ft                      # fix + tous les tests
+make test-frontend            # tests frontend (Vitest)
+make ft                       # fix + tous les tests
 
 # Qualité du code
-make fix     # auto-correction (JS, Twig, Rector, PHP-CS-Fixer + PHPStan)
-make stan    # PHPStan seul
+make fix               # auto-correction (Rector, PHP-CS-Fixer, ESLint) + PHPStan
+make stan              # PHPStan seul
 
 # Base de données
-make migrate             # exécuter les migrations
-make migration           # générer une nouvelle migration
+make migrate           # exécuter les migrations
+make migration         # générer une nouvelle migration
+make fixtures          # drop DB + migrations + fixtures
+
+# Utilisateurs
+make dev-user EMAIL=user@example.com   # passer un utilisateur en ROLE_DEV
 
 # Paramètres applicatifs
 php bin/console nimbus:application-parameter
 
 # Promouvoir un utilisateur en admin
 php bin/console nimbus:user:role user@example.com ROLE_ADMIN
+
+# Utilitaires
+make help              # lister toutes les commandes disponibles
 ```
 
 ---
