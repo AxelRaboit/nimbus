@@ -52,6 +52,16 @@ class TransferRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getTotalFilesSizeByUser(User $user): int
+    {
+        $result = $this->getEntityManager()->getConnection()->fetchOne(
+            'SELECT COALESCE(SUM(tf.file_size), 0) FROM transfer_files tf JOIN transfers t ON tf.transfer_id = t.id WHERE t.user_id = :userId',
+            ['userId' => $user->getId()]
+        );
+
+        return (int) $result;
+    }
+
     public function countByUser(User $user): int
     {
         return (int) $this->createQueryBuilder('t')

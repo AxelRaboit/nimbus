@@ -261,5 +261,5 @@ impersonation:
 
 demo:
   login_button: 'Probar la demo'
-  banner: 'Modo demo — Las transferencias están limitadas a 1 GB'
+  banner: 'Modo demo — %fileSizeMb% MB máx. por archivo, %totalSizeMb% MB en total'
   unavailable: 'La cuenta de demostración no está disponible temporalmente.'

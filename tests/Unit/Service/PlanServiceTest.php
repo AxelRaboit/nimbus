@@ -102,6 +102,23 @@ final class PlanServiceTest extends TestCase
         self::assertTrue($service->canAccessMyTransfers($proUser));
     }
 
+    public function testGetMaxSizeMbReturnsDemoFileSizeLimitForDemoUser(): void
+    {
+        $user = new User();
+        $user->setIsDemo(true);
+
+        self::assertSame(PlanService::DEMO_MAX_FILE_SIZE_MB, $this->buildService()->getMaxSizeMb($user));
+    }
+
+    public function testGetMaxSizeMbDemoLimitIgnoresCustomFileSizeMb(): void
+    {
+        $user = new User();
+        $user->setIsDemo(true);
+        $user->setCustomFileSizeMb(9999);
+
+        self::assertSame(PlanService::DEMO_MAX_FILE_SIZE_MB, $this->buildService()->getMaxSizeMb($user));
+    }
+
     public function testGetMaxSizeMbReturnsCustomSizeWhenBelowProMax(): void
     {
         $user = new User();

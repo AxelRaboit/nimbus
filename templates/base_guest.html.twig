@@ -10,10 +10,13 @@
         {{ include('components/theme_script.html.twig', {colorScheme: true}) }}
         {% block stylesheets %}
             {{ vite_entry_link_tags('app') }}
+            {{ vite_entry_link_tags('flash') }}
         {% endblock %}
+        <script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
         {% block javascripts %}
             {{ vite_entry_script_tags('app') }}
             {{ vite_entry_script_tags('theme') }}
+            {{ vite_entry_script_tags('flash') }}
         {% endblock %}
     </head>
     <body class="transition-colors duration-200">
