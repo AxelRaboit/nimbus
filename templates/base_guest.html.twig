@@ -35,11 +35,11 @@
                 <div class="w-full max-w-5xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     <div>
                         <a href="{{ path('app_login') }}" class="inline-flex items-center gap-3 mb-8">
-                            <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="shadow-lg shadow-indigo-500/30 rounded-2xl"><defs><linearGradient id="ng1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6366f1"/><stop offset="100%" style="stop-color:#4f46e5"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#ng1)"/><text x="32" y="45" font-family="'Figtree','Segoe UI',sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">N</text><line x1="20" y1="52" x2="44" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/></svg>
+                            <svg width="56" height="56" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="shadow-lg shadow-indigo-500/30 rounded-2xl"><defs><linearGradient id="ng1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6366f1"/><stop offset="100%" style="stop-color:#4f46e5"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#ng1)"/><text x="32" y="45" font-family="'Figtree','Segoe UI',sans-serif" font-size="36" font-weight="700" text-anchor="middle" fill="white">N</text><line x1="20" y1="52" x2="44" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/></svg>
                             <div class="flex flex-col">
                                 <span class="text-primary font-bold text-2xl leading-tight">Nimbus</span>
                                 {% if appVersion is defined and appVersion %}
-                                    <span class="text-xs text-muted/50 leading-none">{{ appVersion }}</span>
+                                    <span class="text-xs text-secondary leading-none">{{ appVersion }}</span>
                                 {% endif %}
                             </div>
                         </a>
