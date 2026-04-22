@@ -111,6 +111,7 @@ final readonly class TransferManager
                 $upload = $this->tusUploadService->getUpload((string) $key);
                 $newTransferSize += (int) ($upload['file_size'] ?? 0);
             }
+
             $usedBytes = $this->transferRepository->getTotalFilesSizeByUser($user);
             if ($usedBytes + $newTransferSize > PlanService::DEMO_MAX_TOTAL_SIZE_MB * 1024 * 1024) {
                 throw new SizeLimitExceededException(PlanService::DEMO_MAX_TOTAL_SIZE_MB);

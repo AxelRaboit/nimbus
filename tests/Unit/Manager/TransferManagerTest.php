@@ -6,11 +6,11 @@ namespace App\Tests\Unit\Manager;
 
 use App\Entity\Transfer;
 use App\Entity\TransferFile;
+use App\Entity\User;
 use App\Enum\TransferStatusEnum;
+use App\Exception\SizeLimitExceededException;
 use App\Manager\TransferManager;
 use App\Repository\ApplicationParameterRepository;
-use App\Entity\User;
-use App\Exception\SizeLimitExceededException;
 use App\Repository\RecipientRepository;
 use App\Repository\TransferRepository;
 use App\Repository\TransferStatsRepository;
