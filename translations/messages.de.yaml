@@ -261,5 +261,5 @@ impersonation:
 
 demo:
   login_button: 'Demo ausprobieren'
-  banner: 'Demo-Modus — Übertragungen sind auf 1 GB begrenzt'
+  banner: 'Demo-Modus — Max. %fileSizeMb% MB pro Datei, %totalSizeMb% MB gesamt'
   unavailable: 'Das Demo-Konto ist vorübergehend nicht verfügbar.'

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use App\Service\PlanService;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 
@@ -15,6 +16,8 @@ final class AppEnvironmentExtension extends AbstractExtension implements Globals
     {
         return [
             'isProd' => 'prod' === $this->appEnv,
+            'demoMaxFileSizeMb' => PlanService::DEMO_MAX_FILE_SIZE_MB,
+            'demoMaxTotalSizeMb' => PlanService::DEMO_MAX_TOTAL_SIZE_MB,
         ];
     }
 }

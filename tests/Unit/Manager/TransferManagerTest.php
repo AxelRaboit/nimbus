@@ -9,7 +9,10 @@ use App\Entity\TransferFile;
 use App\Enum\TransferStatusEnum;
 use App\Manager\TransferManager;
 use App\Repository\ApplicationParameterRepository;
+use App\Entity\User;
+use App\Exception\SizeLimitExceededException;
 use App\Repository\RecipientRepository;
+use App\Repository\TransferRepository;
 use App\Repository\TransferStatsRepository;
 use App\Service\PlanService;
 use App\Service\TransferFileValidator;
@@ -78,6 +81,88 @@ final class TransferManagerTest extends TestCase
             sprintf('%s/%s/abc_doc.pdf', $this->storagePath, $transfer->getToken()),
             $this->buildManager()->resolveFilePath($transfer, $file),
         );
+    }
+
+    public function testFinalizeThrowsWhenDemoCumulativeQuotaExceeded(): void
+    {
+        $user = new User();
+        $user->setIsDemo(true);
+
+        $transfer = new Transfer();
+        $transfer->setUser($user);
+
+        // 950 MB already used
+        $transferRepository = $this->createStub(TransferRepository::class);
+        $transferRepository->method('getTotalFilesSizeByUser')->willReturn(950 * 1024 * 1024);
+
+        // new upload: 100 MB → 950 + 100 = 1050 MB > 1024 MB limit
+        $tusService = $this->createStub(TusUploadServiceInterface::class);
+        $tusService->method('getUpload')->willReturn([
+            'file_size' => 100 * 1024 * 1024,
+            'original_name' => 'video.mp4',
+            'mime_type' => 'video/mp4',
+            'file_path' => '/tmp/file',
+        ]);
+
+        $planService = $this->createStub(PlanService::class);
+        $planService->method('getMaxFiles')->willReturn(20);
+        $planService->method('getMaxSizeMb')->willReturn(PlanService::DEMO_MAX_FILE_SIZE_MB);
+
+        $this->expectException(SizeLimitExceededException::class);
+
+        $this->buildManager(tusService: $tusService, planService: $planService, transferRepository: $transferRepository)
+            ->finalize($transfer, ['key1']);
+    }
+
+    public function testFinalizeAllowsDemoTransferWhenWithinCumulativeQuota(): void
+    {
+        $user = new User();
+        $user->setIsDemo(true);
+
+        $transfer = new Transfer();
+        $transfer->setUser($user);
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'tus_');
+        file_put_contents($tmpFile, str_repeat('x', 1024));
+
+        $uploadData = [
+            'file_path' => $tmpFile,
+            'original_name' => 'photo.jpg',
+            'mime_type' => 'image/jpeg',
+            'file_size' => 1024,
+        ];
+
+        // 500 MB already used, new upload 1 KB → well within 1 GB
+        $transferRepository = $this->createStub(TransferRepository::class);
+        $transferRepository->method('getTotalFilesSizeByUser')->willReturn(500 * 1024 * 1024);
+
+        $tusService = $this->createStub(TusUploadServiceInterface::class);
+        $tusService->method('getUpload')->willReturn($uploadData);
+
+        $planService = $this->createStub(PlanService::class);
+        $planService->method('getMaxFiles')->willReturn(20);
+        $planService->method('getMaxSizeMb')->willReturn(PlanService::DEMO_MAX_FILE_SIZE_MB);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::once())->method('flush');
+
+        $this->buildManager(
+            entityManager: $entityManager,
+            tusService: $tusService,
+            planService: $planService,
+            transferRepository: $transferRepository,
+        )->finalize($transfer, ['key1']);
+
+        self::assertSame(TransferStatusEnum::Ready, $transfer->getStatus());
+        self::assertCount(1, $transfer->getFiles());
+
+        $storageDir = $this->storagePath.'/'.$transfer->getToken();
+        foreach (glob($storageDir.'/*') ?: [] as $f) {
+            unlink($f);
+        }
+        if (is_dir($storageDir)) {
+            rmdir($storageDir);
+        }
     }
 
     public function testFinalizeSkipsUnknownUploadKeys(): void
@@ -173,6 +258,7 @@ final class TransferManagerTest extends TestCase
         ?TusUploadServiceInterface $tusService = null,
         ?TransferNotifierInterface $notifier = null,
         ?PlanService $planService = null,
+        ?TransferRepository $transferRepository = null,
     ): TransferManager {
         $tusService ??= $this->createStub(TusUploadServiceInterface::class);
 
@@ -191,6 +277,7 @@ final class TransferManagerTest extends TestCase
             $notifier ?? $this->createStub(TransferNotifierInterface::class),
             new TransferFileValidator($tusService),
             $this->createStub(RecipientRepository::class),
+            $transferRepository ?? $this->createStub(TransferRepository::class),
             $this->storagePath,
             $this->createStub(TransferStatsRepository::class),
             $planService ?? $this->createStub(PlanService::class),

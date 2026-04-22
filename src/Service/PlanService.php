@@ -15,7 +15,9 @@ readonly class PlanService
 {
     public const float PRO_PRICE = 9.99;
 
-    public const int DEMO_MAX_SIZE_MB = 1024;
+    public const int DEMO_MAX_FILE_SIZE_MB = 100;
+
+    public const int DEMO_MAX_TOTAL_SIZE_MB = 1024;
 
     public function __construct(
         private ApplicationParameterRepository $params,
@@ -49,7 +51,7 @@ readonly class PlanService
     public function getMaxSizeMb(User $user): int
     {
         if ($user->isDemo()) {
-            return self::DEMO_MAX_SIZE_MB;
+            return self::DEMO_MAX_FILE_SIZE_MB;
         }
 
         if (null !== $user->getCustomFileSizeMb()) {

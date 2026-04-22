@@ -10,7 +10,9 @@ use App\Entity\TransferFile;
 use App\Entity\User;
 use App\Enum\StorageBackendEnum;
 use App\Enum\TransferStatusEnum;
+use App\Exception\SizeLimitExceededException;
 use App\Repository\RecipientRepository;
+use App\Repository\TransferRepository;
 use App\Repository\TransferStatsRepository;
 use App\Service\PlanService;
 use App\Service\TransferFileValidator;
@@ -30,6 +32,7 @@ final readonly class TransferManager
         private TransferNotifierInterface $notifier,
         private TransferFileValidator $fileValidator,
         private RecipientRepository $recipientRepository,
+        private TransferRepository $transferRepository,
         private string $transferStoragePath,
         private TransferStatsRepository $transferStatsRepository,
         private PlanService $planService,
@@ -101,6 +104,18 @@ final readonly class TransferManager
         $maxSizeMb = $user instanceof User ? $this->planService->getMaxSizeMb($user) : $this->planService->getFreeMaxSizeMb();
 
         $this->fileValidator->validate($uploadKeys, $maxFiles, $maxSizeMb);
+
+        if ($user instanceof User && $user->isDemo()) {
+            $newTransferSize = 0;
+            foreach ($uploadKeys as $key) {
+                $upload = $this->tusUploadService->getUpload((string) $key);
+                $newTransferSize += (int) ($upload['file_size'] ?? 0);
+            }
+            $usedBytes = $this->transferRepository->getTotalFilesSizeByUser($user);
+            if ($usedBytes + $newTransferSize > PlanService::DEMO_MAX_TOTAL_SIZE_MB * 1024 * 1024) {
+                throw new SizeLimitExceededException(PlanService::DEMO_MAX_TOTAL_SIZE_MB);
+            }
+        }
 
         $activeBackend = $this->storageManager->getActiveBackend();
         $activeAdapter = $this->storageManager->getActiveAdapter();

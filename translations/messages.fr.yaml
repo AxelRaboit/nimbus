@@ -267,5 +267,5 @@ impersonation:
 
 demo:
   login_button: 'Essayer la démo'
-  banner: 'Mode démo — Les transferts sont limités à 1 Go'
+  banner: 'Mode démo — %fileSizeMb% Mo max par fichier, %totalSizeMb% Mo cumulés'
   unavailable: 'Le compte de démonstration est temporairement indisponible.'
