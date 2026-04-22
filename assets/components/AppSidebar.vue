@@ -42,6 +42,7 @@ const props = defineProps({
 
 const isPro = computed(() => props.userPlan === Plan.Pro);
 const planActive = computed(() => props.activeRoute === Route.Plan);
+const userInitial = computed(() => props.userName?.charAt(0)?.toUpperCase() || "?");
 
 const { t } = useI18n();
 const { theme, toggle: toggleTheme } = useTheme();
@@ -105,9 +106,14 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
             </button>
         </div>
 
-        <div v-if="!isGuest" class="sh-logo-expanded flex-col border-b border-line px-4 py-3 shrink-0">
-            <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
-            <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+        <div v-if="!isGuest" class="sh-logo-expanded flex items-center gap-3 border-b border-line px-4 py-3 shrink-0">
+            <div class="w-8 h-8 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-semibold shrink-0">
+                {{ userInitial }}
+            </div>
+            <div class="flex flex-col min-w-0 si-label">
+                <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
+                <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+            </div>
         </div>
 
         <nav class="sidebar-nav flex-1 py-4 space-y-0.5">
@@ -313,9 +319,14 @@ const devActive       = props.activeRoute?.startsWith(Route.Dev);
                 </button>
             </div>
 
-            <div v-if="!isGuest" class="px-4 py-3 border-b border-line shrink-0">
-                <p class="text-sm font-medium text-primary">{{ userName }}</p>
-                <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+            <div v-if="!isGuest" class="flex items-center gap-3 px-4 py-3 border-b border-line shrink-0">
+                <div class="w-8 h-8 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-sm font-semibold shrink-0">
+                    {{ userInitial }}
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <p class="text-sm font-medium text-primary truncate">{{ userName }}</p>
+                    <p class="text-xs text-muted truncate">{{ userEmail }}</p>
+                </div>
             </div>
 
             <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
