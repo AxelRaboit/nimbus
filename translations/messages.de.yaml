@@ -258,3 +258,8 @@ plan:
 impersonation:
   banner: 'Eingeloggt als %name%'
   leave: 'Zurück zu meinem Konto'
+
+demo:
+  login_button: 'Demo ausprobieren'
+  banner: 'Demo-Modus — Übertragungen sind auf 1 GB begrenzt'
+  unavailable: 'Das Demo-Konto ist vorübergehend nicht verfügbar.'

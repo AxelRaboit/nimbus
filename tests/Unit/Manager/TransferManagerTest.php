@@ -88,8 +88,8 @@ final class TransferManagerTest extends TestCase
         $tusService->method('getUpload')->willReturn(null);
 
         $planService = $this->createStub(PlanService::class);
-        $planService->method('getProMaxFiles')->willReturn(20);
-        $planService->method('getProMaxSizeMb')->willReturn(10000);
+        $planService->method('getFreeMaxFiles')->willReturn(20);
+        $planService->method('getFreeMaxSizeMb')->willReturn(10000);
 
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReady');
@@ -122,8 +122,8 @@ final class TransferManagerTest extends TestCase
         $tusService->method('getUpload')->willReturn($uploadData);
 
         $planService = $this->createStub(PlanService::class);
-        $planService->method('getProMaxFiles')->willReturn(20);
-        $planService->method('getProMaxSizeMb')->willReturn(10000);
+        $planService->method('getFreeMaxFiles')->willReturn(20);
+        $planService->method('getFreeMaxSizeMb')->willReturn(10000);
 
         $notifier = $this->createMock(TransferNotifierInterface::class);
         $notifier->expects(self::once())->method('notifyReady')->with($transfer);

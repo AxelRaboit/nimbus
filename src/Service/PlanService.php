@@ -15,6 +15,8 @@ readonly class PlanService
 {
     public const float PRO_PRICE = 9.99;
 
+    public const int DEMO_MAX_SIZE_MB = 1024;
+
     public function __construct(
         private ApplicationParameterRepository $params,
         private EntityManagerInterface $entityManager,
@@ -39,8 +41,17 @@ readonly class PlanService
         return PlanEnum::Free === $user->getPlan();
     }
 
+    public function isDemo(User $user): bool
+    {
+        return $user->isDemo();
+    }
+
     public function getMaxSizeMb(User $user): int
     {
+        if ($user->isDemo()) {
+            return self::DEMO_MAX_SIZE_MB;
+        }
+
         if (null !== $user->getCustomFileSizeMb()) {
             return $user->getCustomFileSizeMb();
         }

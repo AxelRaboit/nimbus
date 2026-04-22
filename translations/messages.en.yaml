@@ -258,3 +258,8 @@ plan:
 impersonation:
   banner: 'Logged in as %name%'
   leave: 'Back to my account'
+
+demo:
+  login_button: 'Try the demo'
+  banner: 'Demo mode — Transfers are limited to 1 GB'
+  unavailable: 'The demo account is temporarily unavailable.'

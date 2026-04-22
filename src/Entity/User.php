@@ -53,6 +53,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $customFileSizeMb = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isDemo = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -160,6 +163,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLocale(LocaleEnum $locale): static
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function isDemo(): bool
+    {
+        return $this->isDemo;
+    }
+
+    public function setIsDemo(bool $isDemo): static
+    {
+        $this->isDemo = $isDemo;
 
         return $this;
     }

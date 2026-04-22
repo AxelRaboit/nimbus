@@ -264,3 +264,8 @@ plan:
 impersonation:
   banner: 'Connecté en tant que %name%'
   leave: 'Revenir à mon compte'
+
+demo:
+  login_button: 'Essayer la démo'
+  banner: 'Mode démo — Les transferts sont limités à 1 Go'
+  unavailable: 'Le compte de démonstration est temporairement indisponible.'
