@@ -28,11 +28,10 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 - **Envoi par e-mail ou lien public** — chaque destinataire reçoit un lien personnel, ou partagez via un lien public direct
 - **Protection par mot de passe** — accès conditionnel pour les destinataires
 - **Expiration configurable** — durées disponibles paramétrables par l'administrateur
-- **Aperçu des fichiers** — prévisualisation inline avant téléchargement
 - **Suivi des téléchargements** — statut par destinataire en temps réel
 - **Mes transferts** — les utilisateurs Pro consultent, gèrent et suppriment leurs transferts passés
 - **Demandes d'accès** — les visiteurs peuvent demander l'accès depuis la page protégée ; l'admin reçoit un e-mail, peut définir une limite de taille personnalisée, puis approuve ou refuse (notification e-mail dans les deux cas)
-- **Tableau de bord admin** — statistiques globales, liste des transferts, paramètres applicatifs
+- **Tableau de bord admin** — gestion des utilisateurs, liste des transferts, paramètres applicatifs
 - **Formules Free/Pro** — limites configurables en base de données, période d'essai incluse
 - **Internationalisation** — français, anglais, espagnol, allemand
 - **Thème** — mode sombre et mode clair
@@ -43,25 +42,9 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 
 ### Connexion
 
-![Connexion](docs/readme/screenshots/email/login.jpg)
+![Connexion](docs/readme/screenshots/35-login.png)
 
-> Page de connexion avec présentation des avantages de l'application : transferts chiffrés, expiration automatique, notifications par e-mail et connexion non obligatoire.
-
----
-
-### Inscription
-
-![Inscription](docs/readme/screenshots/email/registration.png)
-
-> Formulaire d'inscription : nom complet, adresse e-mail, mot de passe et confirmation.
-
----
-
-### Comment ça marche ?
-
-![Comment ça marche](docs/readme/screenshots/email/comment-ca-marche.jpg)
-
-> Explication du processus en 3 étapes, récapitulatif des limites du plan actif et liste complète des formats acceptés. Les limites affichées reflètent le paramétrage de l'administrateur.
+> Page de connexion : logo Nimbus, slogan "Envoyez vos fichiers, simplement.", formulaire e-mail/mot de passe avec lien "Mot de passe oublié ?", "Pas encore de compte ?" et option "Continuer sans connexion".
 
 ---
 
@@ -69,75 +52,59 @@ Conçu avec une interface sombre moderne, Nimbus prend en charge les envois volu
 
 Le destinataire reçoit un lien personnel par e-mail. Le téléchargement est tracké individuellement par destinataire.
 
-### Formulaire d'envoi
+### Formulaire vide
 
-![Formulaire d'envoi](docs/readme/screenshots/email/formulaire.jpg)
+![Formulaire vide](docs/readme/screenshots/01-new-transfer-empty.png)
 
-> Mode e-mail : ajoutez un ou plusieurs destinataires, un message optionnel, une durée d'expiration et un mot de passe éventuel.
+> Formulaire "Nouveau transfert" en mode e-mail, sans fichier ajouté. Zone de dépôt avec les deux modes de partage disponibles : "Envoyer par e-mail" et "Lien public".
+
+---
+
+### Modal "Comment ça marche ?"
+
+![Comment ça marche](docs/readme/screenshots/02-how-it-works-modal.png)
+
+> Modal "Comment ça marche ?" — explique le processus d'envoi en quelques étapes avec les limites du plan actif et les formats supportés.
+
+---
+
+### Formulaire rempli
+
+![Formulaire e-mail rempli](docs/readme/screenshots/03-new-transfer-email-filled.png)
+
+> Formulaire complété en mode e-mail : un fichier ajouté, destinataire renseigné, message personnalisé et mot de passe de protection défini.
 
 ---
 
 ### Confirmation d'envoi
 
-![Confirmation](docs/readme/screenshots/email/confirmation.jpg)
+![Transfert envoyé — mode e-mail](docs/readme/screenshots/04-transfer-sent-email.png)
 
-> Après l'envoi : référence du transfert et lien de gestion à conserver. Les destinataires reçoivent leur lien personnel par e-mail.
+> Page "Transfert envoyé !" après envoi en mode e-mail. Référence EC05-2F76 et lien "Gérer mon transfert" à conserver.
 
 ---
 
 ### E-mail reçu par le destinataire
 
-![E-mail](docs/readme/screenshots/email/email.png)
+![E-mail notification destinataire](docs/readme/screenshots/05-email-recipient-notification.png)
 
-> L'e-mail reçu : nom du fichier, taille, indication du mot de passe si protégé, date d'expiration et bouton de téléchargement.
-
----
-
-### Transfert protégé
-
-![Transfert protégé](docs/readme/screenshots/email/transfert-protege.jpg)
-
-> Page d'accès conditionnel — le destinataire saisit le mot de passe défini à l'envoi avant d'accéder aux fichiers.
+> E-mail reçu par le destinataire : "Vous avez reçu des fichiers", avec mention du mot de passe requis et de la date d'expiration du lien.
 
 ---
 
-### Téléchargement
+### Page de téléchargement
 
-![Téléchargement](docs/readme/screenshots/email/telechargement.jpg)
+![Fichiers disponibles — mode e-mail](docs/readme/screenshots/28-download-files-email.png)
 
-> Page de téléchargement : aperçu du fichier, expéditeur, date d'expiration et bouton de téléchargement.
-
----
-
-### Aperçu fichier
-
-![Aperçu fichier](docs/readme/screenshots/email/apercu-fichier.jpg)
-
-> Prévisualisation inline d'un fichier directement dans le navigateur avant téléchargement.
+> Page "Fichiers disponibles" accessible via le lien reçu par e-mail. Référence EC05-2F76, fichier de 17,3 Mo envoyé par Axel Raboit, avec bouton "Télécharger".
 
 ---
 
-### Mes transferts
+### Transfert protégé par mot de passe
 
-![Mes transferts](docs/readme/screenshots/email/mes-transferts.jpg)
+![Transfert protégé](docs/readme/screenshots/27-download-password-protected.png)
 
-> Liste des transferts envoyés avec référence, statut, taille, nombre de destinataires ayant téléchargé et date d'expiration.
-
----
-
-### Gérer un transfert
-
-![Gérer mon transfert](docs/readme/screenshots/email/gerer-transfert.jpg)
-
-> Page de gestion : QR code, lien de téléchargement, statut par destinataire et suppression définitive.
-
----
-
-### Notification de téléchargement
-
-![Notification téléchargement](docs/readme/screenshots/email/email-telechargement.png)
-
-> L'expéditeur reçoit un e-mail dès qu'un destinataire télécharge ses fichiers, avec la référence du transfert et un lien vers la gestion si besoin de supprimer.
+> Page "Transfert protégé" — le destinataire doit saisir le mot de passe défini à l'envoi pour accéder aux fichiers.
 
 ---
 
@@ -145,159 +112,175 @@ Le destinataire reçoit un lien personnel par e-mail. Le téléchargement est tr
 
 Le transfert génère un lien unique partageable librement. N'importe qui avec le lien peut télécharger.
 
-### Formulaire d'envoi
+### Formulaire rempli
 
-![Formulaire d'envoi public](docs/readme/screenshots/public/formulaire.jpg)
+![Formulaire lien public rempli](docs/readme/screenshots/14-new-transfer-public-filled.png)
 
-> Mode lien public : pas de destinataires, le lien et le QR code sont générés à la confirmation.
-
----
-
-### Confirmation d'envoi
-
-![Confirmation publique](docs/readme/screenshots/public/confirmation.jpg)
-
-> Après l'envoi : lien public à partager avec QR code téléchargeable, et lien de gestion séparé.
+> Formulaire en mode "Lien public" complété : 1 fichier ajouté, message, expiration 1 heure et mot de passe optionnel.
 
 ---
 
-### Transfert protégé
+### Plusieurs fichiers
 
-![Transfert protégé public](docs/readme/screenshots/public/transfert-protege.jpg)
+![Plusieurs fichiers](docs/readme/screenshots/15-new-transfer-multiple-files.png)
 
-> Même page d'accès conditionnel par mot de passe, disponible aussi en mode lien public.
-
----
-
-### Téléchargement
-
-![Téléchargement public](docs/readme/screenshots/public/telechargement.jpg)
-
-> Page de téléchargement accessible via le lien public — sans identification du visiteur.
+> 5 fichiers ajoutés en une seule fois avant l'envoi en mode lien public.
 
 ---
 
-### Aperçu fichier
+### Confirmation avec QR code
 
-![Aperçu fichier public](docs/readme/screenshots/public/apercu-fichier.jpg)
+![Transfert envoyé — lien public avec QR](docs/readme/screenshots/19-transfer-sent-public-qr.png)
 
-> Prévisualisation inline identique au parcours e-mail.
+> Page "Transfert envoyé !" en mode lien public. Référence B564-CA4C, QR code téléchargeable et lien de gestion séparé à conserver.
+
+---
+
+### Page de téléchargement
+
+![Fichiers disponibles — lien public](docs/readme/screenshots/39-download-files.png)
+
+> Page "Fichiers disponibles" accessible via le lien public. Référence B564-CA4C, 1 fichier de 17,3 Mo, expire le 22 avril 2026 à 04:12.
+
+---
+
+## Gestion du transfert
+
+### Page de gestion
+
+![Gérer mon transfert](docs/readme/screenshots/06-transfer-manage.png)
+
+> Page "Gérer mon transfert" (référence EC05-2F76) : QR code, statut des destinataires, lien de partage et zone de danger pour supprimer le transfert.
 
 ---
 
 ### Mes transferts
 
-![Mes transferts](docs/readme/screenshots/public/mes-transferts.jpg)
+![Mes transferts](docs/readme/screenshots/29-my-transfers-list.png)
 
-> Les deux modes coexistent dans la liste : le badge "Lien public" distingue les transferts publics des transferts par e-mail.
+> Page "Mes transferts" — transfert EC05-2F76 avec statut "Actif", 1 fichier de 17,3 Mo, 1/1 téléchargé, expiration le 22 avril 2026.
+
+---
+
+## Upload résumable — protocole TUS
+
+### Upload en cours (fichier unique)
+
+![Upload en cours](docs/readme/screenshots/40-upload-progress.png)
+
+> Envoi d'un fichier en cours à 87%. Message "Ne fermez pas cette page" affiché pendant l'upload TUS.
+
+---
+
+### Upload de plusieurs fichiers
+
+![Upload multiple en cours](docs/readme/screenshots/17-upload-in-progress.png)
+
+> Plusieurs fichiers uploadés en parallèle avec barre de progression individuelle par fichier.
+
+---
+
+### Reprise automatique détectée
+
+![Reprise de transfert détectée](docs/readme/screenshots/41-resume-transfer.png)
+
+> Formulaire "Nouveau transfert" avec bannière "Transfert en cours détecté" — Nimbus propose de reprendre automatiquement l'upload interrompu en re-sélectionnant les fichiers.
 
 ---
 
 ## Demandes d'accès
 
-Lorsque l'accès à Nimbus est protégé par un mot de passe, les visiteurs peuvent soumettre une demande d'accès directement depuis la page de connexion. L'administrateur reçoit un e-mail, examine la demande, peut ajuster la limite de taille accordée, puis approuve ou refuse.
+Lorsque l'accès à Nimbus est protégé, les visiteurs peuvent soumettre une demande directement depuis la page protégée.
 
-### Page d'accès protégé
+### Page d'accès protégée
 
-![Accès protégé](docs/readme/screenshots/access_request/01-acces-protege.jpg)
+![Accès protégé](docs/readme/screenshots/10-app-access-protected.png)
 
-> Le visiteur voit le formulaire de mot de passe avec un lien "Demander l'accès" pour soumettre une demande sans connaître le mot de passe.
+> Page "Accès protégé" — l'application est verrouillée. Le visiteur peut cliquer sur "Demander l'accès" pour soumettre une demande à l'administrateur.
 
 ---
 
-### Formulaire de demande
+### Formulaire de demande vide
 
-![Formulaire de demande](docs/readme/screenshots/access_request/02-formulaire.jpg)
+![Demander l'accès — formulaire vide](docs/readme/screenshots/12-access-request-form-empty.png)
 
-> Le visiteur renseigne son e-mail, son nom, un message optionnel et la taille de transfert souhaitée. À la soumission, l'administrateur reçoit immédiatement une notification par e-mail.
+> Formulaire "Demander l'accès" vide — le visiteur saisit son e-mail, son nom et éventuellement un message.
+
+---
+
+### Formulaire de demande rempli
+
+![Demander l'accès — formulaire rempli](docs/readme/screenshots/13-access-request-form-filled.png)
+
+> Formulaire "Demander l'accès" rempli avec e-mail axel.raboit@gmail.com et quota demandé de 5 Go.
 
 ---
 
 ### Confirmation d'envoi
 
-![Demande envoyée](docs/readme/screenshots/access_request/02-demande-envoyee.jpg)
+![Demande envoyée](docs/readme/screenshots/11-access-request-sent.png)
 
-> Confirmation affichée après soumission — le visiteur est informé qu'il recevra un e-mail dès que l'administrateur aura statué.
+> Page de confirmation "Demande envoyée" — coche verte indiquant que l'administrateur a été notifié.
 
 ---
 
 ### E-mail reçu par l'administrateur
 
-![E-mail admin](docs/readme/screenshots/access_request/07-email-admin.png)
+![E-mail nouvelle demande d'accès](docs/readme/screenshots/18-email-new-access-request.png)
 
-> L'e-mail récapitule les informations du demandeur (e-mail, nom, message, taille souhaitée) avec un rappel que la limite peut être ajustée avant approbation. Un bouton "Autoriser l'accès" redirige directement vers la modale d'approbation.
-
----
-
-### Gestion des demandes (admin)
-
-![Liste des demandes](docs/readme/screenshots/access_request/03-admin-liste.jpg)
-
-> Onglet dédié dans le tableau de bord : liste de toutes les demandes avec statut, message, taille demandée/accordée, date et expiration. Un bouton "Purger" supprime les demandes traitées (approuvées et rejetées).
-
----
-
-### Approbation avec limite personnalisée
-
-![Modale approbation](docs/readme/screenshots/access_request/04-admin-modale-approbation.jpg)
-
-> À l'approbation, l'administrateur peut définir une limite de taille spécifique pour ce visiteur (pré-remplie avec la taille demandée). Laisser vide applique la limite par défaut du plan.
-
-![Limite accordée](docs/readme/screenshots/access_request/05-admin-modale-taille.jpg)
-
-> Ici l'administrateur accorde 1 Go (1000 Mo) au lieu des 5 Go demandés.
-
-![Demande approuvée](docs/readme/screenshots/access_request/06-admin-approuve.jpg)
-
-> La demande passe au statut "Approuvé" avec la taille accordée visible dans la liste.
+> E-mail "Nouvelle demande d'accès" reçu par l'administrateur avec les informations du demandeur.
 
 ---
 
 ### E-mail d'approbation reçu par le demandeur
 
-![E-mail approbation](docs/readme/screenshots/access_request/08-email-approuve.png)
+![E-mail demande approuvée](docs/readme/screenshots/07-email-access-approved.png)
 
-> Le demandeur reçoit un lien d'accès à usage unique (valable 24h) avec la limite de transfert qui lui a été accordée.
-
----
-
-### E-mail de refus reçu par le demandeur
-
-![E-mail refus](docs/readme/screenshots/access_request/09-email-refuse.png)
-
-> En cas de refus, le demandeur est informé par e-mail avec une invitation à répondre s'il pense à une erreur.
+> E-mail "Votre demande d'accès a été approuvée" reçu par le demandeur, avec la limite de transfert accordée (1 Go).
 
 ---
 
-## Limite de taille par utilisateur
+## Notifications e-mail
 
-L'administrateur peut définir une limite de taille de fichier personnalisée pour chaque utilisateur, indépendamment de son plan. Cette limite prend le dessus sur la limite par défaut du plan.
+### Fichiers téléchargés
 
-### Liste des utilisateurs
+![E-mail fichiers téléchargés](docs/readme/screenshots/16-email-files-downloaded.png)
 
-![Liste utilisateurs](docs/readme/screenshots/user_limits/01-liste-utilisateurs.jpg)
-
-> La colonne "Taille custom" indique la limite personnalisée de chaque utilisateur. L'icône disque ouvre la modale de modification.
+> E-mail "Fichiers téléchargés" envoyé à l'expéditeur lorsqu'un destinataire a téléchargé les fichiers.
 
 ---
 
-### Définir une limite personnalisée
+## Formules & Tarifs
 
-![Modale limite](docs/readme/screenshots/user_limits/02-modale-limite.jpg)
+![Formules & Tarifs](docs/readme/screenshots/37-plans.png)
 
-> Laisser le champ vide revient à appliquer la limite par défaut du plan de l'utilisateur.
-
-![Modale limite saisie](docs/readme/screenshots/user_limits/03-modale-limite-saisie.jpg)
-
-> Ici, l'administrateur fixe une limite de 500 Mo pour cet utilisateur, quelle que soit sa formule.
+> Page "Formules & Tarifs" — Free (0 €/mois : 100 Mo, 3 fichiers, expiration 24h) vs Pro (9,99 €/mois : 20 Go, 20 fichiers, expiration 7 jours, accès Mes transferts). Changement de formule possible à tout moment.
 
 ---
 
-### Résultat
+## Profil
 
-![Liste après modification](docs/readme/screenshots/user_limits/04-liste-apres.jpg)
+![Mon profil](docs/readme/screenshots/38-profile.png)
 
-> La limite personnalisée est immédiatement visible dans la liste. Elle s'applique dès le prochain transfert de l'utilisateur.
+> Page "Mon profil" — sélection de la langue d'affichage, mise à jour du nom et de l'e-mail, modification du mot de passe, et zone de danger pour supprimer le compte.
+
+---
+
+## Compte
+
+### Inscription
+
+![Créer un compte](docs/readme/screenshots/09-register.png)
+
+> Page "Créer un compte" — formulaire d'inscription avec nom complet, adresse e-mail, mot de passe et confirmation.
+
+---
+
+### Mot de passe oublié
+
+![Mot de passe oublié](docs/readme/screenshots/08-forgot-password.png)
+
+> Page "Mot de passe oublié" — saisie de l'adresse e-mail pour recevoir un lien de réinitialisation.
 
 ---
 
@@ -305,63 +288,95 @@ L'administrateur peut définir une limite de taille de fichier personnalisée po
 
 ### Vue d'ensemble
 
-![Administration - Vue d'ensemble](docs/readme/screenshots/email/admin-vue-ensemble.jpg)
+![Admin — Vue d'ensemble](docs/readme/screenshots/30-admin-dashboard.png)
 
-> Dashboard admin : nombre d'utilisateurs, transferts, fichiers et téléchargements depuis le début, avec graphiques d'évolution sur 6 mois.
+> Tableau de bord admin : 4 utilisateurs, 39 transferts, 43 fichiers, 1 téléchargement. Graphiques "Nouveaux utilisateurs" et "Transferts créés" sur les 6 derniers mois.
+
+---
+
+### Utilisateurs
+
+![Admin — Utilisateurs](docs/readme/screenshots/31-admin-users-full.png)
+
+> Onglet "Utilisateurs" — liste des 4 comptes (Jean Dupont, Dev User, Axel Raboit, Test User) avec plan, rôle, taille custom et date d'inscription. Actions : éditer, impersonifier, définir une limite, désactiver, supprimer.
+
+---
+
+### Invitations
+
+![Admin — Invitations](docs/readme/screenshots/32-admin-invitations.png)
+
+> Onglet "Invitations" — formulaire pour envoyer une invitation par e-mail afin de rejoindre Nimbus, avec message personnalisé et identifiants optionnels.
 
 ---
 
 ### Transferts
 
-![Administration - Transferts](docs/readme/screenshots/public/admin-transferts.jpg)
+![Admin — Transferts](docs/readme/screenshots/34-admin-transfers-list.png)
 
-> Liste complète de tous les transferts avec filtres par statut, expéditeur, destinataires et date d'expiration.
-
----
-
-## Formules & Tarifs
-
-![Formules & Tarifs](docs/readme/screenshots/plan.jpg)
-
-> Comparatif Free (0 €/mois — 100 Mo, 3 fichiers, expiration 24h) et Pro (9,99 €/mois — 5 Go, 20 fichiers, expiration 7 jours, accès Mes transferts). Changement de formule possible à tout moment.
+> Onglet "Transferts" — 3 transferts listés avec référence, expéditeur, statut (Actif / Expiré / Supprimé), nombre de fichiers, destinataires et dates.
 
 ---
 
-## Profil
+### Demandes d'accès
 
-![Profil](docs/readme/screenshots/profil.png)
+![Admin — Demandes d'accès](docs/readme/screenshots/20-admin-access-requests.png)
 
-> Gestion du profil : langue d'affichage, informations personnelles (nom, e-mail), modification du mot de passe et suppression du compte.
+> Onglet "Demandes d'accès" — demande en attente d'Axel Raboit avec quota demandé de 5 Go.
+
+---
+
+### Approbation d'une demande
+
+![Admin — Modale d'approbation](docs/readme/screenshots/21-admin-approve-modal.png)
+
+> Modale d'approbation — l'administrateur peut définir une limite de taille personnalisée avant d'approuver. Laisser vide applique la limite par défaut du plan.
+
+---
+
+### Demande approuvée
+
+![Admin — Demandes d'accès après approbation](docs/readme/screenshots/23-admin-access-request-approved.png)
+
+> Onglet "Demandes d'accès" après traitement — demande d'Axel Raboit avec statut "Approuvé", 5.0 Go demandés, 1.0 Go accordé, expire le 23 avril 2026.
+
+---
+
+### Limite de taille par utilisateur
+
+![Admin — Ligne utilisateur sans quota](docs/readme/screenshots/24-admin-user-row-no-quota.png)
+
+> Ligne Test User dans la liste des utilisateurs — colonne "Taille custom" affiche `—` (aucune limite personnalisée définie).
+
+---
+
+![Admin — Modale limite de taille vide](docs/readme/screenshots/25-admin-size-limit-empty.png)
+
+> Modale "Limite de taille — Test User" ouverte avec le champ vide (placeholder "Défaut plan") — aucune limite personnalisée appliquée pour l'instant.
+
+---
+
+![Admin — Modale limite de taille remplie](docs/readme/screenshots/26-admin-size-limit-filled.png)
+
+> Même modale avec la valeur 1000 Mo saisie — l'administrateur définit une limite personnalisée de 1 Go pour cet utilisateur.
+
+---
+
+![Admin — Ligne utilisateur avec quota](docs/readme/screenshots/36-admin-user-row-quota.png)
+
+> Ligne Test User après enregistrement — colonne "Taille custom" affiche maintenant `1.0 Go`.
+
+---
+
+### Paramètres
+
+![Admin — Paramètres](docs/readme/screenshots/33-admin-settings-params.png)
+
+> Onglet "Paramètres" — table de configuration de l'application : limites par plan, durées d'expiration, quota de stockage, options TUS et paramètres de stockage.
 
 ---
 
 ## Upload résumable — protocole TUS
-
-### Sélection des fichiers
-
-![Sélection fichiers](docs/readme/screenshots/upload/formulaire-fichiers.jpg)
-
-> Plusieurs fichiers volumineux ajoutés avant l'envoi — glisser-déposer ou sélection via le parcourir.
-
----
-
-### Reprise automatique détectée
-
-![Reprise détectée](docs/readme/screenshots/upload/reprise-detectee.jpg)
-
-> Si la page est rechargée ou la connexion coupée, Nimbus détecte l'upload interrompu et propose de le reprendre automatiquement — les fichiers et le formulaire sont restaurés.
-
----
-
-### Progression par fichier
-
-![Progression upload](docs/readme/screenshots/upload/progression.png)
-
-> La progression est affichée fichier par fichier. Les fichiers déjà uploadés (100%) ne sont pas renvoyés, l'upload reprend à l'offset exact des fichiers en cours.
-
----
-
-## Uploads résumables — protocole TUS
 
 Les fichiers peuvent peser plusieurs gigaoctets. Un upload HTTP classique n'offre aucune reprise en cas d'interruption réseau : tout recommence de zéro. Nimbus utilise le [protocole TUS](https://tus.io) pour résoudre ce problème.
 
@@ -407,7 +422,7 @@ TUS découpe chaque fichier en **fragments de 5 Mo** envoyés séquentiellement.
 
 ### Stockage
 
-Actuellement, les fichiers sont stockés directement sur le serveur (`var/uploads/`). Une intégration avec un stockage cloud (AWS S3, Cloudflare R2, etc.) est prévue pour permettre de déléguer le stockage et de passer à l'échelle sans contrainte d'espace disque.
+Par défaut, les fichiers sont stockés sur le serveur (`var/uploads/`). Nimbus supporte également Cloudflare R2 (compatible S3) via les variables `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` et `R2_BUCKET`.
 
 ---
 
@@ -492,9 +507,11 @@ make deploy-prod
 
 ```bash
 # Tests
-make test                # suite complète
-make test-unit           # tests unitaires uniquement
-make test-integration    # tests d'intégration uniquement
+make test-backend            # tous les tests backend (PHPUnit)
+make test-backend-unit       # tests unitaires backend uniquement
+make test-backend-integration # tests d'intégration backend uniquement
+make test-frontend           # tests frontend (Vitest)
+make ft                      # fix + tous les tests
 
 # Qualité du code
 make fix     # auto-correction (JS, Twig, Rector, PHP-CS-Fixer + PHPStan)
