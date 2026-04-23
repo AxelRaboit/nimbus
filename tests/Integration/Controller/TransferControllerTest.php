@@ -58,7 +58,7 @@ final class TransferControllerTest extends IntegrationTestCase
         $client->request('GET', '/t/'.$recipient->getToken());
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists('#app-transfer-password');
+        self::assertSelectorExists('[data-symfony--ux-vue--vue-component-value="TransferPasswordApp"]');
     }
 
     public function testShowExpiredTransferRendersUnavailable(): void

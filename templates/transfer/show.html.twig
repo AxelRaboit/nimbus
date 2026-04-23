@@ -7,22 +7,11 @@
 {% endblock %}
 
 {% block body %}
-    <div id="app-transfer"
-         data-token="{{ transfer.token }}"
-         data-reference="{{ transfer.reference }}"
-         data-expires-at="{{ transfer.expiresAt|date('c') }}"
-         data-sender-name="{{ transfer.senderName ?? '' }}"
-         data-files="{{ transfer.files|map(f => {name: f.originalName, size: f.fileSize, mimeType: f.mimeType, filename: f.filename})|json_encode }}"
-         data-locale="{{ app.request.locale }}">
-    </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ vite_entry_script_tags('transfer') }}
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ vite_entry_link_tags('transfer') }}
+    <div {{ vue_component('TransferApp', {
+        token: transfer.token,
+        reference: transfer.reference,
+        expiresAt: transfer.expiresAt|date('c'),
+        senderName: transfer.senderName ?? '',
+        files: transfer.files|map(f => {name: f.originalName, size: f.fileSize, mimeType: f.mimeType, filename: f.filename}),
+    }) }}></div>
 {% endblock %}

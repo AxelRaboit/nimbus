@@ -33,11 +33,11 @@ const { formatDateShort, formatMonth } = useDateFormat();
 
 const props = defineProps({
     tab:                  { type: String, default: "stats" },
-    stats:                { type: String, default: "{}" },
-    transfers:            { type: String, default: "{}" },
-    users:                { type: String, default: "{}" },
-    parameters:                  { type: String, default: "{}" },
-    accessRequests:              { type: String, default: "{}" },
+    stats:                { type: Object, default: () => ({}) },
+    transfers:            { type: Object, default: () => ({}) },
+    users:                { type: Object, default: () => ({}) },
+    parameters:                  { type: Object, default: () => ({}) },
+    accessRequests:              { type: Object, default: () => ({}) },
     search:                      { type: String, default: "" },
     status:                      { type: String, default: "" },
     statsPath:                   { type: String, required: true },
@@ -60,11 +60,11 @@ const props = defineProps({
     csrfToken:                   { type: String, default: "" },
 });
 
-const parsedStats = computed(() => { try { return JSON.parse(props.stats); } catch { return {}; } });
-const parsedTransfers = computed(() => { try { return JSON.parse(props.transfers); } catch { return {}; } });
-const parsedUsers = computed(() => { try { return JSON.parse(props.users); } catch { return {}; } });
-const parsedParameters = computed(() => { try { return JSON.parse(props.parameters); } catch { return {}; } });
-const parsedAccessRequests = computed(() => { try { return JSON.parse(props.accessRequests); } catch { return {}; } });
+const parsedStats = computed(() => props.stats ?? {});
+const parsedTransfers = computed(() => props.transfers ?? {});
+const parsedUsers = computed(() => props.users ?? {});
+const parsedParameters = computed(() => props.parameters ?? {});
+const parsedAccessRequests = computed(() => props.accessRequests ?? {});
 
 const tabNav = ref(null);
 onMounted(() => {

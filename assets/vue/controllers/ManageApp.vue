@@ -17,16 +17,16 @@ const props = defineProps({
     reference: { type: String, required: true },
     status: { type: String, required: true },
     expiresAt: { type: String, required: true },
-    files: { type: String, default: "[]" },
-    recipients: { type: String, default: "[]" },
+    files: { type: Array, default: () => [] },
+    recipients: { type: Array, default: () => [] },
     csrfToken: { type: String, default: "" },
     isPublic: { type: Boolean, default: false },
     publicDownloadCount: { type: Number, default: 0 },
     transferToken: { type: String, default: "" },
 });
 
-const parsedFiles = computed(() => JSON.parse(props.files));
-const parsedRecipients = computed(() => JSON.parse(props.recipients));
+const parsedFiles = computed(() => props.files ?? []);
+const parsedRecipients = computed(() => props.recipients ?? []);
 const publicMode = computed(() => props.isPublic);
 const downloadCount = computed(() => props.publicDownloadCount);
 const downloadUrl = computed(() =>

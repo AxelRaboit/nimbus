@@ -20,43 +20,32 @@
 {% endblock %}
 
 {% block body %}
-<div id="app-dev"
-     data-tab="{{ tab }}"
-     data-stats="{{ tab == 'stats' ? stats|json_encode : '{}' }}"
-     data-transfers="{{ tab == 'transfers' ? transfers|json_encode : '{}' }}"
-     data-users="{{ tab == 'users' ? users|json_encode : '{}' }}"
-     data-parameters="{{ tab == 'parameters' ? parameters|json_encode : '{}' }}"
-     data-access-requests="{{ tab == 'access_requests' ? accessRequests|json_encode : '{}' }}"
-     data-search="{{ search ?? '' }}"
-     data-status="{{ status ?? '' }}"
-     data-locale="{{ app.request.locale }}"
-     data-stats-path="{{ path('dev_dashboard') }}"
-     data-transfers-path="{{ path('dev_transfers') }}"
-     data-users-path="{{ path('dev_users') }}"
-     data-invitations-path="{{ path('dev_invitations') }}"
-     data-invitation-send-path="{{ path('dev_invitation_send') }}"
-     data-parameters-path="{{ path('dev_parameters') }}"
-     data-parameter-update-path="{{ path('dev_parameter_update', {key: '__key__'}) }}"
-     data-user-create-path="{{ path('dev_user_create') }}"
-     data-user-update-path="{{ path('dev_user_update', {id: '__id__'}) }}"
-     data-user-impersonate-path="{{ path('dev_user_impersonate', {id: '__id__'}) }}"
-     data-user-delete-path="{{ path('dev_user_delete', {id: '__id__'}) }}"
-     data-user-toggle-role-path="{{ path('dev_user_toggle_role', {id: '__id__'}) }}"
-     data-user-custom-file-size-path="{{ path('dev_user_custom_file_size', {id: '__id__'}) }}"
-     data-access-requests-path="{{ path('dev_access_requests') }}"
-     data-access-request-approve-path="{{ path('dev_access_request_approve', {id: '__id__'}) }}"
-     data-access-request-reject-path="{{ path('dev_access_request_reject', {id: '__id__'}) }}"
-     data-access-request-purge-approved-path="{{ path('dev_access_request_purge_approved') }}"
-     data-csrf-token="{{ csrf_token('dev') }}"
-></div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ vite_entry_script_tags('dev') }}
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ vite_entry_link_tags('dev') }}
+<div {{ vue_component('DevApp', {
+    tab: tab,
+    stats: tab == 'stats' ? stats : {},
+    transfers: tab == 'transfers' ? transfers : {},
+    users: tab == 'users' ? users : {},
+    parameters: tab == 'parameters' ? parameters : {},
+    accessRequests: tab == 'access_requests' ? accessRequests : {},
+    search: search ?? '',
+    status: status ?? '',
+    statsPath: path('dev_dashboard'),
+    transfersPath: path('dev_transfers'),
+    usersPath: path('dev_users'),
+    invitationsPath: path('dev_invitations'),
+    invitationSendPath: path('dev_invitation_send'),
+    parametersPath: path('dev_parameters'),
+    parameterUpdatePath: path('dev_parameter_update', {key: '__key__'}),
+    userCreatePath: path('dev_user_create'),
+    userUpdatePath: path('dev_user_update', {id: '__id__'}),
+    userImpersonatePath: path('dev_user_impersonate', {id: '__id__'}),
+    userDeletePath: path('dev_user_delete', {id: '__id__'}),
+    userToggleRolePath: path('dev_user_toggle_role', {id: '__id__'}),
+    userCustomFileSizePath: path('dev_user_custom_file_size', {id: '__id__'}),
+    accessRequestsPath: path('dev_access_requests'),
+    accessRequestApprovePath: path('dev_access_request_approve', {id: '__id__'}),
+    accessRequestRejectPath: path('dev_access_request_reject', {id: '__id__'}),
+    accessRequestPurgeApprovedPath: path('dev_access_request_purge_approved'),
+    csrfToken: csrf_token('dev'),
+}) }}></div>
 {% endblock %}

@@ -4,9 +4,9 @@ import { useI18n } from "vue-i18n";
 import { RotateCcw, X, HelpCircle, Lock, Sparkles, Eye, EyeOff, KeyRound, CheckCircle } from "lucide-vue-next";
 import AppLogo from "@/components/AppLogo.vue";
 import AppModal from "@/components/AppModal.vue";
-import TransferForm from "./components/TransferForm.vue";
-import UploadProgress from "./components/UploadProgress.vue";
-import TransferSuccess from "./components/TransferSuccess.vue";
+import TransferForm from "@/pages/home/components/TransferForm.vue";
+import UploadProgress from "@/pages/home/components/UploadProgress.vue";
+import TransferSuccess from "@/pages/home/components/TransferSuccess.vue";
 import AppButton from "@/components/AppButton.vue";
 import { useTransferDraft } from "@/composables/useTransferDraft.js";
 import { formatFileSize, normalizeServerErrors } from "@/utils/validation.js";
@@ -25,8 +25,8 @@ const props = defineProps({
     maxRecipients:          { type: Number, default: 20 },
     maxExpiryDays:              { type: Number, default: 7 },
     tusCleanupMaxAgeHours:      { type: Number, default: 12 },
-    expiryOptions:          { type: String, default: "[24]" },
-    extensionGroups:        { type: String, default: "{}" },
+    expiryOptions:          { type: Array, default: () => [24] },
+    extensionGroups:        { type: Object, default: () => ({}) },
     accessPasswordEnabled:  { type: Boolean, default: false },
     accessGranted:          { type: Boolean, default: true },
     isPro:                  { type: Boolean, default: false },
@@ -38,7 +38,7 @@ const props = defineProps({
 });
 
 const fileTypeGroups = computed(() => {
-    const groups = JSON.parse(props.extensionGroups || "{}");
+    const groups = props.extensionGroups ?? {};
     return Object.entries(groups).map(([key, exts]) => ({
         label: t(`home.file_groups.${key}`, key),
         exts,
@@ -441,7 +441,7 @@ function reset() {
                 :max-recipients="Number(props.maxRecipients)"
                 :max-size-mb="Number(props.maxSizeMb)"
                 :max-expiry-days="Number(props.maxExpiryDays)"
-                :expiry-options="JSON.parse(props.expiryOptions)"
+                :expiry-options="props.expiryOptions"
                 v-on:submit="onFormSubmit"
                 v-on:open-help="showHelp = true"
             />

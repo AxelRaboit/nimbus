@@ -7,29 +7,18 @@
 {% endblock %}
 
 {% block body %}
-    <div id="app-plan"
-         data-locale="{{ app.request.locale }}"
-         data-is-pro="{{ isPro ? 'true' : 'false' }}"
-         data-trial-ends-at="{{ trialEndsAt ?? '' }}"
-         data-pro-price="{{ proPrice }}"
-         data-free-max-size-mb="{{ freeMaxSizeMb }}"
-         data-free-max-files="{{ freeMaxFiles }}"
-         data-free-max-expiry-hours="{{ freeMaxExpiryHours }}"
-         data-pro-max-size-mb="{{ proMaxSizeMb }}"
-         data-pro-max-files="{{ proMaxFiles }}"
-         data-pro-max-expiry-days="{{ proMaxExpiryDays }}"
-         data-upgrade-path="{{ upgradePath }}"
-         data-downgrade-path="{{ downgradePath }}"
-         data-csrf-token="{{ csrf_token('plan_action') }}"
-    ></div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ vite_entry_script_tags('plan') }}
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ vite_entry_link_tags('plan') }}
+    <div {{ vue_component('PlanApp', {
+        isPro: isPro,
+        trialEndsAt: trialEndsAt ?? null,
+        proPrice: proPrice,
+        freeMaxSizeMb: freeMaxSizeMb,
+        freeMaxFiles: freeMaxFiles,
+        freeMaxExpiryHours: freeMaxExpiryHours,
+        proMaxSizeMb: proMaxSizeMb,
+        proMaxFiles: proMaxFiles,
+        proMaxExpiryDays: proMaxExpiryDays,
+        upgradePath: upgradePath,
+        downgradePath: downgradePath,
+        csrfToken: csrf_token('plan_action'),
+    }) }}></div>
 {% endblock %}

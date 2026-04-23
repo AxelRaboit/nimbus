@@ -8,7 +8,7 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         vue(),
-        symfonyPlugin(),
+        symfonyPlugin({ stimulus: true }),
     ],
     resolve: {
         alias: {
@@ -20,18 +20,7 @@ export default defineConfig({
             input: {
                 app: './assets/app.js',
                 theme: './assets/theme.js',
-                sidebar: './assets/sidebar.js',
                 flash: './assets/flash.js',
-                register: './assets/pages/register/index.js',
-                home: './assets/pages/home/index.js',
-                transfer: './assets/pages/transfer/index.js',
-                manage: './assets/pages/manage/index.js',
-                profile: './assets/pages/profile/index.js',
-                'transfer-password': './assets/pages/transfer-password/index.js',
-                'transfer-unavailable': './assets/pages/transfer-unavailable/index.js',
-                dev: './assets/pages/dev/index.js',
-                dashboard: './assets/pages/dashboard/index.js',
-                plan: './assets/pages/plan/index.js',
             },
             output: {
                 manualChunks(id) {
