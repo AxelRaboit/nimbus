@@ -24,7 +24,7 @@ final class TransferControllerTest extends IntegrationTestCase
         self::assertResponseIsSuccessful();
     }
 
-    public function testShowPrivateTransferViaTransferTokenReturns404(): void
+    public function testShowPrivateTransferViaTransferTokenRedirectsToLogin(): void
     {
         $client = static::createClient();
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
@@ -33,7 +33,7 @@ final class TransferControllerTest extends IntegrationTestCase
 
         $client->request('GET', '/t/'.$transfer->getToken());
 
-        self::assertResponseStatusCodeSame(404);
+        self::assertResponseRedirects('/login');
     }
 
     public function testShowReadyTransferViaRecipientTokenIsAccessible(): void
@@ -77,12 +77,12 @@ final class TransferControllerTest extends IntegrationTestCase
         self::assertRouteSame('transfer_show');
     }
 
-    public function testShowNonExistentTransferReturns404(): void
+    public function testShowNonExistentTransferRedirectsToLogin(): void
     {
         $client = static::createClient();
         $client->request('GET', '/t/nonexistent-token');
 
-        self::assertResponseStatusCodeSame(404);
+        self::assertResponseRedirects('/login');
     }
 
     public function testManagePageIsAccessible(): void
@@ -97,12 +97,12 @@ final class TransferControllerTest extends IntegrationTestCase
         self::assertResponseIsSuccessful();
     }
 
-    public function testManagePageForNonExistentOwnerTokenReturns404(): void
+    public function testManagePageForNonExistentOwnerTokenRedirectsToLogin(): void
     {
         $client = static::createClient();
         $client->request('GET', '/manage/nonexistent-owner-token');
 
-        self::assertResponseStatusCodeSame(404);
+        self::assertResponseRedirects('/login');
     }
 
     private function findReadyPublicTransfer(EntityManagerInterface $entityManager): Transfer
