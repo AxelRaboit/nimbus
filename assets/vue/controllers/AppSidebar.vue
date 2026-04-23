@@ -5,6 +5,7 @@ import { useTheme } from "@/composables/useTheme.js";
 import AppLogo from "@/components/AppLogo.vue";
 import { Route } from "@/utils/routes.js";
 import { Plan } from "@/utils/plans.js";
+import "@/css/sidebar.css";
 import {
     UploadCloud,
     User,

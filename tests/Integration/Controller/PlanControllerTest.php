@@ -60,8 +60,7 @@ final class PlanControllerTest extends IntegrationTestCase
         $client->loginUser($user);
         $client->request('GET', '/plan');
 
-        preg_match('/data-csrf-token="([^"]+)"/', $client->getResponse()->getContent(), $matches);
-        $csrfToken = $matches[1] ?? '';
+        $csrfToken = self::getVueProps($client, 'PlanApp')['csrfToken'] ?? '';
 
         $client->request('POST', '/plan/upgrade', ['_token' => $csrfToken]);
 
@@ -85,8 +84,7 @@ final class PlanControllerTest extends IntegrationTestCase
         $client->loginUser($user);
         $client->request('GET', '/plan');
 
-        preg_match('/data-csrf-token="([^"]+)"/', $client->getResponse()->getContent(), $matches);
-        $csrfToken = $matches[1] ?? '';
+        $csrfToken = self::getVueProps($client, 'PlanApp')['csrfToken'] ?? '';
 
         $client->request('POST', '/plan/downgrade', ['_token' => $csrfToken]);
 

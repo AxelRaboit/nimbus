@@ -7,28 +7,16 @@
 {% endblock %}
 
 {% block body %}
-    <div id="app-manage"
-         data-owner-token="{{ transfer.ownerToken }}"
-         data-reference="{{ transfer.reference }}"
-         data-status="{{ transfer.status.value }}"
-         data-expires-at="{{ transfer.expiresAt|date('c') }}"
-         data-files="{{ transfer.files|map(f => {name: f.originalName, size: f.fileSize})|json_encode }}"
-         data-recipients="{{ transfer.recipients|map(r => {email: r.email, downloaded: r.hasDownloaded})|json_encode }}"
-         data-csrf-token="{{ csrf_token }}"
-         data-locale="{{ app.request.locale }}"
-         data-is-public="{{ transfer.isPublic ? 'true' : 'false' }}"
-         data-public-download-count="{{ transfer.publicDownloadCount }}"
-         data-transfer-token="{{ transfer.token }}"
-         class="flex-1">
-    </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ vite_entry_script_tags('manage') }}
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ vite_entry_link_tags('manage') }}
+    <div {{ vue_component('ManageApp', {
+        ownerToken: transfer.ownerToken,
+        reference: transfer.reference,
+        status: transfer.status.value,
+        expiresAt: transfer.expiresAt|date('c'),
+        files: transfer.files|map(f => {name: f.originalName, size: f.fileSize}),
+        recipients: transfer.recipients|map(r => {email: r.email, downloaded: r.hasDownloaded}),
+        csrfToken: csrf_token,
+        isPublic: transfer.isPublic,
+        publicDownloadCount: transfer.publicDownloadCount,
+        transferToken: transfer.token,
+    }) }} class="flex-1"></div>
 {% endblock %}

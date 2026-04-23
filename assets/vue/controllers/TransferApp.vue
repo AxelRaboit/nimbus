@@ -17,10 +17,10 @@ const props = defineProps({
     reference: { type: String, required: true },
     expiresAt: { type: String, required: true },
     senderName: { type: String, default: "" },
-    files: { type: String, default: "[]" },
+    files: { type: Array, default: () => [] },
 });
 
-const parsedFiles = computed(() => JSON.parse(props.files));
+const parsedFiles = computed(() => props.files ?? []);
 const expiresDate = computed(() => formatDate(props.expiresAt));
 const totalSize = computed(() => parsedFiles.value.reduce((acc, f) => acc + f.size, 0));
 const downloadUrl = computed(() => `/t/${props.token}/download`);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,38 +10,36 @@
         {{ include('components/theme_script.html.twig', {colorScheme: true, sidebar: true}) }}
         {% block stylesheets %}
             {{ vite_entry_link_tags('app') }}
-            {{ vite_entry_link_tags('sidebar') }}
             {{ vite_entry_link_tags('flash') }}
         {% endblock %}
         <script>window.__flash__ = {{ app.flashes|json_encode|raw }};</script>
         {% block javascripts %}
             {{ vite_entry_script_tags('app') }}
-            {{ vite_entry_script_tags('sidebar') }}
             {{ vite_entry_script_tags('flash') }}
         {% endblock %}
     </head>
     <body class="transition-colors duration-200">
         <div class="min-h-screen bg-bg">
 
-            <div id="app-sidebar"
-                 data-user-name="{{ app.user ? app.user.name : '' }}"
-                 data-user-email="{{ app.user ? app.user.email : '' }}"
-                 data-app-version="{{ appVersion is defined ? appVersion : '' }}"
-                 data-active-route="{{ app.request.attributes.get('_route') }}"
-                 data-logout-csrf="{{ app.user ? csrf_token('logout') : '' }}"
-                 data-home-path="{{ path('home') }}"
-                 data-profile-path="{{ app.user ? path('profile') : '' }}"
-                 data-logout-path="{{ app.user ? path('app_logout') : '' }}"
-                 data-login-path="{{ path('app_login') }}"
-                 data-is-guest="{{ app.user ? 'false' : 'true' }}"
-                 data-is-dev="{{ app.user and is_granted('ROLE_DEV') ? 'true' : 'false' }}"
-                 data-dev-path="{{ path('dev_dashboard') }}"
-                 data-dashboard-path="{{ app.user ? path('transfers') : '' }}"
-                 data-user-plan="{{ app.user ? app.user.plan.value : 'free' }}"
-                 data-plan-path="{{ path('plan') }}"
-                 data-mailpit-url="{{ not isProd ? 'http://localhost:8025' : '' }}"
-                 data-locale="{{ app.request.locale }}"
-            ></div>
+            <div {{ vue_component('AppSidebar', {
+                userName: app.user ? app.user.name : '',
+                userEmail: app.user ? app.user.email : '',
+                appVersion: appVersion is defined ? appVersion : '',
+                activeRoute: app.request.attributes.get('_route'),
+                logoutCsrf: app.user ? csrf_token('logout') : '',
+                homePath: path('home'),
+                profilePath: app.user ? path('profile') : '',
+                logoutPath: app.user ? path('app_logout') : '',
+                loginPath: path('app_login'),
+                isGuest: app.user ? false : true,
+                isDev: app.user and is_granted('ROLE_DEV'),
+                devPath: path('dev_dashboard'),
+                dashboardPath: app.user ? path('transfers') : '',
+                userPlan: app.user ? app.user.plan.value : 'free',
+                planPath: path('plan'),
+                mailpitUrl: not isProd ? 'http://localhost:8025' : '',
+                locale: app.request.locale,
+            }) }}></div>
 
             <div id="main-content" class="flex-1 flex flex-col min-h-screen transition-all duration-200 pt-14 lg:pt-0">
 

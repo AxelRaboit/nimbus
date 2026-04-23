@@ -6,11 +6,8 @@
 {% endblock %}
 
 {% block body %}
-<div id="app-transfer-unavailable"
-     data-status="{{ transfer.isExpired ? 'expired' : transfer.status.value }}"
-     data-home-path="{{ path('home') }}"
-     data-locale="{{ app.request.locale }}"
-</div>
+<div {{ vue_component('TransferUnavailableApp', {
+    status: transfer.isExpired ? 'expired' : transfer.status.value,
+    homePath: path('home'),
+}) }}></div>
 {% endblock %}
-{% block stylesheets %}{{ parent() }}{{ vite_entry_link_tags('transfer-unavailable') }}{% endblock %}
-{% block javascripts %}{{ parent() }}{{ vite_entry_script_tags('transfer-unavailable') }}{% endblock %}

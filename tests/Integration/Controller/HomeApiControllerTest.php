@@ -65,7 +65,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $client->request(HttpMethodEnum::Get->value, '/');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('data-access-password-enabled="true"', $client->getResponse()->getContent());
+        self::assertTrue(self::getVueProps($client, 'HomeApp')['accessPasswordEnabled']);
     }
 
     public function testHomePageShowsAccessNotGrantedInitially(): void
@@ -76,7 +76,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $client->request(HttpMethodEnum::Get->value, '/');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('data-access-granted="false"', $client->getResponse()->getContent());
+        self::assertFalse(self::getVueProps($client, 'HomeApp')['accessGranted']);
     }
 
     public function testAfterVerifyAccessHomePageShowsAccessGranted(): void
@@ -89,7 +89,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         self::assertResponseIsSuccessful();
 
         $client->request(HttpMethodEnum::Get->value, '/');
-        self::assertStringContainsString('data-access-granted="true"', $client->getResponse()->getContent());
+        self::assertTrue(self::getVueProps($client, 'HomeApp')['accessGranted']);
     }
 
     public function testHomePageShowsNoAccessPasswordWhenNotSet(): void
@@ -98,8 +98,9 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $client->request(HttpMethodEnum::Get->value, '/');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('data-access-password-enabled="false"', $client->getResponse()->getContent());
-        self::assertStringContainsString('data-access-granted="true"', $client->getResponse()->getContent());
+        $props = self::getVueProps($client, 'HomeApp');
+        self::assertFalse($props['accessPasswordEnabled']);
+        self::assertTrue($props['accessGranted']);
     }
 
     public function testStaleSessionHashDoesNotGrantAccessAfterPasswordChange(): void
@@ -112,7 +113,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         $client->getRequest()->getSession()->save();
 
         $client->request(HttpMethodEnum::Get->value, '/');
-        self::assertStringContainsString('data-access-granted="false"', $client->getResponse()->getContent());
+        self::assertFalse(self::getVueProps($client, 'HomeApp')['accessGranted']);
     }
 
     public function testCorrectPasswordStoresHashInSession(): void
@@ -124,7 +125,7 @@ final class HomeApiControllerTest extends IntegrationTestCase
         self::assertResponseIsSuccessful();
 
         $client->request(HttpMethodEnum::Get->value, '/');
-        self::assertStringContainsString('data-access-granted="true"', $client->getResponse()->getContent());
+        self::assertTrue(self::getVueProps($client, 'HomeApp')['accessGranted']);
     }
 
     // ── POST /api/home/request-access ────────────────────────────────────────

@@ -7,34 +7,23 @@
 {% endblock %}
 
 {% block body %}
-    <div id="app-home"
-         data-locale="{{ app.request.locale }}"
-         data-user-email="{{ app.user ? app.user.email : '' }}"
-         data-is-guest="{{ app.user ? 'false' : 'true' }}"
-         data-max-size-mb="{{ maxSizeMb }}"
-         data-pro-max-size-mb="{{ proMaxSizeMb }}"
-         data-max-files="{{ maxFiles }}"
-         data-max-recipients="{{ maxRecipients }}"
-         data-max-expiry-days="{{ maxExpiryDays }}"
-         data-tus-cleanup-max-age-hours="{{ tusCleanupMaxAgeHours }}"
-         data-expiry-options="{{ expiryOptions|json_encode }}"
-         data-extension-groups="{{ extensionGroups|json_encode }}"
-         data-access-password-enabled="{{ accessPasswordEnabled ? 'true' : 'false' }}"
-         data-access-granted="{{ accessGranted ? 'true' : 'false' }}"
-         data-is-pro="{{ isPro ? 'true' : 'false' }}"
-         data-plan-path="{{ path('plan') }}"
-         data-login-path="{{ path('app_login') }}"
-         data-register-path="{{ path('app_register') }}"
-         data-registration-enabled="{{ registrationEnabled ? 'true' : 'false' }}"
-         class="flex-1"></div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ vite_entry_script_tags('home') }}
-{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ vite_entry_link_tags('home') }}
+    <div {{ vue_component('HomeApp', {
+        userEmail: app.user ? app.user.email : '',
+        isGuest: app.user ? false : true,
+        maxSizeMb: maxSizeMb,
+        proMaxSizeMb: proMaxSizeMb,
+        maxFiles: maxFiles,
+        maxRecipients: maxRecipients,
+        maxExpiryDays: maxExpiryDays,
+        tusCleanupMaxAgeHours: tusCleanupMaxAgeHours,
+        expiryOptions: expiryOptions,
+        extensionGroups: extensionGroups,
+        accessPasswordEnabled: accessPasswordEnabled,
+        accessGranted: accessGranted,
+        isPro: isPro,
+        planPath: path('plan'),
+        loginPath: path('app_login'),
+        registerPath: path('app_register'),
+        registrationEnabled: registrationEnabled,
+    }) }} class="flex-1"></div>
 {% endblock %}
